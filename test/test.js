@@ -145,7 +145,6 @@ function parse(template, options) {
                     node.children.push(child);
                     child.parent = node;
                     child.tag = startTagRes[1];
-                    child.type = 1;
                     advance(startTagRes[1].length + 1);
 
                     // attr 的解析和 startTag
@@ -182,20 +181,15 @@ function parse(template, options) {
 
             } else {
                 const index = template.indexOf('<');
-                const child = createNode();
-                child.type = 3;
-                child.tag = 'text';
-                let data = template.slice(0, index);
-                if (data.includes('\n')) {
-                    // 踩坑： 这个地方，如果是 \n 的话，在生成 render 函数的时候 _t('\n xxx') 会报错，只有 _t('\\n xxx') 才能正确被 new Function() 生成函数
-                    data = data.replace('\n', '\\n');
-                }
-                child.data = data;
-                child.parent = node;
-                node.children.push(child);
                 if (index < 0) {
                     return node;
                 }
+                const child = createNode();
+                child.type = 3;
+                child.tag = 'text';
+                child.data = template.slice(0, index);
+                child.parent = node;
+                node.children.push(child);
                 advance(index);
             }
         }
