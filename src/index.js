@@ -11,11 +11,21 @@ const content = `<div id="app">
 </div>`;
 
 
-const ast = parse(content);
-console.log('>>> ast', ast);
-const renderFn = genRenderFn(ast.children[0]);
-console.log(renderFn);
-const fn = new Function(renderFn);
-const node = fn.call(runtimeCtx);
-console.log(node);
-document.body.appendChild(node);
+// const ast = parse(content);
+// console.log('>>> ast', ast);
+// const renderFn = genRenderFn(ast.children[0]);
+// console.log(renderFn);
+// const fn = new Function(renderFn);
+// const node = fn.call(runtimeCtx);
+// console.log(node);
+// document.body.appendChild(node);
+
+import Vue from './core/vue';
+const vm = new Vue({
+    el: '#app',
+    data() {
+        return {
+            name: 'jack'
+        }
+    }
+});
