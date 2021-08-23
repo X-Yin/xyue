@@ -3,7 +3,7 @@ export function callHook(vm, hookName) {
 }
 
 export function lifecycleMixin(vm) {
-    vm.prototype.lifecycleMixin = function() {
+    vm.prototype._mount = function() {
         callHook(this, 'created');
 
     }

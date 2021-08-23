@@ -1,4 +1,4 @@
-import { lifecycleMixin } from "./lifecycle";
+import { proxyMixin } from "./proxy";
 
 let id = 0;
 
@@ -23,11 +23,14 @@ export function initMixin(vm) {
         this.data = normalizeData(options.data || {});
         this.methods = options.methods || {};
         this.props = options.props || [];
+        this.computed = options.computed || {};
 
-        // 这两个只能在递归循环的时候赋值，在构造函数里面无法给 parent 和 child 赋值
+        // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
+        // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
         this.$parent = null;
         this.$child = null;
 
-        // 2. 生命周期
+        // 2. 对内部属性做一层代理，给 $self 赋值，把 data props computed methods 中的取值进行一层代理
+        proxyMixin(this);
     }
 }

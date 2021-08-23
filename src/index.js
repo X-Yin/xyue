@@ -27,5 +27,17 @@ const vm = new Vue({
         return {
             name: 'jack'
         }
+    },
+    props: ['kiss'],
+    methods: {
+        value: 'hello'
     }
 });
+
+vm.$parent = {
+    $self: {
+        kiss: 'what'
+    }
+}
+
+console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);

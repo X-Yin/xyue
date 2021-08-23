@@ -43,6 +43,32 @@ var _t = function _t(text) {
   _l: _l,
   _t: _t
 });
+;// CONCATENATED MODULE: ./src/core/vue/proxy.js
+function proxyMixin(vm) {
+  vm.$self = new Proxy(vm, {
+    get: function get(target, key, receiver) {
+      var keys = ['methods', 'computed', 'data'];
+
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+
+        if (target[k][key]) {
+          return target[k][key];
+        }
+      }
+
+      for (var _i = 0; _i < target.props.length; _i++) {
+        var _k = target.props[_i];
+
+        if (_k === key && target.$parent && target.$parent.$self[_k]) {
+          return target.$parent.$self[_k];
+        }
+      }
+
+      return target[key];
+    }
+  });
+}
 ;// CONCATENATED MODULE: ./src/core/vue/init.js
 
 var id = 0;
@@ -68,39 +94,40 @@ function initMixin(vm) {
     this.$watcher = null;
     this.data = normalizeData(options.data || {});
     this.methods = options.methods || {};
-    this.props = options.props || []; // 这两个只能在递归循环的时候赋值，在构造函数里面无法给 parent 和 child 赋值
+    this.props = options.props || [];
+    this.computed = options.computed || {}; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
+    // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
 
     this.$parent = null;
-    this.$child = null; // 2. 生命周期
-  };
-}
-;// CONCATENATED MODULE: ./src/core/vue/proxy.js
-function proxyMixin(vm) {
-  vm.prototype.proxyMixin = function () {
-    this.$self = new Proxy(this, {
-      get: function get(target, key, receiver) {
-        var keys = ['methods', 'props', 'data'];
+    this.$child = null; // 2. 对内部属性做一层代理，给 $self 赋值，把 data props computed methods 中的取值进行一层代理
 
-        for (var i = 0; i < keys.length; i++) {
-          if (target[i][key]) {
-            return target[i][key];
-          }
-        }
-
-        return target[key];
-      }
-    });
+    proxyMixin(this);
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/event.js
+// 用于创建每个组件的 eventBus
 function eventMixin(vm) {
-  vm.prototype.eventMixin = function () {};
+  vm.prototype._events = {};
+
+  vm.prototype._on = function () {};
+
+  vm.prototype._off = function () {};
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
 function renderMixin(vm) {
   vm.prototype.eventMixin = function () {};
 }
+;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
+function callHook(vm, hookName) {
+  vm[hookName]();
+}
+function lifecycleMixin(vm) {
+  vm.prototype._mount = function () {
+    callHook(this, 'created');
+  };
+}
 ;// CONCATENATED MODULE: ./src/core/vue/index.js
+
 
 
 
@@ -115,9 +142,9 @@ function Vue(options) {
 }
 
 initMixin(Vue);
-proxyMixin(Vue);
 eventMixin(Vue);
 renderMixin(Vue);
+lifecycleMixin(Vue);
 /* harmony default export */ const vue = (Vue);
 ;// CONCATENATED MODULE: ./src/index.js
 
@@ -139,7 +166,17 @@ var vm = new vue({
     return {
       name: 'jack'
     };
+  },
+  props: ['kiss'],
+  methods: {
+    value: 'hello'
   }
 });
+vm.$parent = {
+  $self: {
+    kiss: 'what'
+  }
+};
+console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
 /******/ })()
 ;
