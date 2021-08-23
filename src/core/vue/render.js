@@ -1,6 +1,6 @@
 
 export function renderMixin(vm) {
-    vm.prototype.eventMixin = function() {
+    vm.prototype._render = function() {
 
     }
 }

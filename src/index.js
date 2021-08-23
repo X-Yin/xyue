@@ -40,4 +40,19 @@ vm.$parent = {
     }
 }
 
-console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
+// console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
+vm.$on('test', (a, b) => {
+    console.log(a + b);
+    return a + b;
+});
+
+const cb = (a, b) => {
+    console.log(a - b);
+    return a - b;
+}
+
+vm.$on('test', cb);
+
+vm.$off('test', cb);
+
+vm.$emit('test', 1, 2);

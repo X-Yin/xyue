@@ -109,13 +109,59 @@ function initMixin(vm) {
 function eventMixin(vm) {
   vm.prototype._events = {};
 
-  vm.prototype._on = function () {};
+  vm.prototype.$on = function (eventName, cb) {
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
 
-  vm.prototype._off = function () {};
+    if (!cb) {
+      throw new Error('_on Unexpected callback params');
+    }
+
+    if (Array.isArray(this._events[eventName])) {
+      this._events[eventName].push(cb);
+    } else {
+      this._events[eventName] = [cb];
+    }
+  };
+
+  vm.prototype.$emit = function (eventName) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
+
+    if (Array.isArray(this._events[eventName])) {
+      this._events[eventName].forEach(function (cb) {
+        cb.apply(void 0, args);
+      });
+    }
+  };
+
+  vm.prototype.$off = function (eventName, cb) {
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
+
+    if (!cb) {
+      throw new Error('_on Unexpected callback params');
+    }
+
+    if (Array.isArray(this._events[eventName])) {
+      var index = this._events[eventName].findIndex(function (item) {
+        return item === cb;
+      });
+
+      this._events[eventName].splice(index, 1);
+    }
+  };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
 function renderMixin(vm) {
-  vm.prototype.eventMixin = function () {};
+  vm.prototype._render = function () {};
 }
 ;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
 function callHook(vm, hookName) {
@@ -176,7 +222,20 @@ vm.$parent = {
   $self: {
     kiss: 'what'
   }
+}; // console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
+
+vm.$on('test', function (a, b) {
+  console.log(a + b);
+  return a + b;
+});
+
+var cb = function cb(a, b) {
+  console.log(a - b);
+  return a - b;
 };
-console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
+
+vm.$on('test', cb);
+vm.$off('test', cb);
+vm.$emit('test', 1, 2);
 /******/ })()
 ;
