@@ -8,6 +8,11 @@
     <title>title</title>
 </head>
 <body>
+<div id="app">1234</div>
+<script>
+    const el = document.getElementById('app');
+    console.log(typeof el.outerHTML);
+</script>
 <script>
     const fn = new Function(`with(this){return 123}`);
     const obj = {

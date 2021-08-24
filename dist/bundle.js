@@ -85,7 +85,7 @@ function initMixin(vm) {
   vm.prototype._init = function (options) {
     // 1. 初始化参数
     this.$template = options.template || '';
-    this.$el = options.el || '';
+    this.$el = document.querySelector(options.el || '');
     this.$id = ++id;
     this.$watch = options.watch || {};
     this.$vnode = {};
@@ -95,7 +95,8 @@ function initMixin(vm) {
     this.data = normalizeData(options.data || {});
     this.methods = options.methods || {};
     this.props = options.props || [];
-    this.computed = options.computed || {}; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
+    this.computed = options.computed || {};
+    this.template = options.template || (this.$el ? this.$el.outerHTML : ''); // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
     // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
 
     this.$parent = null;
@@ -160,6 +161,11 @@ function eventMixin(vm) {
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
+// 封装 createElement 函数
+function createTextVNode(text) {}
+function createElement(tag, attrs, children) {}
+function createListVNode(tag, dataKey, attrs, children) {}
+function createIfVNode(tag, dataKey, attrs, children) {}
 function renderMixin(vm) {
   vm.prototype._render = function () {};
 }
