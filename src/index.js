@@ -25,34 +25,21 @@ const vm = new Vue({
     el: '#app',
     data() {
         return {
-            name: 'jack'
+            name: 'jack',
+            array: [1, 2, 3]
         }
+    },
+    created() {
+        console.log('created');
+    },
+    components: {
+        "my-button": true
     },
     props: ['kiss'],
     methods: {
         value: 'hello'
-    }
+    },
 });
 
-vm.$parent = {
-    $self: {
-        kiss: 'what'
-    }
-}
-
-// console.log(vm.$self.name, vm.$self.value, vm.$self.kiss);
-vm.$on('test', (a, b) => {
-    console.log(a + b);
-    return a + b;
-});
-
-const cb = (a, b) => {
-    console.log(a - b);
-    return a - b;
-}
-
-vm.$on('test', cb);
-
-vm.$off('test', cb);
-
-vm.$emit('test', 1, 2);
+vm._mount();
+console.log(vm);

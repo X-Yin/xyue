@@ -204,7 +204,7 @@ function parse(template, options) {
 
     _parse(ast);
 
-    return ast;
+    return ast.children[0];
 }
 
 export default parse;
