@@ -2,7 +2,7 @@
  * html to ast
  * ast 定义标准
  * {
- *     attrs: [{name 'id', value: 'app'}],
+ *     classes: [{name 'id', value: 'app'}],
  *     children: [{...}],
  *     parent: [{...}] || null,
  *     tag: 'div',
@@ -50,7 +50,7 @@ function parseAttr(attr) {
 }
 
 /**
- * 将 attrs 数组细分到 events style class 等
+ * 将 classes 数组细分到 events style class 等
  * */
 function handleAttr(node, attrs) {
     const res = [];

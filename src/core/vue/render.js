@@ -49,5 +49,6 @@ export function renderMixin(vm) {
         this.$render = genRenderFn(parse(this.template || ''));
         const fn = new Function(this.$render);
         this.$vnode = handleVNodeRelationship(fn.call(this) || {});
+        return this.$vnode;
     }
 }

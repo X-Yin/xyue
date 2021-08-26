@@ -2,12 +2,12 @@
  * html to ast
  * ast 定义标准
  * {
- *     attrs: [{name 'id', value: 'app'}],
+ *     classes: [{name 'id', value: 'app'}, {name: ':class', value: 'flag ? "active" : ""'}, [name: ':style', value: "{color: flag ? 'red' : 'blue'}"]],
  *     children: [{...}],
  *     parent: [{...}] || null,
  *     tag: 'div',
- *     staticClass: "\"container\""
- *     staticStyle: "{\"color\":\"red\"}"
+ *     staticClass: "\"container\"" // 静态的 class 属性放在这个地方，动态的依然在 classes 里面
+ *     staticStyle: "{\"color\":\"red\"}" // 静态的 style 属性解析到这个地方，动态的 在 classes 里面
  *     events: [{click: 'clickHandler', 'doubleClick': 'handler'}]
  *     v-for: '',
  *     v-if: '',
@@ -50,7 +50,7 @@ function parseAttr(attr) {
 }
 
 /**
- * 将 attrs 数组细分到 events style class 等
+ * 将 classes 数组细分到 events style class 等
  * */
 function handleAttr(node, attrs) {
     const res = [];

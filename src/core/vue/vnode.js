@@ -7,7 +7,7 @@ import { isEqual } from "../utils";
  * style: 'color: red' 只支持静态字符串的写法，或者绑定 data 与 props 中的字段
  * children: [vnode, vnode]
  * parent: vnode
- * attrs: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
+ * classes: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
  * $vm: vm.$self
  * type: 1 | 3
  * data: 在 type 为 3 的时候是静态文本的内容
@@ -20,14 +20,14 @@ class VNode {
         this.id = ++id;
         this.children = children;
         this.parent = null;
-        this.class = attrs.class;
-        this.style = attrs.style;
+        this.staticClass = attrs.staticClass;
+        this.staticStyle = attrs.staticStyle;
         this.attrs = attrs.attrs;
         this.events = attrs.events;
         this.$vm = vm.$self;
         this.type = type;
         this.data = data;
-        this.options = options;
+        this.options = vm.options;
         // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
         this.isComponent = !!vm.$self.components[tag]; //
     }
@@ -41,7 +41,7 @@ export function compareVNode(oldVNode, newVNode) {
     if (!oldVNode) {
         throw new Error('Unexpected params ' + oldVNode);
     }
-    // 对比 tag class style attrs events type data 等
+    // 对比 tag class style classes events type data 等
     if (!isEqual(newVNode.tag, oldVNode.tag)) {
         return false;
     }

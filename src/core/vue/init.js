@@ -23,6 +23,7 @@ export function initMixin(vm) {
         this.$self = null;
         this.$render = '';
         this.$watcher = null;
+        this.$props = {}; // $props 是 vm 实例内部存储数据结构对象
         this.data = normalizeData(options.data || {});
         this.methods = options.methods || {};
         this.props = options.props || [];
@@ -30,9 +31,11 @@ export function initMixin(vm) {
         this.computed = options.computed || {};
         this.template = options.template || (this.$el ? this.$el.outerHTML : '');
         this.components = options.components || {};
+        vm.isMount = false;
 
         // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
         // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
+        // 这里的 $parent 都是父组件的实例，而不是 $self 实例
         this.$parent = null;
         this.$child = null;
 

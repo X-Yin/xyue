@@ -1,14 +1,15 @@
 import { LifeCycleHooks } from "../../constants";
-import attrHooks from './attrs';
+import attrHooks from './classes';
 import eventHooks from './events';
 import styleHooks from './style';
+import propsHooks from './props';
 
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
  * vm 组件实例中，真正的 created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
-const installDefaultHooks = [attrHooks, styleHooks, eventHooks,];
+const installDefaultHooks = [propsHooks, attrHooks, styleHooks, eventHooks,];
 
 export function installHook(vm) {
     const customHooks = {};
@@ -18,7 +19,6 @@ export function installHook(vm) {
         }
     });
     const prepareInstallHooks = [...installDefaultHooks, customHooks];
-    console.log(prepareInstallHooks);
     LifeCycleHooks.forEach(lifecycleHook => {
         if (!Array.isArray(vm[lifecycleHook])) {
             vm[lifecycleHook] = [];

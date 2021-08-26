@@ -9588,10 +9588,37 @@ var _t = function _t(text) {
   _t: _t
 });
 ;// CONCATENATED MODULE: ./src/core/vue/proxy.js
+function proxy_slicedToArray(arr, i) { return proxy_arrayWithHoles(arr) || proxy_iterableToArrayLimit(arr, i) || proxy_unsupportedIterableToArray(arr, i) || proxy_nonIterableRest(); }
+
+function proxy_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function proxy_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return proxy_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return proxy_arrayLikeToArray(o, minLen); }
+
+function proxy_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function proxy_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function proxy_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function isPropsKey(target, key) {
+  var isProp = false;
+  var props = target.$props || {};
+  Object.entries(props).forEach(function (_ref) {
+    var _ref2 = proxy_slicedToArray(_ref, 2),
+        k = _ref2[0],
+        val = _ref2[1];
+
+    if (key === k) {
+      isProp = true;
+    }
+  });
+  return isProp;
+}
+
 function proxyMixin(vm) {
   vm.$self = new Proxy(vm, {
     get: function get(target, key, receiver) {
-      var keys = ['methods', 'computed', 'data'];
+      var keys = ['methods', 'computed', 'data', '$props'];
 
       for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
@@ -9601,8 +9628,8 @@ function proxyMixin(vm) {
         }
       }
 
-      for (var _i = 0; _i < target.props.length; _i++) {
-        var _k = target.props[_i];
+      for (var _i2 = 0; _i2 < target.props.length; _i2++) {
+        var _k = target.props[_i2];
 
         if (_k === key && target.$parent && target.$parent.$self[_k]) {
           return target.$parent.$self[_k];
@@ -9610,17 +9637,60 @@ function proxyMixin(vm) {
       }
 
       return target[key];
+    },
+    set: function set(target, key, value, receiver) {
+      // 对于 props 的属性的赋值需要做一层拦截
+      var isProp = isPropsKey(target, key);
+
+      if (isProp) {
+        throw new Error('can not set props value in child component ' + key);
+      }
+
+      return true;
     }
   });
 }
 ;// CONCATENATED MODULE: ./src/core/constants/index.js
 var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed'];
-;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/attrs/index.js
-function created(vm) {}
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/classes/index.js
+function created() {}
 
-function beforeMount(vm) {}
+function handleVNodeClass(vm, vnode) {
+  if (!vnode) {
+    return;
+  }
 
-function beforeMounted(vm) {}
+  var attrs = vnode.attrs; //[{name: '', value: ''}];
+
+  if (!Array.isArray(attrs)) {
+    return;
+  }
+
+  var staticClass = vnode.staticClass;
+  var customClass = '';
+  attrs.forEach(function (attr) {
+    var name = attr.name,
+        value = attr.value;
+
+    if (name === ':class') {
+      // 动态的 class 有三种写法
+      // 1. 普通的字符串 :class="container"
+      // 2. 数组 :class="['container', flag ? 'active' : '']"
+      // 3. 对象 :class="{container: true, active: flag}"
+      try {
+        var val = JSON.parse(value);
+
+        if (Array.isArray()) {}
+      } catch (e) {}
+    }
+  });
+}
+
+function beforeMount() {
+  var vnode = this.$vnode;
+}
+
+function mounted(vm) {}
 
 function updated(vm) {}
 
@@ -9630,19 +9700,21 @@ function destroyed(vm) {}
 
 function beforeDestroy(vm) {}
 
-/* harmony default export */ const attrs = ({
+/* harmony default export */ const classes = ({
   created: created,
   updated: updated,
   beforeUpdate: beforeUpdate,
   destroyed: destroyed,
-  beforeDestroy: beforeDestroy
+  beforeDestroy: beforeDestroy,
+  mounted: mounted,
+  beforeMount: beforeMount
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/events/index.js
 function events_created(vm) {}
 
 function events_beforeMount(vm) {}
 
-function events_beforeMounted(vm) {}
+function beforeMounted(vm) {}
 
 function events_updated(vm) {}
 
@@ -9681,6 +9753,55 @@ function style_beforeDestroy(vm) {}
   destroyed: style_destroyed,
   beforeDestroy: style_beforeDestroy
 });
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/props/index.js
+function props_slicedToArray(arr, i) { return props_arrayWithHoles(arr) || props_iterableToArrayLimit(arr, i) || props_unsupportedIterableToArray(arr, i) || props_nonIterableRest(); }
+
+function props_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function props_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return props_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return props_arrayLikeToArray(o, minLen); }
+
+function props_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function props_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function props_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function props_created() {
+  var vm = this; // 将 parent 的值和 props 中的值一一对应起来
+  // 然后把 props 中的这些 key 值赋值到 vm 实例中去
+  // 但是在 set 函数中，如果修改的是 props 中的 key，需要发出警告
+
+  if (!vm.$parent) {
+    return;
+  }
+
+  if (Array.isArray(vm.props)) {
+    vm.props.forEach(function (key) {
+      var val = vm.$parent.$self[key];
+      Object.assign(vm.$props, _defineProperty({}, key, val));
+    });
+    return;
+  }
+
+  if (_typeof(vm.props) === 'object') {
+    Object.entries(vm.props).forEach(function (_ref) {
+      var _ref2 = props_slicedToArray(_ref, 2),
+          key = _ref2[0],
+          val = _ref2[1];
+
+      var value = vm.$parent.$self[key];
+      Object.assign(vm.$props, _defineProperty({}, val, value));
+    });
+  }
+}
+
+/* harmony default export */ const props = ({
+  created: props_created
+});
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
 function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
 
@@ -9698,12 +9819,13 @@ function runtimeHooks_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; 
 
 
 
+
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
  * vm 组件实例中，真正的 created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
-var installDefaultHooks = [attrs, style, events];
+var installDefaultHooks = [props, classes, style, events];
 function installHook(vm) {
   var customHooks = {};
   LifeCycleHooks.forEach(function (hook) {
@@ -9712,7 +9834,6 @@ function installHook(vm) {
     }
   });
   var prepareInstallHooks = [].concat(installDefaultHooks, [customHooks]);
-  console.log(prepareInstallHooks);
   LifeCycleHooks.forEach(function (lifecycleHook) {
     if (!Array.isArray(vm[lifecycleHook])) {
       vm[lifecycleHook] = [];
@@ -9754,14 +9875,18 @@ function initMixin(vm) {
     this.$self = null;
     this.$render = '';
     this.$watcher = null;
+    this.$props = {}; // $props 是 vm 实例内部存储数据结构对象
+
     this.data = normalizeData(options.data || {});
     this.methods = options.methods || {};
     this.props = options.props || [];
     this.options = options;
     this.computed = options.computed || {};
     this.template = options.template || (this.$el ? this.$el.outerHTML : '');
-    this.components = options.components || {}; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
+    this.components = options.components || {};
+    vm.isMount = false; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
     // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
+    // 这里的 $parent 都是父组件的实例，而不是 $self 实例
 
     this.$parent = null;
     this.$child = null; // 2. 对内部属性做一层代理，给 $self 赋值，把 data props computed methods 中的取值进行一层代理
@@ -9825,18 +9950,18 @@ function eventMixin(vm) {
   };
 }
 ;// CONCATENATED MODULE: ./src/core/compile/index.js
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function compile_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
  * html to ast
  * ast 定义标准
  * {
- *     attrs: [{name 'id', value: 'app'}],
+ *     classes: [{name 'id', value: 'app'}, {name: ':class', value: 'flag ? "active" : ""'}, [name: ':style', value: "{color: flag ? 'red' : 'blue'}"]],
  *     children: [{...}],
  *     parent: [{...}] || null,
  *     tag: 'div',
- *     staticClass: "\"container\""
- *     staticStyle: "{\"color\":\"red\"}"
+ *     staticClass: "\"container\"" // 静态的 class 属性放在这个地方，动态的依然在 classes 里面
+ *     staticStyle: "{\"color\":\"red\"}" // 静态的 style 属性解析到这个地方，动态的 在 classes 里面
  *     events: [{click: 'clickHandler', 'doubleClick': 'handler'}]
  *     v-for: '',
  *     v-if: '',
@@ -9880,7 +10005,7 @@ function parseAttr(attr) {
   }
 }
 /**
- * 将 attrs 数组细分到 events style class 等
+ * 将 classes 数组细分到 events style class 等
  * */
 
 
@@ -9901,7 +10026,7 @@ function handleAttr(node, attrs) {
     }
 
     if (name.startsWith('v-on:') || name.startsWith('@')) {
-      node.events.push(_defineProperty({}, name.replace(/v-on:|@/, ''), value));
+      node.events.push(compile_defineProperty({}, name.replace(/v-on:|@/, ''), value));
       return;
     }
 
@@ -10083,7 +10208,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * style: 'color: red' 只支持静态字符串的写法，或者绑定 data 与 props 中的字段
  * children: [vnode, vnode]
  * parent: vnode
- * attrs: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
+ * classes: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
  * $vm: vm.$self
  * type: 1 | 3
  * data: 在 type 为 3 的时候是静态文本的内容
@@ -10098,14 +10223,14 @@ var VNode = function VNode(tag, vm, attrs, children, type, data) {
   this.id = ++vnode_id;
   this.children = children;
   this.parent = null;
-  this["class"] = attrs["class"];
-  this.style = attrs.style;
+  this.staticClass = attrs.staticClass;
+  this.staticStyle = attrs.staticStyle;
   this.attrs = attrs.attrs;
   this.events = attrs.events;
   this.$vm = vm.$self;
   this.type = type;
   this.data = data;
-  this.options = options; // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
+  this.options = vm.options; // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
 
   this.isComponent = !!vm.$self.components[tag]; //
 }; // 只负责提供比较当前两个 vnode 属性的工具函数，child 的递归对比逻辑不在这里
@@ -10118,7 +10243,7 @@ function compareVNode(oldVNode, newVNode) {
 
   if (!oldVNode) {
     throw new Error('Unexpected params ' + oldVNode);
-  } // 对比 tag class style attrs events type data 等
+  } // 对比 tag class style classes events type data 等
 
 
   if (!isEqual(newVNode.tag, oldVNode.tag)) {
@@ -10156,9 +10281,9 @@ function compareVNode(oldVNode, newVNode) {
 /**
  * render 函数的标准
  * _t createText 创建普通的文本 vnode: createText('helloText')
- * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', attrs: { class, style, events, attrs: [{name, value}], parent }, children: [])
- * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', attrs, children: [])
- * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', attrs, children: [])
+ * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', classes: { class, style, events, classes: [{name, value}], parent }, children: [])
+ * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', classes, children: [])
+ * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', classes, children: [])
  * */
 
 /**
@@ -10225,7 +10350,7 @@ function genFor(ast) {
         value = _ref.value;
     attributes[name] = value;
   });
-  return "..._l(\n        '".concat(tag, "',\n        '").concat(vFor, "', \n        {class: '").concat(staticClass, "', style: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+  return "..._l(\n        '".concat(tag, "',\n        '").concat(vFor, "', \n        {staticClass: '").concat(staticClass, "', staticStyle: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
 }
 
 function genIf(ast) {
@@ -10242,7 +10367,7 @@ function genIf(ast) {
         value = _ref2.value;
     attributes[name] = value;
   });
-  return "_f(\n        '".concat(tag, "',\n        '").concat(vIf, "', \n        {class: '").concat(staticClass, "', style: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+  return "_f(\n        '".concat(tag, "',\n        '").concat(vIf, "', \n        {staticClass: '").concat(staticClass, "', staticStyle: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
 }
 
 function genEle(ast) {
@@ -10263,7 +10388,7 @@ function genEle(ast) {
         value = _ref3.value;
     attributes[name] = value;
   });
-  return "_c(\n        '".concat(tag, "',\n        {class: '").concat(staticClass, "', style: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+  return "_c(\n        '".concat(tag, "',\n        {staticClass: '").concat(staticClass, "', staticStyle: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
 
@@ -10318,18 +10443,58 @@ function renderMixin(vm) {
     this.$render = genRenderFn(compile(this.template || ''));
     var fn = new Function(this.$render);
     this.$vnode = handleVNodeRelationship(fn.call(this) || {});
+    return this.$vnode;
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
 
 function callHook(vm, hookName) {
-  if (vm[hookName]) {
+  if (typeof vm[hookName] === 'function') {
     vm[hookName]();
+    return;
+  }
+
+  if (Array.isArray(vm[hookName])) {
+    vm[hookName].forEach(function (hook) {
+      hook.call(vm);
+    });
   }
 }
-function lifecycleMixin(vm) {
-  vm.prototype._mount = function () {
-    installHook(this); // 开始给内部的变量赋值
+/**
+ * 各个生命周期应该做什么事情
+ * created 组件内部实例的各个属性的初始化，比如说 class、style、props 等，将模板变量中的字符串和 vm 中的数据一一对应起来
+ * beforeMount vnode 和 dom 元素已经创建完成，但是还没有挂载到页面上
+ * mounted dom 元素已经挂载到页面上
+ * beforeUpdate 开始更新前的时候，组件内部的数据已经更新，但是页面还没有更新
+ * updated 页面上的 dom 元素也发生了更新
+ * beforeDestroy 组件开始销毁之前
+ * destroyed 组件已经销毁之后
+ * */
+
+function lifecycleMixin(Vue) {
+  Vue.prototype._mount = function () {
+    var vm = this;
+    installHook(vm); // 开始给内部的 props 变量赋值
+
+    callHook(vm, 'created');
+
+    var updateComponent = function updateComponent() {
+      vm._update(vm._render());
+    }; // 应该是通过 watcher 来触发的，这里暂时先手动触发下
+
+
+    updateComponent();
+  };
+
+  Vue.prototype._update = function (vnode) {
+    console.log('_update vnode is', vnode);
+    var vm = this;
+
+    if (vm.isMount) {
+      callHook(vm, 'beforeUpdate');
+    } else {
+      callHook(vm, 'beforeMount');
+    }
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/index.js
@@ -10371,7 +10536,8 @@ var vm = new vue({
   data: function data() {
     return {
       name: 'jack',
-      array: [1, 2, 3]
+      array: [1, 2, 3],
+      flag: true
     };
   },
   created: function created() {
@@ -10380,15 +10546,24 @@ var vm = new vue({
   components: {
     "my-button": true
   },
-  props: ['kiss'],
+  props: {
+    kiss: 'kissa'
+  },
   methods: {
     value: 'hello'
   }
 });
+var src_parent = {
+  $self: {
+    kiss: 'hello world!'
+  }
+};
+vm.$parent = src_parent;
 
 vm._mount();
 
-console.log(vm);
+console.log(vm); // 不能给 props 里面的 key 赋值
+// vm.$self.kissa = 'asd';
 })();
 
 /******/ })()

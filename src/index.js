@@ -26,7 +26,8 @@ const vm = new Vue({
     data() {
         return {
             name: 'jack',
-            array: [1, 2, 3]
+            array: [1, 2, 3],
+            flag: true
         }
     },
     created() {
@@ -35,11 +36,23 @@ const vm = new Vue({
     components: {
         "my-button": true
     },
-    props: ['kiss'],
+    props: {
+        kiss: 'kissa'
+    },
     methods: {
         value: 'hello'
     },
 });
 
+const parent = {
+    $self: {
+        kiss: 'hello world!'
+    }
+}
+
+vm.$parent = parent;
+
 vm._mount();
 console.log(vm);
+// 不能给 props 里面的 key 赋值
+// vm.$self.kissa = 'asd';

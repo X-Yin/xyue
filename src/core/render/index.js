@@ -2,9 +2,9 @@
 /**
  * render 函数的标准
  * _t createText 创建普通的文本 vnode: createText('helloText')
- * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', attrs: { class, style, events, attrs: [{name, value}], parent }, children: [])
- * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', attrs, children: [])
- * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', attrs, children: [])
+ * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', classes: { class, style, events, classes: [{name, value}], parent }, children: [])
+ * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', classes, children: [])
+ * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', classes, children: [])
  * */
 
 /**
@@ -55,7 +55,7 @@ function genFor(ast) {
     return `..._l(
         '${tag}',
         '${vFor}', 
-        {class: '${staticClass}', style: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }
 
@@ -68,7 +68,7 @@ function genIf(ast) {
     return `_f(
         '${tag}',
         '${vIf}', 
-        {class: '${staticClass}', style: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }
 
@@ -80,6 +80,6 @@ function genEle(ast) {
     });
     return `_c(
         '${tag}',
-        {class: '${staticClass}', style: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }
