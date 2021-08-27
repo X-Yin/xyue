@@ -9652,7 +9652,37 @@ function proxyMixin(vm) {
 }
 ;// CONCATENATED MODULE: ./src/core/constants/index.js
 var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed'];
+// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
+var lodash_lodash = __webpack_require__(103);
+;// CONCATENATED MODULE: ./src/core/utils/tool.js
+
+function tool_isEqual(obj1, obj2) {
+  return lodash.isEqual(obj1, obj2);
+}
+function handleJsExpression(context, expression) {
+  var str = "with(this){return ".concat(expression, "}");
+  var fn = new Function(str);
+  return fn.call(context);
+}
+;// CONCATENATED MODULE: ./src/core/utils/index.js
+
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/classes/index.js
+function classes_slicedToArray(arr, i) { return classes_arrayWithHoles(arr) || classes_iterableToArrayLimit(arr, i) || classes_unsupportedIterableToArray(arr, i) || classes_nonIterableRest(); }
+
+function classes_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function classes_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return classes_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return classes_arrayLikeToArray(o, minLen); }
+
+function classes_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function classes_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function classes_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+
+
 function created() {}
 
 function handleVNodeClass(vm, vnode) {
@@ -9666,35 +9696,70 @@ function handleVNodeClass(vm, vnode) {
     return;
   }
 
-  var staticClass = vnode.staticClass;
-  var customClass = '';
+  var staticClass = vnode.staticClass && vnode.staticClass.trim();
+  var customClass = "".concat(staticClass, " ");
   attrs.forEach(function (attr) {
     var name = attr.name,
         value = attr.value;
 
-    if (name === ':class') {
-      // 动态的 class 有三种写法
-      // 1. 普通的字符串 :class="container"
-      // 2. 数组 :class="['container', flag ? 'active' : '']"
-      // 3. 对象 :class="{container: true, active: flag}"
-      try {
-        var val = JSON.parse(value);
+    if (name !== ':class') {
+      return;
+    } // 动态 class 有三种格式
+    // 1. 字符串 :class="container"
+    // 2. 数组 :class="['container', this.flag ? 'active' : '']"
+    // 3. 对象 :class="{container: true, active: this.flag}"
 
-        if (Array.isArray()) {}
-      } catch (e) {}
+
+    try {
+      var result = handleJsExpression(vm, value);
+
+      if (typeof result === 'string') {
+        customClass += result;
+        return;
+      }
+
+      if (Array.isArray(result)) {
+        result.forEach(function (item) {
+          customClass += "".concat(item, " ");
+        });
+        return;
+      }
+
+      if (_typeof(result) === 'object' && result !== null) {
+        Object.entries(result).forEach(function (_ref) {
+          var _ref2 = classes_slicedToArray(_ref, 2),
+              key = _ref2[0],
+              value = _ref2[1];
+
+          if (value) {
+            customClass += "".concat(key, " ");
+          }
+        });
+      }
+    } catch (e) {
+      console.error('handleVNodeClass error', e);
     }
   });
+  vnode["class"] = customClass;
+
+  if (Array.isArray(vnode.children)) {
+    vnode.children.forEach(function (child) {
+      handleVNodeClass(vm, child);
+    });
+  }
 }
 
 function beforeMount() {
-  var vnode = this.$vnode;
+  handleVNodeClass(this.$self, this.$vnode);
 }
 
 function mounted(vm) {}
 
 function updated(vm) {}
 
-function beforeUpdate(vm) {}
+function beforeUpdate(vm) {
+  handleVNodeClass(this.$self, this.$vnode);
+}
 
 function destroyed(vm) {}
 
@@ -9732,15 +9797,89 @@ function events_beforeDestroy(vm) {}
   beforeDestroy: events_beforeDestroy
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/style/index.js
+function style_slicedToArray(arr, i) { return style_arrayWithHoles(arr) || style_iterableToArrayLimit(arr, i) || style_unsupportedIterableToArray(arr, i) || style_nonIterableRest(); }
+
+function style_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function style_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return style_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return style_arrayLikeToArray(o, minLen); }
+
+function style_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function style_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function style_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function style_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { style_typeof = function _typeof(obj) { return typeof obj; }; } else { style_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return style_typeof(obj); }
+
+
+
 function style_created(vm) {}
 
-function style_beforeMount(vm) {}
+function handleVNodeStyle(vm, vnode) {
+  if (!vnode) {
+    return;
+  }
 
-function style_beforeMounted(vm) {}
+  var attrs = vnode.attrs; //[{name: '', value: ''}];
+
+  if (!Array.isArray(attrs)) {
+    return;
+  }
+
+  var staticStyle = vnode.staticStyle && vnode.staticStyle.trim();
+  var customStyle = "".concat(staticStyle).concat(staticStyle.endsWith(';') ? '' : ';');
+  attrs.forEach(function (attr) {
+    var name = attr.name,
+        value = attr.value;
+
+    if (name !== ':style') {
+      return;
+    } // 动态 style 有 2 种格式
+    // 1. 字符串 :style="color: red"
+    // 2. 对象 :style="{color: 'red', background: this.flag ? 'blue' : 'orange'}"
+
+
+    try {
+      var result = handleJsExpression(vm, value);
+
+      if (typeof result === 'string') {
+        customStyle += result;
+        return;
+      }
+
+      if (style_typeof(result) === 'object' && result !== null) {
+        Object.entries(result).forEach(function (_ref) {
+          var _ref2 = style_slicedToArray(_ref, 2),
+              key = _ref2[0],
+              value = _ref2[1];
+
+          customStyle += "".concat(key, ":").concat(value, ";");
+        });
+      }
+    } catch (e) {
+      console.error('handleVNodeStyle error', e);
+    }
+  });
+  vnode.style = customStyle;
+
+  if (Array.isArray(vnode.children)) {
+    vnode.children.forEach(function (child) {
+      handleVNodeStyle(vm, child);
+    });
+  }
+}
+
+function style_beforeMount(vm) {
+  handleVNodeStyle(this.$self, this.$vnode);
+}
+
+function style_mounted(vm) {}
 
 function style_updated(vm) {}
 
-function style_beforeUpdate(vm) {}
+function style_beforeUpdate(vm) {
+  handleVNodeStyle(this.$self, this.$vnode);
+}
 
 function style_destroyed(vm) {}
 
@@ -9751,7 +9890,9 @@ function style_beforeDestroy(vm) {}
   updated: style_updated,
   beforeUpdate: style_beforeUpdate,
   destroyed: style_destroyed,
-  beforeDestroy: style_beforeDestroy
+  beforeDestroy: style_beforeDestroy,
+  beforeMount: style_beforeMount,
+  mounted: style_mounted
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/props/index.js
 function props_slicedToArray(arr, i) { return props_arrayWithHoles(arr) || props_iterableToArrayLimit(arr, i) || props_unsupportedIterableToArray(arr, i) || props_nonIterableRest(); }
@@ -9766,7 +9907,7 @@ function props_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : type
 
 function props_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function props_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { props_typeof = function _typeof(obj) { return typeof obj; }; } else { props_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return props_typeof(obj); }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -9787,7 +9928,7 @@ function props_created() {
     return;
   }
 
-  if (_typeof(vm.props) === 'object') {
+  if (props_typeof(vm.props) === 'object') {
     Object.entries(vm.props).forEach(function (_ref) {
       var _ref2 = props_slicedToArray(_ref, 2),
           key = _ref2[0],
@@ -10187,15 +10328,6 @@ function parse(template, options) {
 }
 
 /* harmony default export */ const compile = (parse);
-// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
-var lodash_lodash = __webpack_require__(103);
-;// CONCATENATED MODULE: ./src/core/utils/tool.js
-
-function tool_isEqual(obj1, obj2) {
-  return lodash.isEqual(obj1, obj2);
-}
-;// CONCATENATED MODULE: ./src/core/utils/index.js
-
 ;// CONCATENATED MODULE: ./src/core/vue/vnode.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 

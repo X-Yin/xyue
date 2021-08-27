@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+
+<script>
+    function handleJsExpression(context, expression) {
+        const str = `with(this){console.log(this);return ${expression}}`;
+        const fn = new Function(str);
+        return fn.call(context);
+    }
+    const context = {
+        name: 'jack',
+        flag: true,
+        data: {
+            flag: true,
+        }
+    }
+
+    const proxy = new Proxy(context, {
+        get(target, p, receiver) {
+            if (target.data[p]) {
+                return target.data[p];
+            }
+            return target[p];
+        },
+        set(target, p, value, receiver) {
+            target[p] = value;
+            return true;
+        }
+    });
+    console.log(proxy.flag);
+    console.log(handleJsExpression(proxy, "['container', this.flag ? 'active' : 'inactive']"));
+</script>
+</body>
+</html>
