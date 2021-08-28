@@ -11,7 +11,10 @@ function handleVNodeStyle(vm, vnode) {
         return;
     }
     const staticStyle = vnode.staticStyle && vnode.staticStyle.trim();
-    let customStyle = `${staticStyle}${staticStyle.endsWith(';') ? '' : ';'}`;
+    let customStyle = '';
+    if (staticStyle) {
+        customStyle = `${staticStyle}${staticStyle.endsWith(';') ? '' : ';'}`;
+    }
     attrs.forEach(attr => {
         const { name, value } = attr;
         if (name !== ':style') {
@@ -36,7 +39,7 @@ function handleVNodeStyle(vm, vnode) {
             console.error('handleVNodeStyle error', e);
         }
     })
-    vnode.style = customStyle;
+    vnode.style = customStyle.trim();
     if (Array.isArray(vnode.children)) {
         vnode.children.forEach(child => {
             handleVNodeStyle(vm, child);

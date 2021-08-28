@@ -8,7 +8,7 @@
     <title>title</title>
 </head>
 <body>
-<div id="app"><p style="font-size: 12px" class="base"  :style="{color: 'red', background: this.flag ? 'blue' : 'orange'}" :class="['container', this.flag ? 'active' : '']">1234</p><li v-for="array">hello</li><my-button/></div>
+<div id="app"><p @click="this.clickHandler" style="font-size: 12px" class="base"  :style="{color: 'red', background: this.flag ? 'blue' : 'orange'}" :class="['container', this.flag ? 'active' : '']">1234</p><li v-for="array">hello</li><my-button></my-button><p>what!</p></div>
 <script>
     const fn = new Function(`with(this){return 123}`);
     const obj = {

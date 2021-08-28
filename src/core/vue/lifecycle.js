@@ -1,4 +1,5 @@
 import { installHook } from "./runtimeHooks";
+import {patch} from "./patch";
 
 export function callHook(vm, hookName) {
     if (typeof vm[hookName] === 'function') {
@@ -25,6 +26,10 @@ export function callHook(vm, hookName) {
  * */
 
 export function lifecycleMixin(Vue) {
+    Vue.prototype.mount = function() {
+        return this._mount();
+    }
+
     Vue.prototype._mount = function() {
         const vm = this;
         installHook(vm);
@@ -47,5 +52,9 @@ export function lifecycleMixin(Vue) {
         } else {
             callHook(vm, 'beforeMount');
         }
+
+        vnode.parentEl = vm.$el;
+
+        patch(vnode);
     }
 }

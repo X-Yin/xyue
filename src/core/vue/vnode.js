@@ -1,35 +1,61 @@
-import { isEqual } from "../utils";
+import {isEqual, normalizeTagName} from "../utils";
 /**
  * vnode 类的定义
- * tag: div | my-button
+ * tag: div | mybutton
  * id 自动生成
- * class: 'container' | "['container', flag ? 'active' : '']" | "{container: true, active: flag}" html 中解析出来的原生的结果
- * style: 'color: red' 只支持静态字符串的写法，或者绑定 data 与 props 中的字段
+ * staticClass：静态的 class 类名，都是纯字符串 'container wrapper'
+ * staticStyle：静态的 style，都是纯字符串，比如 'font-size: 20px;color:red;'
+ * attrs: 所有的属性，包括 :class 和 :style 等
  * children: [vnode, vnode]
+ * el: 当前的 dom 元素
  * parent: vnode
+ * parentEl: 父级 dom 元素
  * classes: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
+ * events: {'click': 'clickHandler'}
  * $vm: vm.$self
  * type: 1 | 3
  * data: 在 type 为 3 的时候是静态文本的内容
+ * componentsOptions: {isComponent: false | true, options?: {}}
  * */
 let id = 0;
 
 class VNode {
     constructor(tag, vm, attrs, children, type, data) {
-        this.tag = tag;
+        this.tag = normalizeTagName(tag);
         this.id = ++id;
         this.children = children;
-        this.parent = null;
+        this.el = null;
+        this.parent = null; // vm._render 创建时会梳理父子关系并赋值
+        this.parentEl = null; // 在 patch 渲染时会赋值
         this.staticClass = attrs.staticClass;
         this.staticStyle = attrs.staticStyle;
         this.attrs = attrs.attrs;
         this.events = attrs.events;
-        this.$vm = vm.$self;
+        this.vm = vm;
         this.type = type;
         this.data = data;
         this.options = vm.options;
         // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
-        this.isComponent = !!vm.$self.components[tag]; //
+        // 这个 componentOptions 里面有两个字段一个是 isComponent 用来标记是不是组件，如果为 true 的话，会把这个组件的 options 选项给赋值
+        this.componentOptions = this.getComponentOptions();
+    }
+
+    getComponentOptions() {
+        const components = {};
+        Object.assign(components, this.vm.Ctor.components || {}, this.vm.components);
+        const componentKeys = Object.keys(components);
+        for (let i = 0; i < componentKeys.length; i++) {
+            const componentKey = componentKeys[i];
+            if (normalizeTagName(componentKey) === normalizeTagName(this.tag)) {
+                return {
+                    isComponent: true,
+                    options: components[componentKey]
+                };
+            }
+        }
+        return {
+            isComponent: false
+        };
     }
 }
 

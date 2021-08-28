@@ -3,7 +3,7 @@ function created(vm) {}
 
 function beforeMount(vm) {}
 
-function beforeMounted(vm) {}
+function mounted(vm) {}
 
 function updated(vm) {}
 
@@ -19,5 +19,7 @@ export default {
     updated,
     beforeUpdate,
     destroyed,
-    beforeDestroy
+    beforeDestroy,
+    beforeMount,
+    mounted
 }

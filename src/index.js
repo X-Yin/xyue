@@ -20,7 +20,22 @@ const content = `<div id="app">
 // console.log(node);
 // document.body.appendChild(node);
 
-import Vue from './core/vue';
+import Vue from './core/vue/entry';
+
+Vue.component('my-button', {
+    template: `<div class="my-button"><h1 @click="this.clickHandler">my-button</h1></div>`,
+    data() {
+        return {
+            name: 'lucy'
+        }
+    },
+    methods: {
+        clickHandler() {
+            console.log('my-button click', this.name);
+        }
+    }
+});
+
 const vm = new Vue({
     el: '#app',
     data() {
@@ -34,13 +49,14 @@ const vm = new Vue({
         console.log('created');
     },
     components: {
-        "my-button": true
     },
     props: {
         kiss: 'kissa'
     },
     methods: {
-        value: 'hello'
+        clickHandler(...args) {
+            console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
+        }
     },
 });
 
@@ -52,7 +68,7 @@ const parent = {
 
 vm.$parent = parent;
 
-vm._mount();
+vm.mount();
 console.log(vm);
 // 不能给 props 里面的 key 赋值
 // vm.$self.kissa = 'asd';

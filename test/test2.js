@@ -1,19 +1,10 @@
-const lodash = require('lodash');
-console.log(lodash);
-const obj1 = {
-    obj: {
-        name: 'jack',
-        age: 30
-    },
-    array: [1, 2, 3]
+function MyButton(name, age) {
+    this.name = name;
+    this.age = age;
+    this.Ctor = this.constructor;
 }
 
-const obj2 = {
-    array: [1, 2, 3],
-    obj: {
-        age: 30,
-        name: 'jack'
-    }
-}
+MyButton.base = 'what';
 
-console.log(lodash.isEqual('123', 123));
+const myButton = new MyButton('jack', 30);
+console.log(myButton.Ctor.base);

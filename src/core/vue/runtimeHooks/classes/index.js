@@ -48,7 +48,7 @@ function handleVNodeClass(vm, vnode) {
             console.error('handleVNodeClass error', e);
         }
     })
-    vnode.class = customClass;
+    vnode.class = customClass.trim();
     if (Array.isArray(vnode.children)) {
         vnode.children.forEach(child => {
             handleVNodeClass(vm, child);

@@ -8,7 +8,7 @@
  *     tag: 'div',
  *     staticClass: "\"container\"" // 静态的 class 属性放在这个地方，动态的依然在 classes 里面
  *     staticStyle: "{\"color\":\"red\"}" // 静态的 style 属性解析到这个地方，动态的 在 classes 里面
- *     events: [{click: 'clickHandler', 'doubleClick': 'handler'}]
+ *     events: {click: 'clickHandler', 'doubleClick': 'handler'}
  *     v-for: '',
  *     v-if: '',
  *     type: 1 https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
@@ -66,9 +66,7 @@ function handleAttr(node, attrs) {
         }
 
         if (name.startsWith('v-on:') || name.startsWith('@')) {
-            node.events.push({
-                [name.replace(/v-on:|@/, '')]: value
-            });
+            node.events[name.replace(/v-on:|@/, '')] = value;
             return;
         }
 
@@ -105,7 +103,7 @@ function parse(template, options) {
             tag: '',
             staticClass: '',
             staticStyle: '',
-            events: [],
+            events: {},
             type: 0,
             vFor: '',
             vIf: '',

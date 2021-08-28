@@ -3,6 +3,7 @@ import { proxyMixin } from "./proxy";
 import { eventMixin } from "./event";
 import { renderMixin } from "./render";
 import { lifecycleMixin } from "./lifecycle";
+import * as GlobalApis from './global';
 
 function Vue(options) {
     if (!options) {
