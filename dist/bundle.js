@@ -9676,9 +9676,17 @@ function tool_isEqual(obj1, obj2) {
   return lodash.isEqual(obj1, obj2);
 }
 function handleJsExpression(context, expression) {
-  var str = "with(this){return ".concat(expression, "}");
-  var fn = new Function(str);
-  return fn.call(context);
+  // 这块做一层代理，是为了减少重复检查 with 对象里面的属性，造成的性能损失
+  // 但是这样会导致在 code 代码执行的过程中，所有的对象，包括 window.console 也会被直接认为是 context上的对象
+  // 那么就会调用报错
+  var fn = new Function('sandbox', "with(sandbox){return ".concat(expression, "}")); // 这个 proxy 必须要做代理，否则执行表达式的时候报错
+
+  var proxy = new Proxy(context, {
+    has: function has(target, p) {
+      return true;
+    }
+  });
+  return fn(proxy);
 }
 function normalizeTagName(tagName) {
   // 统一转成小写无连字符
@@ -9946,19 +9954,31 @@ function props_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "f
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function props_created() {
-  var vm = this; // 将 parent 的值和 props 中的值一一对应起来
+function handleProps(vm) {
+  // 将 parent 的值和 props 中的值一一对应起来
   // 然后把 props 中的这些 key 值赋值到 vm 实例中去
   // 但是在 set 函数中，如果修改的是 props 中的 key，需要发出警告
-
   if (!vm.$parent) {
     return;
   }
 
   if (Array.isArray(vm.props)) {
     vm.props.forEach(function (key) {
-      var val = vm.$parent.$self[key];
-      Object.assign(vm.$props, _defineProperty({}, key, val));
+      var parentAttrs = vm.$parentVnode.attrs || []; //[{name: ':msg', value: 'message'}]
+
+      parentAttrs.forEach(function (item) {
+        var name = item.name,
+            value = item.value;
+
+        if (name.startsWith(':')) {
+          var k = name.slice(1); // name 是 :msg
+
+          if (k === key) {
+            var val = vm.$parent.$self[value];
+            Object.assign(vm.$props, _defineProperty({}, key, val));
+          }
+        }
+      });
     });
     return;
   }
@@ -9975,8 +9995,18 @@ function props_created() {
   }
 }
 
+function props_created() {// handleProps(this);
+}
+function props_beforeMount() {
+  handleProps(this);
+}
+function props_beforeUpdate() {
+  handleProps(this);
+}
 /* harmony default export */ const props = ({
-  created: props_created
+  created: props_created,
+  beforeMount: props_beforeMount,
+  beforeUpdate: props_beforeUpdate
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
 function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
@@ -10054,6 +10084,7 @@ function initMixin(vm) {
     this.$id = ++id;
     this.$watch = options.watch || {};
     this.$vnode = {};
+    this.$parentVnode = options.parentVnode || {};
     this.$self = null;
     this.$render = '';
     this.$watcher = null;
@@ -10689,8 +10720,7 @@ function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function patch(oldVNode, newVNode) {
   if (!newVNode) {
-    var childDom = vNode2Dom(oldVNode); // oldVNode.parentEl.appendChild(childDom);
-
+    var childDom = vNode2Dom(oldVNode);
     clearChildrenList(oldVNode.parentEl);
     appendChild(oldVNode.parentEl, childDom);
   }
@@ -10713,8 +10743,11 @@ function componentVNode2Dom(vnode) {
   var options = vnode.componentOptions.options;
   var el = createDocumentFragment();
   options.el = el;
+  options.parentVnode = vnode; // 把当前的组件占位 vnode 赋值给组件的 $parentVnode 属性，为后面 props 的解析和父子组件通信用
+
   var Ctor = vnode.vm.Ctor;
   var componentInstance = new Ctor(options);
+  componentInstance.$parent = vnode.vm;
 
   componentInstance._mount();
 
@@ -10724,7 +10757,7 @@ function normalVNode2Dom(vnode) {
   var tag = vnode.tag;
 
   if (vnode.type === 3) {
-    var _dom = createTextNode(vnode.data);
+    var _dom = createTextNode(handleDynamicExpression(vnode.vm.$self, vnode.data));
 
     vnode.el = _dom;
     return _dom;
@@ -10767,6 +10800,25 @@ function addEvent(vnode) {
       dom.addEventListener(name, cb.bind(vnode.vm.$self));
     }
   });
+}
+function handleDynamicExpression(context, expression) {
+  // .*? 非贪婪匹配，匹配尽可能少的字符串
+  // expression 为 {{a}}-{{b}} 时，如果是贪婪匹配，那么匹配到的结果是 a}}-{{b
+  // 如果是非贪婪匹配，那么匹配到结果是 a
+  var reg = /{{(.*?)}}/;
+  var matchResult;
+
+  while (matchResult = expression.match(reg)) {
+    try {
+      var value = handleJsExpression(context, matchResult[1]);
+      expression = expression.replace(matchResult[0], value);
+    } catch (e) {
+      console.error('handleDynamicExpression error', e);
+      break;
+    }
+  }
+
+  return expression;
 }
 ;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
 
@@ -10888,12 +10940,13 @@ var content = "<div id=\"app\">\n    <div @click=\"handler\" :msg=\"msg\" value=
 
 
 entry.component('my-button', {
-  template: "<div class=\"my-button\"><h1 @click=\"this.clickHandler\">my-button</h1></div>",
+  template: "<div class=\"my-button\"><h1 @click=\"clickHandler\">my-button  {{message}}</h1></div>",
   data: function data() {
     return {
       name: 'lucy'
     };
   },
+  props: ['message'],
   methods: {
     clickHandler: function clickHandler() {
       console.log('my-button click', this.name);
@@ -10906,7 +10959,9 @@ var vm = new entry({
     return {
       name: 'jack',
       array: [1, 2, 3],
-      flag: true
+      flag: true,
+      message1: 'hello1',
+      message2: 'hello2'
     };
   },
   created: function created() {
