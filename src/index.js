@@ -23,12 +23,13 @@ const content = `<div id="app">
 import Vue from './core/vue/entry';
 
 Vue.component('my-button', {
-    template: `<div class="my-button"><h1 @click="this.clickHandler">my-button</h1></div>`,
+    template: `<div class="my-button"><h1 @click="clickHandler">my-button  {{message}}</h1></div>`,
     data() {
         return {
             name: 'lucy'
         }
     },
+    props: ['message'],
     methods: {
         clickHandler() {
             console.log('my-button click', this.name);
@@ -42,7 +43,9 @@ const vm = new Vue({
         return {
             name: 'jack',
             array: [1, 2, 3],
-            flag: true
+            flag: true,
+            message1: 'hello1',
+            message2: 'hello2'
         }
     },
     created() {
@@ -56,6 +59,13 @@ const vm = new Vue({
     methods: {
         clickHandler(...args) {
             console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
+        },
+        changeArr() {
+            this.array.push(4);
+        },
+        changeMessage1() {
+            console.log('changeMessage1 触发更新');
+            this.message1 = 'world!';
         }
     },
 });

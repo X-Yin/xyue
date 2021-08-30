@@ -9600,19 +9600,21 @@ function proxy_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : type
 
 function proxy_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function isPropsKey(target, key) {
-  var isProp = false;
-  var props = target.$props || {};
-  Object.entries(props).forEach(function (_ref) {
+function includeKey() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var key = arguments.length > 1 ? arguments[1] : undefined;
+  var isInclude = false;
+  var obj = data || {};
+  Object.entries(obj).forEach(function (_ref) {
     var _ref2 = proxy_slicedToArray(_ref, 2),
         k = _ref2[0],
         val = _ref2[1];
 
     if (key === k) {
-      isProp = true;
+      isInclude = true;
     }
   });
-  return isProp;
+  return isInclude;
 }
 
 function proxyMixin(vm) {
@@ -9640,10 +9642,16 @@ function proxyMixin(vm) {
     },
     set: function set(target, key, value, receiver) {
       // 对于 props 的属性的赋值需要做一层拦截
-      var isProp = isPropsKey(target, key);
+      var isProp = includeKey(target.$props, key);
 
       if (isProp) {
         throw new Error('can not set props value in child component ' + key);
+      }
+
+      var isData = includeKey(target.data, key);
+
+      if (isData) {
+        target.data[key] = value;
       }
 
       return true;
@@ -9698,6 +9706,26 @@ function normalizeTagName(tagName) {
   tagName = tagName.replace('-', '');
   tagName = tagName.replace('_', '');
   return tagName;
+}
+function handleDynamicExpression(context) {
+  var expression = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  // .*? 非贪婪匹配，匹配尽可能少的字符串
+  // expression 为 {{a}}-{{b}} 时，如果是贪婪匹配，那么匹配到的结果是 a}}-{{b
+  // 如果是非贪婪匹配，那么匹配到结果是 a
+  var reg = /{{(.*?)}}/;
+  var matchResult;
+
+  while (matchResult = (expression || '').match(reg)) {
+    try {
+      var value = handleJsExpression(context, matchResult[1]);
+      expression = expression.replace(matchResult[0], value);
+    } catch (e) {
+      console.error('handleDynamicExpression error', e);
+      break;
+    }
+  }
+
+  return expression;
 }
 ;// CONCATENATED MODULE: ./src/core/utils/index.js
 
@@ -9995,13 +10023,12 @@ function handleProps(vm) {
   }
 }
 
-function props_created() {// handleProps(this);
-}
-function props_beforeMount() {
+function props_created() {
   handleProps(this);
 }
-function props_beforeUpdate() {
-  handleProps(this);
+function props_beforeMount() {// handleProps(this)
+}
+function props_beforeUpdate() {// handleProps(this);
 }
 /* harmony default export */ const props = ({
   created: props_created,
@@ -10446,7 +10473,11 @@ var VNode = /*#__PURE__*/function () {
     this.events = attrs.events;
     this.vm = vm;
     this.type = type;
-    this.data = data;
+
+    if (this.type === 3) {
+      this.data = this.handleDynamicText(data);
+    }
+
     this.options = vm.options; // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
     // 这个 componentOptions 里面有两个字段一个是 isComponent 用来标记是不是组件，如果为 true 的话，会把这个组件的 options 选项给赋值
 
@@ -10474,6 +10505,11 @@ var VNode = /*#__PURE__*/function () {
       return {
         isComponent: false
       };
+    }
+  }, {
+    key: "handleDynamicText",
+    value: function handleDynamicText(data) {
+      return handleDynamicExpression(this.vm.$self, data);
     }
   }]);
 
@@ -10757,7 +10793,7 @@ function normalVNode2Dom(vnode) {
   var tag = vnode.tag;
 
   if (vnode.type === 3) {
-    var _dom = createTextNode(handleDynamicExpression(vnode.vm.$self, vnode.data));
+    var _dom = createTextNode(vnode.data);
 
     vnode.el = _dom;
     return _dom;
@@ -10801,26 +10837,213 @@ function addEvent(vnode) {
     }
   });
 }
-function handleDynamicExpression(context, expression) {
-  // .*? 非贪婪匹配，匹配尽可能少的字符串
-  // expression 为 {{a}}-{{b}} 时，如果是贪婪匹配，那么匹配到的结果是 a}}-{{b
-  // 如果是非贪婪匹配，那么匹配到结果是 a
-  var reg = /{{(.*?)}}/;
-  var matchResult;
+;// CONCATENATED MODULE: ./src/core/vue/reactive/scheduler.js
+var queue = [];
 
-  while (matchResult = expression.match(reg)) {
-    try {
-      var value = handleJsExpression(context, matchResult[1]);
-      expression = expression.replace(matchResult[0], value);
-    } catch (e) {
-      console.error('handleDynamicExpression error', e);
-      break;
-    }
+function runQueue() {
+  queue.forEach(function (watcher) {
+    watcher.update();
+  });
+  queue = [];
+}
+
+function singlePush(array, item) {
+  var index = array.findIndex(function (i) {
+    return i === item;
+  });
+
+  if (index < 0) {
+    array.push(item);
+  } // 先更新子组件再更新父组件，子组件的 id 大，放在前面，父组件的 id 小，放在后面
+
+
+  array = array.sort(function (a, b) {
+    return b.id - a.id;
+  });
+}
+
+function nextTick(fn) {
+  Promise.resolve().then(function () {
+    fn();
+  });
+}
+
+function queueWatcher(watcher) {
+  singlePush(queue, watcher);
+  nextTick(runQueue);
+}
+;
+;// CONCATENATED MODULE: ./src/core/vue/reactive/dep.js
+function dep_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function dep_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function dep_createClass(Constructor, protoProps, staticProps) { if (protoProps) dep_defineProperties(Constructor.prototype, protoProps); if (staticProps) dep_defineProperties(Constructor, staticProps); return Constructor; }
+
+function dep_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var dep_id = 0;
+
+var Dep = /*#__PURE__*/function () {
+  function Dep() {
+    dep_classCallCheck(this, Dep);
+
+    dep_defineProperty(this, "subs", []);
+
+    dep_defineProperty(this, "id", ++dep_id);
   }
 
-  return expression;
+  dep_createClass(Dep, [{
+    key: "depend",
+    value: function depend() {
+      if (Dep.target) {
+        singlePush(this.subs, Dep.target);
+      }
+    }
+  }, {
+    key: "notify",
+    value: function notify() {
+      this.subs.forEach(function (sub) {
+        sub.callback && sub.callback();
+      });
+    }
+  }]);
+
+  return Dep;
+}();
+
+Dep.target = null;
+var DepTargetQueue = [];
+function pushDepTargetQueue(target) {
+  DepTargetQueue.push(target);
+  Dep.target = target;
 }
+function popDepTargetQueue() {
+  DepTargetQueue.pop();
+  Dep.target = DepTargetQueue[DepTargetQueue.length - 1];
+}
+/* harmony default export */ const reactive_dep = (Dep);
+;// CONCATENATED MODULE: ./src/core/vue/reactive/watcher.js
+function watcher_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function watcher_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function watcher_createClass(Constructor, protoProps, staticProps) { if (protoProps) watcher_defineProperties(Constructor.prototype, protoProps); if (staticProps) watcher_defineProperties(Constructor, staticProps); return Constructor; }
+
+function watcher_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+var watcher_id = 0;
+
+var Watcher = /*#__PURE__*/function () {
+  function Watcher(cb) {
+    watcher_classCallCheck(this, Watcher);
+
+    watcher_defineProperty(this, "callback", null);
+
+    watcher_defineProperty(this, "id", ++watcher_id);
+
+    this.callback = cb;
+    this.get();
+  }
+
+  watcher_createClass(Watcher, [{
+    key: "update",
+    value: function update() {
+      queueWatcher(this.callback);
+    }
+  }, {
+    key: "get",
+    value: function get() {
+      // 只用在组件挂载的时候收集一次依赖即可
+      pushDepTargetQueue(this);
+      this.callback();
+      popDepTargetQueue();
+    }
+  }]);
+
+  return Watcher;
+}();
+
+/* harmony default export */ const watcher = (Watcher);
+;// CONCATENATED MODULE: ./src/core/vue/reactive/observer.js
+function observer_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { observer_typeof = function _typeof(obj) { return typeof obj; }; } else { observer_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return observer_typeof(obj); }
+
+function observer_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function observer_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function observer_createClass(Constructor, protoProps, staticProps) { if (protoProps) observer_defineProperties(Constructor.prototype, protoProps); if (staticProps) observer_defineProperties(Constructor, staticProps); return Constructor; }
+
+function observer_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Observer = /*#__PURE__*/function () {
+  function Observer(data, dep) {
+    observer_classCallCheck(this, Observer);
+
+    observer_defineProperty(this, "data", null);
+
+    observer_defineProperty(this, "dep", null);
+
+    this.dep = dep;
+    this.data = this.deepProxy(data);
+  }
+
+  observer_createClass(Observer, [{
+    key: "deepProxy",
+    value: function deepProxy(data) {
+      var _this = this;
+
+      var dep = this.dep;
+
+      if (!data) {
+        return;
+      }
+
+      if (observer_typeof(data) !== 'object') {
+        return;
+      }
+
+      Object.keys(data).forEach(function (key) {
+        var val = data[key];
+
+        if (observer_typeof(val) === 'object' && val !== null) {
+          data[key] = _this.deepProxy(val);
+        }
+      });
+      return new Proxy(data, {
+        get: function get(target, p, receiver) {
+          if (typeof dep !== 'undefined') {
+            console.log('observer proxy get', target, p, dep);
+            dep.depend();
+          }
+
+          return target[p];
+        },
+        set: function set(target, p, value, receiver) {
+          if (observer_typeof(value) === 'object' && value !== null) {
+            target[p] = this.deepProxy(value);
+          } else {
+            target[p] = value;
+          }
+
+          dep.notify();
+          return true;
+        }
+      });
+    }
+  }]);
+
+  return Observer;
+}();
+
+/* harmony default export */ const reactive_observer = (Observer);
 ;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
+
+
+
 
 
 function callHook(vm, hookName) {
@@ -10859,14 +11082,18 @@ function lifecycleMixin(Vue) {
 
     var updateComponent = function updateComponent() {
       vm._update(vm._render());
-    }; // 应该是通过 watcher 来触发的，这里暂时先手动触发下
+    };
 
+    var dep = new reactive_dep(); // 应该是通过 watcher 来触发的，这里暂时先手动触发下
+    // updateComponent();
 
-    updateComponent();
+    var observer = new reactive_observer(this.data, dep);
+    this.data = observer.data;
+    this.$watcher = new watcher(updateComponent);
   };
 
   Vue.prototype._update = function (vnode) {
-    console.log('_update vnode is', vnode);
+    console.log('_update vNode is', vnode);
     var vm = this;
 
     if (vm.isMount) {
@@ -10980,6 +11207,13 @@ var vm = new entry({
       }
 
       (_console = console).log.apply(_console, ['clickHandler'].concat(args, [this.name, this.flag, this.kissa]));
+    },
+    changeArr: function changeArr() {
+      this.array.push(4);
+    },
+    changeMessage1: function changeMessage1() {
+      console.log('changeMessage1 触发更新');
+      this.message1 = 'world!';
     }
   }
 });

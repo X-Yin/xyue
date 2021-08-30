@@ -1,5 +1,8 @@
 import { installHook } from "./runtimeHooks";
 import {patch} from "./patch";
+import Dep, {pushDepTargetQueue} from "./reactive/dep";
+import Watcher from "./reactive/watcher";
+import Observer from "./reactive/observer";
 
 export function callHook(vm, hookName) {
     if (typeof vm[hookName] === 'function') {
@@ -33,19 +36,26 @@ export function lifecycleMixin(Vue) {
     Vue.prototype._mount = function() {
         const vm = this;
         installHook(vm);
+
         // 开始给内部的 props 变量赋值
         callHook(vm, 'created');
 
         const updateComponent = () => {
             vm._update(vm._render());
         }
-        // 应该是通过 watcher 来触发的，这里暂时先手动触发下
-        updateComponent();
 
+        const dep = new Dep();
+        // 应该是通过 watcher 来触发的，这里暂时先手动触发下
+        // updateComponent();
+
+        const observer = new Observer(this.data, dep);
+        this.data = observer.data;
+
+        this.$watcher = new Watcher(updateComponent);
     }
 
     Vue.prototype._update = function(vnode) {
-        console.log('_update vnode is', vnode);
+        console.log('_update vNode is', vnode);
         const vm = this;
         if (vm.isMount) {
             callHook(vm, 'beforeUpdate');

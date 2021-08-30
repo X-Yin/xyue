@@ -1,13 +1,12 @@
-
-function isPropsKey(target, key) {
-    let isProp = false;
-    const props = target.$props || {};
-    Object.entries(props).forEach(([k, val]) => {
+function includeKey(data = {}, key) {
+    let isInclude = false;
+    const obj = data || {};
+    Object.entries(obj).forEach(([k, val]) => {
         if (key === k) {
-            isProp = true;
+            isInclude = true;
         }
     });
-    return isProp;
+    return isInclude;
 }
 
 export function proxyMixin(vm) {
@@ -30,9 +29,14 @@ export function proxyMixin(vm) {
         },
         set(target, key, value, receiver) {
            // 对于 props 的属性的赋值需要做一层拦截
-            const isProp = isPropsKey(target, key);
+            const isProp = includeKey(target.$props, key);
             if (isProp) {
                 throw new Error('can not set props value in child component ' + key);
+            }
+
+            const isData = includeKey(target.data, key);
+            if (isData) {
+                target.data[key] = value;
             }
             return true;
         }

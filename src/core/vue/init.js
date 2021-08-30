@@ -24,6 +24,7 @@ export function initMixin(vm) {
         this.$id = ++id;
         this.$watch = options.watch || {};
         this.$vnode = {};
+        this.$parentVnode = options.parentVnode || {};
         this.$self = null;
         this.$render = '';
         this.$watcher = null;

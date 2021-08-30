@@ -9,7 +9,7 @@ import propsHooks from './props';
  * vm 组件实例中，真正的 created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
-const installDefaultHooks = [propsHooks, attrHooks, styleHooks, eventHooks,];
+const installDefaultHooks = [propsHooks, attrHooks, styleHooks, eventHooks];
 
 export function installHook(vm) {
     const customHooks = {};

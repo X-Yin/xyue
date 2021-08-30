@@ -1,4 +1,4 @@
-import {isEqual, normalizeTagName} from "../utils";
+import {handleDynamicExpression, isEqual, normalizeTagName} from "../utils";
 /**
  * vnode 类的定义
  * tag: div | mybutton
@@ -33,7 +33,9 @@ class VNode {
         this.events = attrs.events;
         this.vm = vm;
         this.type = type;
-        this.data = data;
+        if (this.type === 3) {
+            this.data = this.handleDynamicText(data);
+        }
         this.options = vm.options;
         // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
         // 这个 componentOptions 里面有两个字段一个是 isComponent 用来标记是不是组件，如果为 true 的话，会把这个组件的 options 选项给赋值
@@ -56,6 +58,10 @@ class VNode {
         return {
             isComponent: false
         };
+    }
+
+    handleDynamicText(data) {
+        return handleDynamicExpression(this.vm.$self, data);
     }
 }
 

@@ -12,7 +12,6 @@ import { NativeDomEventKeyList } from "../config";
 export function patch(oldVNode, newVNode) {
 	if (!newVNode) {
 		const childDom = vNode2Dom(oldVNode);
-		// oldVNode.parentEl.appendChild(childDom);
 		clearChildrenList(oldVNode.parentEl);
 		appendChild(oldVNode.parentEl, childDom);
 	}
@@ -34,8 +33,10 @@ export function componentVNode2Dom(vnode) {
 	const options = vnode.componentOptions.options;
 	const el = createDocumentFragment();
 	options.el = el;
+	options.parentVnode = vnode; // 把当前的组件占位 vnode 赋值给组件的 $parentVnode 属性，为后面 props 的解析和父子组件通信用
 	const Ctor = vnode.vm.Ctor;
 	const componentInstance = new Ctor(options);
+	componentInstance.$parent = vnode.vm;
 	componentInstance._mount();
 	return el;
 }
@@ -83,5 +84,4 @@ export function addEvent(vnode) {
 			dom.addEventListener(name, cb.bind(vnode.vm.$self));
 		}
 	});
-
 }
