@@ -73,5 +73,15 @@ export function lifecycleMixin(Vue) {
         // patch 只返回当前组件 vnode 生成的 dom，至于后面的 dom 要如何挂载到页面上，还是在这个 _update 里面处理
         // 如果之前有 $el 比如 App 组件，那就 replaceChild
         // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
+        const dom = patch(vnode);
+        if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
+            prevEl.parentNode.replaceChild(dom, prevEl);
+        } else { // MyButton 组件，并不是真实存在于页面上
+            vm.$parentEl.appendChild(dom);
+        }
+        vm.$el = dom;
     }
+
+
+
 }

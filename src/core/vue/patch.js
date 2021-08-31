@@ -5,17 +5,14 @@ import {
 	createElement,
 	createTextNode,
 	handleJsExpression,
-	normalizeTagName, replaceNode
+	normalizeTagName,
+	replaceNode
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
 
 export function patch(oldVNode, newVNode) {
 	if (!newVNode) {
 		const childDom = vNode2Dom(oldVNode);
-		// clearChildrenList(oldVNode.parentEl);
-		// debugger;
-		// appendChild(oldVNode.parentEl, childDom);
-		replaceNode(childDom, oldVNode.parentEl);
 		console.log('>>> childDom is', childDom);
 		return childDom;
 	}
@@ -35,15 +32,14 @@ export function vNode2Dom(vnode) {
 
 export function componentVNode2Dom(vnode) {
 	const options = vnode.componentOptions.options;
-	const el = createDocumentFragment();
-	options.el = el;
-	options.parentVnode = vnode; // 把当前的组件占位 vnode 赋值给组件的 $parentVnode 属性，为后面 props 的解析和父子组件通信用
-	options.parentEl = vnode.parentEl; // TODO 这里需要理清楚 parentEl 的赋值逻辑
+	options.parentEl = vnode.$parent.el;
+	options.parentVnode = vnode;
 	const Ctor = vnode.vm.Ctor;
 	const componentInstance = new Ctor(options);
 	componentInstance.$parent = vnode.vm;
 	componentInstance._mount();
-	return el;
+	vnode.el = componentInstance.$el;
+	return componentInstance.$el;
 }
 
 export function normalVNode2Dom(vnode) {
