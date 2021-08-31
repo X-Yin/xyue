@@ -17,7 +17,7 @@ class Dep {
 
     notify() {
         this.subs.forEach((sub) => {
-            sub.callback && sub.callback();
+            sub.update && sub.update();
         })
     }
 }

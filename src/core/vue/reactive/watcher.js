@@ -6,13 +6,15 @@ let id = 0;
 class Watcher {
     callback = null;
     id = ++id;
-    constructor(cb) {
+    vm = null;
+    constructor(cb, vm) {
         this.callback = cb;
+        this.vm = vm;
         this.get();
     }
 
     update() {
-        queueWatcher(this.callback);
+        queueWatcher(this);
     }
 
     get() {

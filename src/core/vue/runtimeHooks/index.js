@@ -6,7 +6,7 @@ import propsHooks from './props';
 
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
- * vm 组件实例中，真正的 created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
+ * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
 const installDefaultHooks = [propsHooks, attrHooks, styleHooks, eventHooks];

@@ -11,10 +11,17 @@ export function createDocumentFragment() {
     return document.createDocumentFragment();
 }
 
-export function createDocumentNode(tag) {
+export function createElement(tag) {
     return document.createElement(tag);
 }
 
 export function createTextNode(data) {
     return document.createTextNode(data);
+}
+
+export function replaceNode(newNode, oldNode) {
+    if (!oldNode || oldNode.parentNode) {
+        return
+    }
+    oldNode.parentNode.replaceChild(newNode, oldNode);
 }

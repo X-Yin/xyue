@@ -25,6 +25,7 @@ export function initMixin(vm) {
         this.$watch = options.watch || {};
         this.$vnode = {};
         this.$parentVnode = options.parentVnode || {};
+        this.$parentEl = options.parentEl || {};
         this.$self = null;
         this.$render = '';
         this.$watcher = null;
@@ -34,7 +35,15 @@ export function initMixin(vm) {
         this.props = options.props || [];
         this.options = options;
         this.computed = options.computed || {};
-        this.template = options.template || (this.$el ? this.$el.outerHTML : '');
+        if (options.template) {
+            this.template = options.template;
+        } else if (this.$el) {
+            this.template = this.$el.outerHTML;
+            this.$el.innerHTML = '';
+        } else {
+            this.template = '';
+        }
+        // this.template = options.template || (this.$el ? this.$el.outerHTML : '');
         this.components = options.components || {};
         this.isMount = false;
         this.Ctor = this.constructor;

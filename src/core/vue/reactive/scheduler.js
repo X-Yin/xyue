@@ -2,7 +2,7 @@ let queue = [];
 
 function runQueue() {
     queue.forEach(watcher => {
-        watcher.update()
+        watcher.callback()
     });
     queue = [];
 }
@@ -27,4 +27,4 @@ function nextTick(fn) {
 export function queueWatcher(watcher) {
     singlePush(queue, watcher);
     nextTick(runQueue);
-};
+}

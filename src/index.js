@@ -23,7 +23,7 @@ const content = `<div id="app">
 import Vue from './core/vue/entry';
 
 Vue.component('my-button', {
-    template: `<div class="my-button"><h1 @click="clickHandler">my-button  {{message}}</h1></div>`,
+    template: `<div class="my-button"><h1 @click="clickHandler">my-button  {{name}}</h1></div>`,
     data() {
         return {
             name: 'lucy'
@@ -32,7 +32,8 @@ Vue.component('my-button', {
     props: ['message'],
     methods: {
         clickHandler() {
-            console.log('my-button click', this.name);
+            // console.log('my-button click', this.name);
+            this.name = 'hello'
         }
     }
 });

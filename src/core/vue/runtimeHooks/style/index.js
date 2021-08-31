@@ -1,7 +1,5 @@
 import {handleJsExpression} from "../../../utils";
 
-function created(vm) {}
-
 function handleVNodeStyle(vm, vnode) {
     if (!vnode) {
         return;
@@ -45,6 +43,10 @@ function handleVNodeStyle(vm, vnode) {
             handleVNodeStyle(vm, child);
         })
     }
+}
+
+function created(vm) {
+
 }
 
 function beforeMount(vm) {

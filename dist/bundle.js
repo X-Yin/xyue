@@ -9660,22 +9660,6 @@ function proxyMixin(vm) {
 }
 ;// CONCATENATED MODULE: ./src/core/constants/index.js
 var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed'];
-;// CONCATENATED MODULE: ./src/core/utils/dom.js
-function appendChild(parentNode, childNode) {
-  return parentNode.appendChild(childNode);
-}
-function clearChildrenList(node) {
-  node.innerHTML = '';
-}
-function createDocumentFragment() {
-  return document.createDocumentFragment();
-}
-function createDocumentNode(tag) {
-  return document.createElement(tag);
-}
-function createTextNode(data) {
-  return document.createTextNode(data);
-}
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash_lodash = __webpack_require__(103);
 ;// CONCATENATED MODULE: ./src/core/utils/tool.js
@@ -9683,7 +9667,7 @@ var lodash_lodash = __webpack_require__(103);
 function tool_isEqual(obj1, obj2) {
   return lodash.isEqual(obj1, obj2);
 }
-function handleJsExpression(context, expression) {
+function tool_handleJsExpression(context, expression) {
   // 这块做一层代理，是为了减少重复检查 with 对象里面的属性，造成的性能损失
   // 但是这样会导致在 code 代码执行的过程中，所有的对象，包括 window.console 也会被直接认为是 context上的对象
   // 那么就会调用报错
@@ -9717,7 +9701,7 @@ function handleDynamicExpression(context) {
 
   while (matchResult = (expression || '').match(reg)) {
     try {
-      var value = handleJsExpression(context, matchResult[1]);
+      var value = tool_handleJsExpression(context, matchResult[1]);
       expression = expression.replace(matchResult[0], value);
     } catch (e) {
       console.error('handleDynamicExpression error', e);
@@ -9775,7 +9759,7 @@ function handleVNodeClass(vm, vnode) {
 
 
     try {
-      var result = handleJsExpression(vm, value);
+      var result = tool_handleJsExpression(vm, value);
 
       if (typeof result === 'string') {
         customClass += result;
@@ -9879,8 +9863,6 @@ function style_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "f
 
 
 
-function style_created(vm) {}
-
 function handleVNodeStyle(vm, vnode) {
   if (!vnode) {
     return;
@@ -9911,7 +9893,7 @@ function handleVNodeStyle(vm, vnode) {
 
 
     try {
-      var result = handleJsExpression(vm, value);
+      var result = tool_handleJsExpression(vm, value);
 
       if (typeof result === 'string') {
         customStyle += result;
@@ -9939,6 +9921,8 @@ function handleVNodeStyle(vm, vnode) {
     });
   }
 }
+
+function style_created(vm) {}
 
 function style_beforeMount(vm) {
   handleVNodeStyle(this.$self, this.$vnode);
@@ -10055,7 +10039,7 @@ function runtimeHooks_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; 
 
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
- * vm 组件实例中，真正的 created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
+ * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
 var installDefaultHooks = [props, classes, style, events];
@@ -10112,6 +10096,7 @@ function initMixin(vm) {
     this.$watch = options.watch || {};
     this.$vnode = {};
     this.$parentVnode = options.parentVnode || {};
+    this.$parentEl = options.parentEl || {};
     this.$self = null;
     this.$render = '';
     this.$watcher = null;
@@ -10122,7 +10107,17 @@ function initMixin(vm) {
     this.props = options.props || [];
     this.options = options;
     this.computed = options.computed || {};
-    this.template = options.template || (this.$el ? this.$el.outerHTML : '');
+
+    if (options.template) {
+      this.template = options.template;
+    } else if (this.$el) {
+      this.template = this.$el.outerHTML;
+      this.$el.innerHTML = '';
+    } else {
+      this.template = '';
+    } // this.template = options.template || (this.$el ? this.$el.outerHTML : '');
+
+
     this.components = options.components || {};
     this.isMount = false;
     this.Ctor = this.constructor; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
@@ -10679,7 +10674,7 @@ function genEle(ast) {
 function createTextVNode(text) {
   return new vnode('text', this, {}, [], 3, text);
 }
-function createElement(tag, attrs, children) {
+function render_createElement(tag, attrs, children) {
   return new vnode(tag, this, attrs, children, 1, null);
 }
 function createListVNode(tag, dataKey, attrs, children) {
@@ -10714,7 +10709,7 @@ function handleVNodeRelationship(vnode) {
   return vnode;
 }
 function renderMixin(vm) {
-  vm.prototype._c = createElement;
+  vm.prototype._c = render_createElement;
   vm.prototype._l = createListVNode;
   vm.prototype._t = createTextVNode;
   vm.prototype._f = createIfVNode;
@@ -10736,7 +10731,7 @@ var InputEvent = ['input', 'change', 'focus', 'blur'];
 var MediaEvent = ['canplay', 'play', 'pause', 'complete', 'emptied', 'ended', 'playing', 'seeked', 'ratechange', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'];
 var ProgressEvent = ['abort', 'load', 'error', 'loadend', 'progress', 'timeout', 'loadstart'];
 var KeyEvent = ['keydown', 'keypress', 'keyup'];
-var NativeDomEventKeyList = [].concat(TouchEvent, MouseEvent, ClickEvent, DragEvent, InputEvent, MediaEvent, ProgressEvent, KeyEvent);
+var event_NativeDomEventKeyList = [].concat(TouchEvent, MouseEvent, ClickEvent, DragEvent, InputEvent, MediaEvent, ProgressEvent, KeyEvent);
 ;// CONCATENATED MODULE: ./src/core/config/index.js
 
 ;// CONCATENATED MODULE: ./src/core/vue/patch.js
@@ -10756,9 +10751,13 @@ function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function patch(oldVNode, newVNode) {
   if (!newVNode) {
-    var childDom = vNode2Dom(oldVNode);
-    clearChildrenList(oldVNode.parentEl);
-    appendChild(oldVNode.parentEl, childDom);
+    var childDom = vNode2Dom(oldVNode); // clearChildrenList(oldVNode.parentEl);
+    // debugger;
+    // appendChild(oldVNode.parentEl, childDom);
+
+    replaceNode(childDom, oldVNode.parentEl);
+    console.log('>>> childDom is', childDom);
+    return childDom;
   }
 } // 将一个 vnode 树转换为 dom
 
@@ -10781,6 +10780,8 @@ function componentVNode2Dom(vnode) {
   options.el = el;
   options.parentVnode = vnode; // 把当前的组件占位 vnode 赋值给组件的 $parentVnode 属性，为后面 props 的解析和父子组件通信用
 
+  options.parentEl = vnode.parentEl; // TODO 这里需要理清楚 parentEl 的赋值逻辑
+
   var Ctor = vnode.vm.Ctor;
   var componentInstance = new Ctor(options);
   componentInstance.$parent = vnode.vm;
@@ -10799,7 +10800,7 @@ function normalVNode2Dom(vnode) {
     return _dom;
   }
 
-  var dom = createDocumentNode(tag);
+  var dom = createElement(tag);
   vnode.el = dom; // 处理 css
 
   if (vnode.style) {
@@ -10809,6 +10810,21 @@ function normalVNode2Dom(vnode) {
 
   if (vnode["class"]) {
     dom.className = vnode["class"];
+  } // 处理 attrs
+
+
+  if (Array.isArray(vnode.attrs)) {
+    vnode.attrs.forEach(function (_ref) {
+      var name = _ref.name,
+          value = _ref.value;
+
+      if (name.startsWith(':')) {
+        value = handleJsExpression(vnode.vm.$self, value);
+        name = name.slice(1);
+      }
+
+      vnode.el.setAttribute(name, value);
+    });
   } // 处理 event
 
 
@@ -10825,10 +10841,10 @@ function addEvent(vnode) {
   var dom = vnode.el;
   var events = vnode.events || {}; //{click: 'clickHandler'}
 
-  Object.entries(events).forEach(function (_ref) {
-    var _ref2 = patch_slicedToArray(_ref, 2),
-        name = _ref2[0],
-        value = _ref2[1];
+  Object.entries(events).forEach(function (_ref2) {
+    var _ref3 = patch_slicedToArray(_ref2, 2),
+        name = _ref3[0],
+        value = _ref3[1];
 
     if (NativeDomEventKeyList.includes(name)) {
       var cb = handleJsExpression(vnode.vm.$self, value); // TODO addEventListeners 的 options
@@ -10842,7 +10858,7 @@ var queue = [];
 
 function runQueue() {
   queue.forEach(function (watcher) {
-    watcher.update();
+    watcher.callback();
   });
   queue = [];
 }
@@ -10872,7 +10888,6 @@ function queueWatcher(watcher) {
   singlePush(queue, watcher);
   nextTick(runQueue);
 }
-;
 ;// CONCATENATED MODULE: ./src/core/vue/reactive/dep.js
 function dep_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -10905,7 +10920,7 @@ var Dep = /*#__PURE__*/function () {
     key: "notify",
     value: function notify() {
       this.subs.forEach(function (sub) {
-        sub.callback && sub.callback();
+        sub.update && sub.update();
       });
     }
   }]);
@@ -10938,21 +10953,24 @@ function watcher_defineProperty(obj, key, value) { if (key in obj) { Object.defi
 var watcher_id = 0;
 
 var Watcher = /*#__PURE__*/function () {
-  function Watcher(cb) {
+  function Watcher(cb, vm) {
     watcher_classCallCheck(this, Watcher);
 
     watcher_defineProperty(this, "callback", null);
 
     watcher_defineProperty(this, "id", ++watcher_id);
 
+    watcher_defineProperty(this, "vm", null);
+
     this.callback = cb;
+    this.vm = vm;
     this.get();
   }
 
   watcher_createClass(Watcher, [{
     key: "update",
     value: function update() {
-      queueWatcher(this.callback);
+      queueWatcher(this);
     }
   }, {
     key: "get",
@@ -11016,7 +11034,6 @@ var Observer = /*#__PURE__*/function () {
       return new Proxy(data, {
         get: function get(target, p, receiver) {
           if (typeof dep !== 'undefined') {
-            console.log('observer proxy get', target, p, dep);
             dep.depend();
           }
 
@@ -11089,12 +11106,13 @@ function lifecycleMixin(Vue) {
 
     var observer = new reactive_observer(this.data, dep);
     this.data = observer.data;
-    this.$watcher = new watcher(updateComponent);
+    this.$watcher = new watcher(updateComponent, vm);
   };
 
   Vue.prototype._update = function (vnode) {
     console.log('_update vNode is', vnode);
     var vm = this;
+    var prevEl = vm.$el;
 
     if (vm.isMount) {
       callHook(vm, 'beforeUpdate');
@@ -11102,8 +11120,13 @@ function lifecycleMixin(Vue) {
       callHook(vm, 'beforeMount');
     }
 
-    vnode.parentEl = vm.$el;
-    patch(vnode);
+    vnode.parentEl = vm.$el; // const el = patch(vnode);
+    // if (!(prevEl instanceof HTMLElement)) {
+    //     vm.$el = el;
+    // }
+    // patch 只返回当前组件 vnode 生成的 dom，至于后面的 dom 要如何挂载到页面上，还是在这个 _update 里面处理
+    // 如果之前有 $el 比如 App 组件，那就 replaceChild
+    // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/index.js
@@ -11167,7 +11190,7 @@ var content = "<div id=\"app\">\n    <div @click=\"handler\" :msg=\"msg\" value=
 
 
 entry.component('my-button', {
-  template: "<div class=\"my-button\"><h1 @click=\"clickHandler\">my-button  {{message}}</h1></div>",
+  template: "<div class=\"my-button\"><h1 @click=\"clickHandler\">my-button  {{name}}</h1></div>",
   data: function data() {
     return {
       name: 'lucy'
@@ -11176,7 +11199,8 @@ entry.component('my-button', {
   props: ['message'],
   methods: {
     clickHandler: function clickHandler() {
-      console.log('my-button click', this.name);
+      // console.log('my-button click', this.name);
+      this.name = 'hello';
     }
   }
 });

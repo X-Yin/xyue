@@ -2,18 +2,22 @@ import {
 	appendChild,
 	clearChildrenList,
 	createDocumentFragment,
-	createDocumentNode,
+	createElement,
 	createTextNode,
 	handleJsExpression,
-	normalizeTagName
+	normalizeTagName, replaceNode
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
 
 export function patch(oldVNode, newVNode) {
 	if (!newVNode) {
 		const childDom = vNode2Dom(oldVNode);
-		clearChildrenList(oldVNode.parentEl);
-		appendChild(oldVNode.parentEl, childDom);
+		// clearChildrenList(oldVNode.parentEl);
+		// debugger;
+		// appendChild(oldVNode.parentEl, childDom);
+		replaceNode(childDom, oldVNode.parentEl);
+		console.log('>>> childDom is', childDom);
+		return childDom;
 	}
 }
 
@@ -34,6 +38,7 @@ export function componentVNode2Dom(vnode) {
 	const el = createDocumentFragment();
 	options.el = el;
 	options.parentVnode = vnode; // 把当前的组件占位 vnode 赋值给组件的 $parentVnode 属性，为后面 props 的解析和父子组件通信用
+	options.parentEl = vnode.parentEl; // TODO 这里需要理清楚 parentEl 的赋值逻辑
 	const Ctor = vnode.vm.Ctor;
 	const componentInstance = new Ctor(options);
 	componentInstance.$parent = vnode.vm;
@@ -50,7 +55,7 @@ export function normalVNode2Dom(vnode) {
 		return dom;
 	}
 
-	const dom = createDocumentNode(tag);
+	const dom = createElement(tag);
 	vnode.el = dom;
 	// 处理 css
 	if (vnode.style) {
@@ -60,6 +65,17 @@ export function normalVNode2Dom(vnode) {
 	// 处理 className
 	if (vnode.class) {
 		dom.className = vnode.class;
+	}
+
+	// 处理 attrs
+	if (Array.isArray(vnode.attrs)) {
+		vnode.attrs.forEach(({name, value}) => {
+			if (name.startsWith(':')) {
+				value = handleJsExpression(vnode.vm.$self, value);
+				name = name.slice(1);
+			}
+			vnode.el.setAttribute(name, value);
+		})
 	}
 
 	// 处理 event

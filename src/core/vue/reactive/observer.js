@@ -25,7 +25,6 @@ class Observer {
         return new Proxy(data, {
             get(target, p, receiver) {
                 if (typeof dep !== 'undefined') {
-                    console.log('observer proxy get', target, p, dep);
                     dep.depend();
                 }
                 return target[p];
