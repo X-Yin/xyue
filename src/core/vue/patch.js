@@ -9,16 +9,52 @@ import {
 	replaceNode
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
+import { compareVNode } from "./vnode";
 
-export function patch(oldVNode, newVNode) {
+function _patch(vm, oldVNode, newVNode) {
 	if (!newVNode) {
-		const childDom = vNode2Dom(oldVNode);
-		console.log('>>> childDom is', childDom);
-		return childDom;
+		// const childDom = vNode2Dom(oldVNode);
+		// console.log('>>> childDom is', childDom);
+		// return childDom;
+		return vNode2Dom(oldVNode);
+	}
+	return diff(oldVNode, newVNode);
+}
+
+export function patch(vm, oldVNode, newVNode) {
+	if (!newVNode) { // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
+		const dom = _patch(vm, oldVNode, newVNode);
+		const prevEl = vm.$el;
+		vm.$oldVNode = oldVNode;
+		if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
+			prevEl.parentNode.replaceChild(dom, prevEl);
+		} else { // MyButton 组件，并不是真实存在于页面上
+			vm.$parentEl.appendChild(dom);
+		}
+		vm.$el = dom;
+		vm.isMount = true;
+	} else { // 说明不是第一次挂在，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
+		_patch(vm, oldVNode, newVNode);
+	}
+
+}
+
+export function diff(vm, oldVNode, newVNode) {
+	// 普通 text 元素不一样 vnode2dom 然后替换
+	// 普通其他元素不一样，vnode2dom 然后替换
+	// my-button 元素不一样
+	// 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
+	// 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
+	const isEqual = compareVNode(oldVNode, newVNode);
+	if (!isEqual) {
+		if (newVNode.tag === 'text') {
+			const newDom = createTextNode(newVNode.data);
+			replaceNode(newDom, oldVNode.el);
+		}
 	}
 }
 
-// 将一个 vnode 树转换为 dom
+// 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
 export function vNode2Dom(vnode) {
 	const tag = vnode.tag;
 	if (!vnode.tag) {

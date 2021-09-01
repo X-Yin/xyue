@@ -48,6 +48,10 @@ export function renderMixin(vm) {
         // $render 是一个 render 函数字符串
         this.$render = genRenderFn(parse(this.template || ''));
         const fn = new Function(this.$render);
+        // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
+        if (this.$vnode) {
+            this.$oldVNode = this.$vnode;
+        }
         this.$vnode = handleVNodeRelationship(fn.call(this) || {});
         return this.$vnode;
     }

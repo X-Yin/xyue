@@ -9519,6 +9519,30 @@ root._=_;}}).call(this);
 /******/ 		__webpack_require__.amdO = {};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -9529,6 +9553,11 @@ root._=_;}}).call(this);
 /******/ 				if (typeof window === 'object') return window;
 /******/ 			}
 /******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
@@ -9684,11 +9713,12 @@ function replaceNode(newNode, oldNode) {
   oldNode.parentNode.replaceChild(newNode, oldNode);
 }
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
-var lodash_lodash = __webpack_require__(103);
+var lodash = __webpack_require__(103);
+var lodash_default = /*#__PURE__*/__webpack_require__.n(lodash);
 ;// CONCATENATED MODULE: ./src/core/utils/tool.js
 
-function tool_isEqual(obj1, obj2) {
-  return lodash.isEqual(obj1, obj2);
+function isEqual(obj1, obj2) {
+  return lodash_default().isEqual(obj1, obj2);
 }
 function handleJsExpression(context, expression) {
   // 这块做一层代理，是为了减少重复检查 with 对象里面的属性，造成的性能损失
@@ -10118,6 +10148,7 @@ function initMixin(vm) {
     this.$id = ++id;
     this.$watch = options.watch || {};
     this.$vnode = {};
+    this.$oldVNode = null;
     this.$parentVnode = options.parentVnode || {};
     this.$parentEl = options.parentEl || {};
     this.$self = null;
@@ -10740,7 +10771,12 @@ function renderMixin(vm) {
   vm.prototype._render = function () {
     // $render 是一个 render 函数字符串
     this.$render = genRenderFn(compile(this.template || ''));
-    var fn = new Function(this.$render);
+    var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
+
+    if (this.$vnode) {
+      this.$oldVNode = this.$vnode;
+    }
+
     this.$vnode = handleVNodeRelationship(fn.call(this) || {});
     return this.$vnode;
   };
@@ -10772,13 +10808,57 @@ function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-function patch(oldVNode, newVNode) {
+
+
+function _patch(vm, oldVNode, newVNode) {
   if (!newVNode) {
-    var childDom = vNode2Dom(oldVNode);
-    console.log('>>> childDom is', childDom);
-    return childDom;
+    // const childDom = vNode2Dom(oldVNode);
+    // console.log('>>> childDom is', childDom);
+    // return childDom;
+    return vNode2Dom(oldVNode);
   }
-} // 将一个 vnode 树转换为 dom
+
+  return diff(oldVNode, newVNode);
+}
+
+function patch(vm, oldVNode, newVNode) {
+  if (!newVNode) {
+    // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
+    var dom = _patch(vm, oldVNode, newVNode);
+
+    var prevEl = vm.$el;
+    vm.$oldVNode = oldVNode;
+
+    if (prevEl) {
+      // App 组件，el 是 div#app 真实存在于页面上
+      prevEl.parentNode.replaceChild(dom, prevEl);
+    } else {
+      // MyButton 组件，并不是真实存在于页面上
+      vm.$parentEl.appendChild(dom);
+    }
+
+    vm.$el = dom;
+    vm.isMount = true;
+  } else {
+    // 说明不是第一次挂在，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
+    _patch(vm, oldVNode, newVNode);
+  }
+}
+function diff(vm, oldVNode, newVNode) {
+  // 普通 text 元素不一样 vnode2dom 然后替换
+  // 普通其他元素不一样，vnode2dom 然后替换
+  // my-button 元素不一样
+  // 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
+  // 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
+  var isEqual = compareVNode(oldVNode, newVNode);
+
+  if (!isEqual) {
+    if (newVNode.tag === 'text') {
+      var newDom = createTextNode(newVNode.data);
+      replaceNode(newDom, oldVNode.el);
+    }
+  }
+} // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
 
 function vNode2Dom(vnode) {
   var tag = vnode.tag;
@@ -11128,7 +11208,7 @@ function lifecycleMixin(Vue) {
   Vue.prototype._update = function (vnode) {
     console.log('_update vNode is', vnode);
     var vm = this;
-    var prevEl = vm.$el;
+    var prevEl = vm.$el; // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 render 函数里面
 
     if (vm.isMount) {
       callHook(vm, 'beforeUpdate');
@@ -11143,18 +11223,14 @@ function lifecycleMixin(Vue) {
     // patch 只返回当前组件 vnode 生成的 dom，至于后面的 dom 要如何挂载到页面上，还是在这个 _update 里面处理
     // 如果之前有 $el 比如 App 组件，那就 replaceChild
     // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
+    // const dom = patch(vnode);
 
-    var dom = patch(vnode);
-
-    if (prevEl) {
-      // App 组件，el 是 div#app 真实存在于页面上
-      prevEl.parentNode.replaceChild(dom, prevEl);
-    } else {
-      // MyButton 组件，并不是真实存在于页面上
-      vm.$parentEl.appendChild(dom);
-    }
-
-    vm.$el = dom;
+    patch(vm, vnode); // if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
+    //     prevEl.parentNode.replaceChild(dom, prevEl);
+    // } else { // MyButton 组件，并不是真实存在于页面上
+    //     vm.$parentEl.appendChild(dom);
+    // }
+    // vm.$el = dom;
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/index.js
