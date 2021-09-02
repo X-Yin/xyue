@@ -25,3 +25,7 @@ export function replaceNode(newNode, oldNode) {
     }
     oldNode.parentNode.replaceChild(newNode, oldNode);
 }
+
+export function removeChild(parentNode, childNode) {
+    parentNode.removeChild(childNode);
+}

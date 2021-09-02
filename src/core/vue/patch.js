@@ -5,7 +5,7 @@ import {
 	createElement,
 	createTextNode,
 	handleJsExpression,
-	normalizeTagName,
+	normalizeTagName, removeChild,
 	replaceNode
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
@@ -46,11 +46,43 @@ export function diff(vm, oldVNode, newVNode) {
 	// 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
 	// 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
 	const isEqual = compareVNode(oldVNode, newVNode);
-	if (!isEqual) {
-		if (newVNode.tag === 'text') {
-			const newDom = createTextNode(newVNode.data);
+	if (newVNode.tag === 'text') {
+		if (!isEqual) {
+			const newDom = vNode2Dom(newVNode);
 			replaceNode(newDom, oldVNode.el);
+			return newDom;
 		}
+	}
+
+	if (!newVNode.componentOptions.isComponent) {
+		// 如果不是组件 vnode，先比较当前的 vnode，如果不一样的话直接替换，如果一样，递归比较 children
+		if (!isEqual) {
+			const newDom = vNode2Dom(newVNode);
+			replaceNode(newDom, oldVNode.el);
+		} else {
+			const newChildren = newVNode.children || [];
+			const oldChildren = oldVNode.children || [];
+			const maxLength = Math.max(newChildren.length, oldChildren.length);
+			for (let i = 0; i < maxLength; i++) {
+				const newChild = newChildren[i];
+				const oldChild = oldChildren[i];
+				if (!oldChild && newChild) { // 增加新的子元素
+					const newDom = vNode2Dom(newChild);
+					oldVNode.el.appendChild(newDom);
+					continue;
+				}
+
+				if (!newChild && oldChild) { //  删除之前的子元素
+					removeChild(oldVNode.el, oldChild.el);
+					continue;
+				}
+
+				if (newChild && oldChild) {
+					diff(vm, oldChild, newChild);
+				}
+			}
+		}
+		return oldVNode.el;
 	}
 }
 

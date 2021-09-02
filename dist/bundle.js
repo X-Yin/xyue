@@ -9712,6 +9712,9 @@ function replaceNode(newNode, oldNode) {
 
   oldNode.parentNode.replaceChild(newNode, oldNode);
 }
+function removeChild(parentNode, childNode) {
+  parentNode.removeChild(childNode);
+}
 // EXTERNAL MODULE: ./node_modules/lodash/lodash.js
 var lodash = __webpack_require__(103);
 var lodash_default = /*#__PURE__*/__webpack_require__.n(lodash);
@@ -10845,18 +10848,58 @@ function patch(vm, oldVNode, newVNode) {
   }
 }
 function diff(vm, oldVNode, newVNode) {
-  // 普通 text 元素不一样 vnode2dom 然后替换
+  debugger; // 普通 text 元素不一样 vnode2dom 然后替换
   // 普通其他元素不一样，vnode2dom 然后替换
   // my-button 元素不一样
   // 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
   // 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
+
   var isEqual = compareVNode(oldVNode, newVNode);
 
-  if (!isEqual) {
-    if (newVNode.tag === 'text') {
-      var newDom = createTextNode(newVNode.data);
+  if (newVNode.tag === 'text') {
+    if (!isEqual) {
+      var newDom = vNode2Dom(newVNode);
       replaceNode(newDom, oldVNode.el);
+      return newDom;
     }
+  }
+
+  if (!newVNode.componentOptions.isComponent) {
+    // 如果不是组件 vnode，先比较当前的 vnode，如果不一样的话直接替换，如果一样，递归比较 children
+    if (!isEqual) {
+      var _newDom = vNode2Dom(newVNode);
+
+      replaceNode(_newDom, oldVNode.el);
+    } else {
+      var newChildren = newVNode.children || [];
+      var oldChildren = oldVNode.children || [];
+      var maxLength = Math.max(newChildren.length, oldChildren.length);
+
+      for (var i = 0; i < maxLength; i++) {
+        var newChild = newChildren[i];
+        var oldChild = oldChildren[i];
+
+        if (!oldChild && newChild) {
+          // 增加新的子元素
+          var _newDom2 = vNode2Dom(newChild);
+
+          oldVNode.el.appendChild(_newDom2);
+          continue;
+        }
+
+        if (!newChild && oldChild) {
+          //  删除之前的子元素
+          removeChild(oldVNode.el, oldChild.el);
+          continue;
+        }
+
+        if (newChild && oldChild) {
+          diff(vm, oldChild, newChild);
+        }
+      }
+    }
+
+    return oldVNode.el;
   }
 } // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
 
@@ -11208,7 +11251,7 @@ function lifecycleMixin(Vue) {
   Vue.prototype._update = function (vnode) {
     console.log('_update vNode is', vnode);
     var vm = this;
-    var prevEl = vm.$el; // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 render 函数里面
+    var prevEl = vm.$el; // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 _render 函数里面
 
     if (vm.isMount) {
       callHook(vm, 'beforeUpdate');
