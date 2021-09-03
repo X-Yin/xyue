@@ -19,11 +19,13 @@
     <my-button :message="message2"></my-button>
     <p>what!{{name}}</p>
 </div>
-<div id="app">
+<div id="app2">
     <p @click="changeArr">changeArr</p>
     <li v-for="array">hello</li>
     <p @click="changeMessage1">changeMessage1</p>
 </div>
+
+<div id="app"><p @click="changeArr">changeArray</p><li v-for="array">{{name}}</li><p @click="changeName">{{name}}</p></div>
 <script>
     const fn = new Function(`with(this){return 123}`);
     const obj = {

@@ -9,23 +9,23 @@ import {
 	replaceNode
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
-import { compareVNode } from "./vnode";
+import {compareVNode, replaceVNode} from "./vnode";
 
 function _patch(vm, oldVNode, newVNode) {
-	if (!newVNode) {
+	if (!oldVNode) {
 		// const childDom = vNode2Dom(oldVNode);
 		// console.log('>>> childDom is', childDom);
 		// return childDom;
-		return vNode2Dom(oldVNode);
+		return vNode2Dom(newVNode);
 	}
-	return diff(oldVNode, newVNode);
+	return diff(vm, oldVNode, newVNode);
 }
 
 export function patch(vm, oldVNode, newVNode) {
-	if (!newVNode) { // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
+	if (!oldVNode) { // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
 		const dom = _patch(vm, oldVNode, newVNode);
 		const prevEl = vm.$el;
-		vm.$oldVNode = oldVNode;
+		vm.$oldVNode = newVNode;
 		if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
 			prevEl.parentNode.replaceChild(dom, prevEl);
 		} else { // MyButton 组件，并不是真实存在于页面上
@@ -33,8 +33,9 @@ export function patch(vm, oldVNode, newVNode) {
 		}
 		vm.$el = dom;
 		vm.isMount = true;
-	} else { // 说明不是第一次挂在，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
-		_patch(vm, oldVNode, newVNode);
+	} else { // 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
+		const dom = _patch(vm, oldVNode, newVNode);
+
 	}
 
 }
@@ -50,6 +51,8 @@ export function diff(vm, oldVNode, newVNode) {
 		if (!isEqual) {
 			const newDom = vNode2Dom(newVNode);
 			replaceNode(newDom, oldVNode.el);
+			replaceVNode(oldVNode, newVNode);
+			oldVNode.el = newDom;
 			return newDom;
 		}
 	}
@@ -59,6 +62,8 @@ export function diff(vm, oldVNode, newVNode) {
 		if (!isEqual) {
 			const newDom = vNode2Dom(newVNode);
 			replaceNode(newDom, oldVNode.el);
+			replaceVNode(oldVNode, newVNode);
+			oldVNode.el = newDom;
 		} else {
 			const newChildren = newVNode.children || [];
 			const oldChildren = oldVNode.children || [];
@@ -68,12 +73,14 @@ export function diff(vm, oldVNode, newVNode) {
 				const oldChild = oldChildren[i];
 				if (!oldChild && newChild) { // 增加新的子元素
 					const newDom = vNode2Dom(newChild);
+					oldVNode.children.push(newChild);
 					oldVNode.el.appendChild(newDom);
 					continue;
 				}
 
 				if (!newChild && oldChild) { //  删除之前的子元素
 					removeChild(oldVNode.el, oldChild.el);
+					oldChildren.splice(i, 1);
 					continue;
 				}
 
@@ -84,6 +91,8 @@ export function diff(vm, oldVNode, newVNode) {
 		}
 		return oldVNode.el;
 	}
+
+	// TODO 组件的 diff
 }
 
 // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到

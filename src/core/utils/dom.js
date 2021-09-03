@@ -20,7 +20,7 @@ export function createTextNode(data) {
 }
 
 export function replaceNode(newNode, oldNode) {
-    if (!oldNode || oldNode.parentNode) {
+    if (!oldNode || !oldNode.parentNode) {
         return
     }
     oldNode.parentNode.replaceChild(newNode, oldNode);

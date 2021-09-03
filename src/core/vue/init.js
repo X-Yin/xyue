@@ -23,7 +23,7 @@ export function initMixin(vm) {
         }
         this.$id = ++id;
         this.$watch = options.watch || {};
-        this.$vnode = {};
+        this.$vnode = null;
         this.$oldVNode = null;
         this.$parentVnode = options.parentVnode || {};
         this.$parentEl = options.parentEl || {};

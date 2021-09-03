@@ -1,5 +1,5 @@
 import parse from "../compile";
-import VNode from './vnode';
+import VNode, {cloneVNode} from './vnode';
 import { genRenderFn } from "../render";
 // 封装 createElement 函数
 
@@ -16,8 +16,18 @@ export function createListVNode(tag, dataKey, attrs, children) {
     if (!arr) {
         throw new Error(dataKey + ' does not exist on ' + this);
     }
+    // 这个地方有大坑
+    // 因为 render 函数中 _l 是这么写的
+    // ..._l(
+    //         'li',
+    //         'array',
+    //         {staticClass: '', staticStyle: '', events: {}, attrs: []},
+    //         [_t('{{name}}')]
+    // )
+    // 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
+    // 对于 children 的处理要 clone 创建，而不能直接赋值
     return arr.map(item => {
-        return new VNode(tag, this, attrs, children, 1, null);
+        return new VNode(tag, this, attrs, cloneVNode(children), 1, null);
     });
 }
 
@@ -49,10 +59,12 @@ export function renderMixin(vm) {
         this.$render = genRenderFn(parse(this.template || ''));
         const fn = new Function(this.$render);
         // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
-        if (this.$vnode) {
-            this.$oldVNode = this.$vnode;
-        }
-        this.$vnode = handleVNodeRelationship(fn.call(this) || {});
+        // if (this.$vnode) {
+        //     debugger;
+        //     this.$oldVNode = this.$vnode;
+        // }
+        const vnode = fn.call(this);
+        this.$vnode = handleVNodeRelationship(vnode || {});
         return this.$vnode;
     }
 }

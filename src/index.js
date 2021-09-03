@@ -12,7 +12,6 @@ const content = `<div id="app">
 
 
 // const ast = parse(content);
-// console.log('>>> ast', ast);
 // const renderFn = genRenderFn(ast.children[0]);
 // console.log(renderFn);
 // const fn = new Function(renderFn);
@@ -67,6 +66,9 @@ const vm = new Vue({
         changeMessage1() {
             console.log('changeMessage1 触发更新');
             this.message1 = 'world!';
+        },
+        changeName() {
+            this.name = this.name + ' hello';
         }
     },
 });
@@ -80,6 +82,6 @@ const parent = {
 vm.$parent = parent;
 
 vm.mount();
-console.log(vm);
+window.vm = vm;
 // 不能给 props 里面的 key 赋值
 // vm.$self.kissa = 'asd';

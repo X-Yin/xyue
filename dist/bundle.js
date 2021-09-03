@@ -9706,7 +9706,7 @@ function createTextNode(data) {
   return document.createTextNode(data);
 }
 function replaceNode(newNode, oldNode) {
-  if (!oldNode || oldNode.parentNode) {
+  if (!oldNode || !oldNode.parentNode) {
     return;
   }
 
@@ -10150,7 +10150,7 @@ function initMixin(vm) {
 
     this.$id = ++id;
     this.$watch = options.watch || {};
-    this.$vnode = {};
+    this.$vnode = null;
     this.$oldVNode = null;
     this.$parentVnode = options.parentVnode || {};
     this.$parentEl = options.parentEl || {};
@@ -10511,6 +10511,16 @@ var VNode = /*#__PURE__*/function () {
   function VNode(tag, vm, attrs, children, type, data) {
     _classCallCheck(this, VNode);
 
+    var _ref = attrs || {},
+        _ref$staticClass = _ref.staticClass,
+        staticClass = _ref$staticClass === void 0 ? '' : _ref$staticClass,
+        _ref$staticStyle = _ref.staticStyle,
+        staticStyle = _ref$staticStyle === void 0 ? '' : _ref$staticStyle,
+        _ref$attrs = _ref.attrs,
+        attributes = _ref$attrs === void 0 ? {} : _ref$attrs,
+        _ref$events = _ref.events,
+        events = _ref$events === void 0 ? {} : _ref$events;
+
     this.tag = normalizeTagName(tag);
     this.id = ++vnode_id;
     this.children = children;
@@ -10519,10 +10529,10 @@ var VNode = /*#__PURE__*/function () {
 
     this.parentEl = null; // 在 patch 渲染时会赋值
 
-    this.staticClass = attrs.staticClass;
-    this.staticStyle = attrs.staticStyle;
-    this.attrs = attrs.attrs;
-    this.events = attrs.events;
+    this.staticClass = staticClass;
+    this.staticStyle = staticStyle;
+    this.attrs = attributes;
+    this.events = events;
     this.vm = vm;
     this.type = type;
 
@@ -10608,6 +10618,26 @@ function compareVNode(oldVNode, newVNode) {
   }
 
   return true;
+} // 将 newVNode 的属性赋值给 oldVNode，但是不替换 oldVNode 的堆地址
+
+function replaceVNode(oldVNode, newVNode) {
+  var keys = ['tag', 'children', 'id', 'staticClass', 'staticStyle', 'attrs', 'events', 'vm', 'type', 'data', 'options', 'componentOptions'];
+  keys.forEach(function (key) {
+    oldVNode[key] = newVNode[key];
+  });
+  return oldVNode;
+}
+function cloneVNode(oldVNode) {
+  if (Array.isArray(oldVNode)) {
+    return oldVNode.map(function (vnode) {
+      return cloneVNode(vnode);
+    });
+  }
+
+  var children = (oldVNode.children || []).map(function (child) {
+    return cloneVNode(child);
+  });
+  return new VNode(oldVNode.tag, oldVNode.vm, oldVNode.attrs, children, oldVNode.type, oldVNode.data);
 }
 /* harmony default export */ const vnode = (VNode);
 ;// CONCATENATED MODULE: ./src/core/render/index.js
@@ -10741,10 +10771,20 @@ function createListVNode(tag, dataKey, attrs, children) {
 
   if (!arr) {
     throw new Error(dataKey + ' does not exist on ' + this);
-  }
+  } // 这个地方有大坑
+  // 因为 render 函数中 _l 是这么写的
+  // ..._l(
+  //         'li',
+  //         'array',
+  //         {staticClass: '', staticStyle: '', events: {}, attrs: []},
+  //         [_t('{{name}}')]
+  // )
+  // 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
+  // 对于 children 的处理要 clone 创建，而不能直接赋值
+
 
   return arr.map(function (item) {
-    return new vnode(tag, _this, attrs, children, 1, null);
+    return new vnode(tag, _this, attrs, cloneVNode(children), 1, null);
   });
 }
 function createIfVNode(tag, dataKey, attrs, children) {
@@ -10774,13 +10814,15 @@ function renderMixin(vm) {
   vm.prototype._render = function () {
     // $render 是一个 render 函数字符串
     this.$render = genRenderFn(compile(this.template || ''));
+    console.log('>>>> this.$render', this.$render);
     var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
+    // if (this.$vnode) {
+    //     debugger;
+    //     this.$oldVNode = this.$vnode;
+    // }
 
-    if (this.$vnode) {
-      this.$oldVNode = this.$vnode;
-    }
-
-    this.$vnode = handleVNodeRelationship(fn.call(this) || {});
+    var vnode = fn.call(this);
+    this.$vnode = handleVNodeRelationship(vnode || {});
     return this.$vnode;
   };
 }
@@ -10814,23 +10856,23 @@ function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 function _patch(vm, oldVNode, newVNode) {
-  if (!newVNode) {
+  if (!oldVNode) {
     // const childDom = vNode2Dom(oldVNode);
     // console.log('>>> childDom is', childDom);
     // return childDom;
-    return vNode2Dom(oldVNode);
+    return vNode2Dom(newVNode);
   }
 
-  return diff(oldVNode, newVNode);
+  return diff(vm, oldVNode, newVNode);
 }
 
 function patch(vm, oldVNode, newVNode) {
-  if (!newVNode) {
+  if (!oldVNode) {
     // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
     var dom = _patch(vm, oldVNode, newVNode);
 
     var prevEl = vm.$el;
-    vm.$oldVNode = oldVNode;
+    vm.$oldVNode = newVNode;
 
     if (prevEl) {
       // App 组件，el 是 div#app 真实存在于页面上
@@ -10843,23 +10885,24 @@ function patch(vm, oldVNode, newVNode) {
     vm.$el = dom;
     vm.isMount = true;
   } else {
-    // 说明不是第一次挂在，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
-    _patch(vm, oldVNode, newVNode);
+    // 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
+    var _dom = _patch(vm, oldVNode, newVNode);
   }
 }
 function diff(vm, oldVNode, newVNode) {
-  debugger; // 普通 text 元素不一样 vnode2dom 然后替换
+  // 普通 text 元素不一样 vnode2dom 然后替换
   // 普通其他元素不一样，vnode2dom 然后替换
   // my-button 元素不一样
   // 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
   // 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
-
   var isEqual = compareVNode(oldVNode, newVNode);
 
   if (newVNode.tag === 'text') {
     if (!isEqual) {
       var newDom = vNode2Dom(newVNode);
       replaceNode(newDom, oldVNode.el);
+      replaceVNode(oldVNode, newVNode);
+      oldVNode.el = newDom;
       return newDom;
     }
   }
@@ -10870,6 +10913,8 @@ function diff(vm, oldVNode, newVNode) {
       var _newDom = vNode2Dom(newVNode);
 
       replaceNode(_newDom, oldVNode.el);
+      replaceVNode(oldVNode, newVNode);
+      oldVNode.el = _newDom;
     } else {
       var newChildren = newVNode.children || [];
       var oldChildren = oldVNode.children || [];
@@ -10883,6 +10928,7 @@ function diff(vm, oldVNode, newVNode) {
           // 增加新的子元素
           var _newDom2 = vNode2Dom(newChild);
 
+          oldVNode.children.push(newChild);
           oldVNode.el.appendChild(_newDom2);
           continue;
         }
@@ -10890,6 +10936,7 @@ function diff(vm, oldVNode, newVNode) {
         if (!newChild && oldChild) {
           //  删除之前的子元素
           removeChild(oldVNode.el, oldChild.el);
+          oldChildren.splice(i, 1);
           continue;
         }
 
@@ -10900,7 +10947,8 @@ function diff(vm, oldVNode, newVNode) {
     }
 
     return oldVNode.el;
-  }
+  } // TODO 组件的 diff
+
 } // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
 
 function vNode2Dom(vnode) {
@@ -10933,10 +10981,11 @@ function normalVNode2Dom(vnode) {
   var tag = vnode.tag;
 
   if (vnode.type === 3) {
-    var _dom = createTextNode(vnode.data);
+    var _dom2 = createTextNode(vnode.data);
 
-    vnode.el = _dom;
-    return _dom;
+    console.log('>>>> dom is', _dom2, vnode, vnode.parentEl);
+    vnode.el = _dom2;
+    return _dom2;
   }
 
   var dom = createElement(tag);
@@ -11268,7 +11317,7 @@ function lifecycleMixin(Vue) {
     // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
     // const dom = patch(vnode);
 
-    patch(vm, vnode); // if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
+    patch(vm, vm.$oldVNode, vnode); // if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
     //     prevEl.parentNode.replaceChild(dom, prevEl);
     // } else { // MyButton 组件，并不是真实存在于页面上
     //     vm.$parentEl.appendChild(dom);
@@ -11385,6 +11434,9 @@ var vm = new entry({
     changeMessage1: function changeMessage1() {
       console.log('changeMessage1 触发更新');
       this.message1 = 'world!';
+    },
+    changeName: function changeName() {
+      this.name = this.name + ' hello';
     }
   }
 });
@@ -11395,7 +11447,7 @@ var src_parent = {
 };
 vm.$parent = src_parent;
 vm.mount();
-console.log(vm); // 不能给 props 里面的 key 赋值
+window.vm = vm; // 不能给 props 里面的 key 赋值
 // vm.$self.kissa = 'asd';
 })();
 

@@ -21,16 +21,19 @@ let id = 0;
 
 class VNode {
     constructor(tag, vm, attrs, children, type, data) {
+
+        const { staticClass = '', staticStyle = '', attrs: attributes = {}, events = {} } = attrs || {};
+
         this.tag = normalizeTagName(tag);
         this.id = ++id;
         this.children = children;
         this.el = null;
         this.parent = null; // vm._render 创建时会梳理父子关系并赋值
         this.parentEl = null; // 在 patch 渲染时会赋值
-        this.staticClass = attrs.staticClass;
-        this.staticStyle = attrs.staticStyle;
-        this.attrs = attrs.attrs;
-        this.events = attrs.events;
+        this.staticClass = staticClass;
+        this.staticStyle = staticStyle;
+        this.attrs = attributes;
+        this.events = events;
         this.vm = vm;
         this.type = type;
         if (this.type === 3) {
@@ -103,6 +106,29 @@ export function compareVNode(oldVNode, newVNode) {
     }
 
     return true;
+}
+
+// 将 newVNode 的属性赋值给 oldVNode，但是不替换 oldVNode 的堆地址
+export function replaceVNode(oldVNode, newVNode) {
+    const keys = ['tag', 'children', 'id', 'staticClass',
+        'staticStyle', 'attrs', 'events', 'vm', 'type', 'data', 'options', 'componentOptions'];
+    keys.forEach(key => {
+        oldVNode[key] = newVNode[key];
+    });
+    return oldVNode;
+}
+
+export function cloneVNode(oldVNode) {
+    if (Array.isArray(oldVNode)) {
+        return oldVNode.map(vnode => {
+            return cloneVNode(vnode);
+        });
+    }
+    const children = (oldVNode.children || []).map(child => {
+        return cloneVNode(child);
+    });
+
+    return new VNode(oldVNode.tag, oldVNode.vm, oldVNode.attrs, children, oldVNode.type, oldVNode.data);
 }
 
 export default VNode;

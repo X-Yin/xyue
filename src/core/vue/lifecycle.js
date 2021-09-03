@@ -55,7 +55,6 @@ export function lifecycleMixin(Vue) {
     }
 
     Vue.prototype._update = function(vnode) {
-        console.log('_update vNode is', vnode);
         const vm = this;
         const prevEl = vm.$el;
         // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 _render 函数里面
@@ -77,7 +76,7 @@ export function lifecycleMixin(Vue) {
         // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
 
         // const dom = patch(vnode);
-        patch(vm, vnode);
+        patch(vm, vm.$oldVNode, vnode);
         // if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
         //     prevEl.parentNode.replaceChild(dom, prevEl);
         // } else { // MyButton 组件，并不是真实存在于页面上
