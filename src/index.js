@@ -64,7 +64,6 @@ const vm = new Vue({
             this.array.push(4);
         },
         changeMessage1() {
-            console.log('changeMessage1 触发更新');
             this.message1 = 'world!';
         },
         changeName() {

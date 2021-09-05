@@ -9688,7 +9688,7 @@ function proxyMixin(vm) {
   });
 }
 ;// CONCATENATED MODULE: ./src/core/constants/index.js
-var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed'];
+var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed', 'beforeCreateVNode'];
 ;// CONCATENATED MODULE: ./src/core/utils/dom.js
 function appendChild(parentNode, childNode) {
   return parentNode.appendChild(childNode);
@@ -10070,10 +10070,14 @@ function props_beforeMount() {// handleProps(this)
 }
 function props_beforeUpdate() {// handleProps(this);
 }
+function beforeCreateVNode() {
+  handleProps(this);
+}
 /* harmony default export */ const props = ({
   created: props_created,
   beforeMount: props_beforeMount,
-  beforeUpdate: props_beforeUpdate
+  beforeUpdate: props_beforeUpdate,
+  beforeCreateVNode: beforeCreateVNode
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
 function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
@@ -10559,7 +10563,9 @@ var VNode = /*#__PURE__*/function () {
         if (normalizeTagName(componentKey) === normalizeTagName(this.tag)) {
           return {
             isComponent: true,
-            options: components[componentKey]
+            options: components[componentKey],
+            componentInstance: null // 这个后面在第一次 patch 的时候会赋值，此后 update 的时候，就可以使用该组件实例进行 $watcher.update() 的渲染了
+
           };
         }
       }
@@ -10753,79 +10759,6 @@ function genEle(ast) {
   });
   return "_c(\n        '".concat(tag, "',\n        {staticClass: '").concat(staticClass, "', staticStyle: '").concat(staticStyle, "', events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
 }
-;// CONCATENATED MODULE: ./src/core/vue/render.js
-
-
- // 封装 createElement 函数
-
-function createTextVNode(text) {
-  return new vnode('text', this, {}, [], 3, text);
-}
-function render_createElement(tag, attrs, children) {
-  return new vnode(tag, this, attrs, children, 1, null);
-}
-function createListVNode(tag, dataKey, attrs, children) {
-  var _this = this;
-
-  var arr = this.$self[dataKey];
-
-  if (!arr) {
-    throw new Error(dataKey + ' does not exist on ' + this);
-  } // 这个地方有大坑
-  // 因为 render 函数中 _l 是这么写的
-  // ..._l(
-  //         'li',
-  //         'array',
-  //         {staticClass: '', staticStyle: '', events: {}, attrs: []},
-  //         [_t('{{name}}')]
-  // )
-  // 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
-  // 对于 children 的处理要 clone 创建，而不能直接赋值
-
-
-  return arr.map(function (item) {
-    return new vnode(tag, _this, attrs, cloneVNode(children), 1, null);
-  });
-}
-function createIfVNode(tag, dataKey, attrs, children) {
-  var flag = this.$self[dataKey];
-
-  if (flag) {
-    return new vnode(tag, this, attrs, children, 1, null);
-  }
-
-  return null;
-} // 梳理 vnode 父子关系
-
-function handleVNodeRelationship(vnode) {
-  var children = vnode.children || [];
-  children.forEach(function (item) {
-    item.$parent = vnode;
-    handleVNodeRelationship(item);
-  });
-  return vnode;
-}
-function renderMixin(vm) {
-  vm.prototype._c = render_createElement;
-  vm.prototype._l = createListVNode;
-  vm.prototype._t = createTextVNode;
-  vm.prototype._f = createIfVNode;
-
-  vm.prototype._render = function () {
-    // $render 是一个 render 函数字符串
-    this.$render = genRenderFn(compile(this.template || ''));
-    console.log('>>>> this.$render', this.$render);
-    var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
-    // if (this.$vnode) {
-    //     debugger;
-    //     this.$oldVNode = this.$vnode;
-    // }
-
-    var vnode = fn.call(this);
-    this.$vnode = handleVNodeRelationship(vnode || {});
-    return this.$vnode;
-  };
-}
 ;// CONCATENATED MODULE: ./src/core/config/event.js
 var TouchEvent = ['touchstart', 'touchmove', 'touchcancel', 'touchend'];
 var MouseEvent = ['mouseup', 'mousedown', 'mouseenter', 'mouseleave', 'mouseout', 'mousemove', 'mouseover'];
@@ -10850,6 +10783,7 @@ function patch_arrayLikeToArray(arr, len) { if (len == null || len > arr.length)
 function patch_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -10889,6 +10823,15 @@ function patch(vm, oldVNode, newVNode) {
     var _dom = _patch(vm, oldVNode, newVNode);
   }
 }
+/**
+ * diff
+ * oldVNode !== newVNode
+ * vnode2dom(newVNode) 然后直接替换旧的 dom
+ * oldVNode = newVNode
+ * 1. 如果是组件 vnode，执行 oldVNode 的 updateComponent 逻辑
+ * 2. 如果不是组件 vnode，执行 children 的递归遍历
+ * */
+
 function diff(vm, oldVNode, newVNode) {
   // 普通 text 元素不一样 vnode2dom 然后替换
   // 普通其他元素不一样，vnode2dom 然后替换
@@ -10897,58 +10840,54 @@ function diff(vm, oldVNode, newVNode) {
   // 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
   var isEqual = compareVNode(oldVNode, newVNode);
 
-  if (newVNode.tag === 'text') {
-    if (!isEqual) {
-      var newDom = vNode2Dom(newVNode);
-      replaceNode(newDom, oldVNode.el);
-      replaceVNode(oldVNode, newVNode);
-      oldVNode.el = newDom;
-      return newDom;
-    }
+  if (!isEqual) {
+    var newDom = vNode2Dom(newVNode);
+    replaceNode(newDom, oldVNode.el);
+    replaceVNode(oldVNode, newVNode);
+    oldVNode.el = newDom;
+    return newDom;
   }
 
-  if (!newVNode.componentOptions.isComponent) {
-    // 如果不是组件 vnode，先比较当前的 vnode，如果不一样的话直接替换，如果一样，递归比较 children
-    if (!isEqual) {
-      var _newDom = vNode2Dom(newVNode);
+  if (oldVNode.componentOptions.isComponent) {
+    // 如果父组件发生更新的话，子组件默认全部执行一次 updateComponent() 来 diff 一次
+    // TODO 后面优化，如果子组件的 props 属性中没有发生更新的情况，就跳过子组件的 diff 更新
+    var componentInstance = oldVNode.componentOptions.componentInstance;
 
-      replaceNode(_newDom, oldVNode.el);
-      replaceVNode(oldVNode, newVNode);
-      oldVNode.el = _newDom;
-    } else {
-      var newChildren = newVNode.children || [];
-      var oldChildren = oldVNode.children || [];
-      var maxLength = Math.max(newChildren.length, oldChildren.length);
-
-      for (var i = 0; i < maxLength; i++) {
-        var newChild = newChildren[i];
-        var oldChild = oldChildren[i];
-
-        if (!oldChild && newChild) {
-          // 增加新的子元素
-          var _newDom2 = vNode2Dom(newChild);
-
-          oldVNode.children.push(newChild);
-          oldVNode.el.appendChild(_newDom2);
-          continue;
-        }
-
-        if (!newChild && oldChild) {
-          //  删除之前的子元素
-          removeChild(oldVNode.el, oldChild.el);
-          oldChildren.splice(i, 1);
-          continue;
-        }
-
-        if (newChild && oldChild) {
-          diff(vm, oldChild, newChild);
-        }
-      }
+    if (componentInstance) {
+      return componentInstance.$watcher.update();
     }
 
-    return oldVNode.el;
-  } // TODO 组件的 diff
+    return vNode2Dom(oldVNode);
+  } else {
+    var newChildren = newVNode.children || [];
+    var oldChildren = oldVNode.children || [];
+    var maxLength = Math.max(newChildren.length, oldChildren.length);
 
+    for (var i = 0; i < maxLength; i++) {
+      var newChild = newChildren[i];
+      var oldChild = oldChildren[i];
+
+      if (!oldChild && newChild) {
+        // 增加新的子元素
+        var _newDom = vNode2Dom(newChild);
+
+        oldVNode.children.push(newChild);
+        oldVNode.el.appendChild(_newDom);
+        continue;
+      }
+
+      if (!newChild && oldChild) {
+        //  删除之前的子元素
+        removeChild(oldVNode.el, oldChild.el);
+        oldChildren.splice(i, 1);
+        continue;
+      }
+
+      if (newChild && oldChild) {
+        diff(vm, oldChild, newChild);
+      }
+    }
+  }
 } // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
 
 function vNode2Dom(vnode) {
@@ -10974,7 +10913,9 @@ function componentVNode2Dom(vnode) {
 
   componentInstance._mount();
 
-  vnode.el = componentInstance.$el;
+  vnode.el = componentInstance.$el; // 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
+
+  vnode.componentOptions.componentInstance = componentInstance;
   return componentInstance.$el;
 }
 function normalVNode2Dom(vnode) {
@@ -10983,7 +10924,6 @@ function normalVNode2Dom(vnode) {
   if (vnode.type === 3) {
     var _dom2 = createTextNode(vnode.data);
 
-    console.log('>>>> dom is', _dom2, vnode, vnode.parentEl);
     vnode.el = _dom2;
     return _dom2;
   }
@@ -11045,10 +10985,29 @@ function addEvent(vnode) {
 var queue = [];
 
 function runQueue() {
-  queue.forEach(function (watcher) {
-    watcher.callback();
+  queue.forEach(function (watcher, index) {
+    if (watcher) {
+      watcher.callback();
+    }
+
+    queue[index] = null;
+  }); // 这个地方有坑！
+  // 不能直接 queue = []，因为 watcher.callback 中间会执行该组件的 updateComponent，里面可能会执行子组件的 updateComponent
+  // 那么就会走到 queueWatcher(childWatcher)这个地方，相当于是遍历一个数组的时候，还往这个数组里面添加新的元素，关键 runQueue 的下一次执行遍历还是异步执行
+  // 此时如果将 queue 置为空 那么新添加的子元素的 watcher 就无法执行到了
+  // queue = [];
+
+  clearQueue();
+}
+
+function clearQueue() {
+  var data = [];
+  queue.forEach(function (item) {
+    if (item) {
+      data.push(item);
+    }
   });
-  queue = [];
+  queue = data;
 }
 
 function singlePush(array, item) {
@@ -11059,11 +11018,10 @@ function singlePush(array, item) {
   if (index < 0) {
     array.push(item);
   } // 先更新子组件再更新父组件，子组件的 id 大，放在前面，父组件的 id 小，放在后面
+  // array = array.sort((a, b) => {
+  //     return b.id - a.id;
+  // });
 
-
-  array = array.sort(function (a, b) {
-    return b.id - a.id;
-  });
 }
 
 function nextTick(fn) {
@@ -11298,7 +11256,6 @@ function lifecycleMixin(Vue) {
   };
 
   Vue.prototype._update = function (vnode) {
-    console.log('_update vNode is', vnode);
     var vm = this;
     var prevEl = vm.$el; // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 _render 函数里面
 
@@ -11323,6 +11280,82 @@ function lifecycleMixin(Vue) {
     //     vm.$parentEl.appendChild(dom);
     // }
     // vm.$el = dom;
+  };
+}
+;// CONCATENATED MODULE: ./src/core/vue/render.js
+
+
+
+ // 封装 createElement 函数
+
+function createTextVNode(text) {
+  return new vnode('text', this, {}, [], 3, text);
+}
+function render_createElement(tag, attrs, children) {
+  return new vnode(tag, this, attrs, children, 1, null);
+}
+function createListVNode(tag, dataKey, attrs, children) {
+  var _this = this;
+
+  var arr = this.$self[dataKey];
+
+  if (!arr) {
+    throw new Error(dataKey + ' does not exist on ' + this);
+  } // 这个地方有大坑
+  // 因为 render 函数中 _l 是这么写的
+  // ..._l(
+  //         'li',
+  //         'array',
+  //         {staticClass: '', staticStyle: '', events: {}, attrs: []},
+  //         [_t('{{name}}')]
+  // )
+  // 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
+  // 对于 children 的处理要 clone 创建，而不能直接赋值
+
+
+  return arr.map(function (item) {
+    return new vnode(tag, _this, attrs, cloneVNode(children), 1, null);
+  });
+}
+function createIfVNode(tag, dataKey, attrs, children) {
+  var flag = this.$self[dataKey];
+
+  if (flag) {
+    return new vnode(tag, this, attrs, children, 1, null);
+  }
+
+  return null;
+} // 梳理 vnode 父子关系
+
+function handleVNodeRelationship(vnode) {
+  var children = vnode.children || [];
+  children.forEach(function (item) {
+    item.$parent = vnode;
+    handleVNodeRelationship(item);
+  });
+  return vnode;
+}
+function renderMixin(Vue) {
+  Vue.prototype._c = render_createElement;
+  Vue.prototype._l = createListVNode;
+  Vue.prototype._t = createTextVNode;
+  Vue.prototype._f = createIfVNode;
+
+  Vue.prototype._render = function () {
+    var vm = this;
+    callHook(vm, 'beforeCreateVNode'); // $render 是一个 render 函数字符串
+
+    this.$render = genRenderFn(compile(this.template || '')); // debugger;
+
+    var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
+    // if (this.$vnode) {
+    //     debugger;
+    //     this.$oldVNode = this.$vnode;
+    // }
+
+    var vnode = fn.call(this);
+    this.$vnode = handleVNodeRelationship(vnode || {});
+    return this.$vnode;
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/index.js
@@ -11376,7 +11409,6 @@ window.Vue = vue;
 
 
 var content = "<div id=\"app\">\n    <div @click=\"handler\" :msg=\"msg\" value=\"hello\" style=\"color: red\" class=\"container\" v-for=\"arr\" v-if=\"flag\">\n        <input type=\"text\">\n        <p>hello</p>\n        <my-button :msg=\"msg\"></my-button>\n    </div>\n</div>"; // const ast = parse(content);
-// console.log('>>> ast', ast);
 // const renderFn = genRenderFn(ast.children[0]);
 // console.log(renderFn);
 // const fn = new Function(renderFn);
@@ -11432,7 +11464,6 @@ var vm = new entry({
       this.array.push(4);
     },
     changeMessage1: function changeMessage1() {
-      console.log('changeMessage1 触发更新');
       this.message1 = 'world!';
     },
     changeName: function changeName() {

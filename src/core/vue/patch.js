@@ -10,6 +10,7 @@ import {
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
 import {compareVNode, replaceVNode} from "./vnode";
+import component from "./global/component";
 
 function _patch(vm, oldVNode, newVNode) {
 	if (!oldVNode) {
@@ -40,6 +41,15 @@ export function patch(vm, oldVNode, newVNode) {
 
 }
 
+/**
+ * diff
+ * oldVNode !== newVNode
+ * vnode2dom(newVNode) 然后直接替换旧的 dom
+ * oldVNode = newVNode
+ * 1. 如果是组件 vnode，执行 oldVNode 的 updateComponent 逻辑
+ * 2. 如果不是组件 vnode，执行 children 的递归遍历
+ * */
+
 export function diff(vm, oldVNode, newVNode) {
 	// 普通 text 元素不一样 vnode2dom 然后替换
 	// 普通其他元素不一样，vnode2dom 然后替换
@@ -47,52 +57,48 @@ export function diff(vm, oldVNode, newVNode) {
 	// 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
 	// 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
 	const isEqual = compareVNode(oldVNode, newVNode);
-	if (newVNode.tag === 'text') {
-		if (!isEqual) {
-			const newDom = vNode2Dom(newVNode);
-			replaceNode(newDom, oldVNode.el);
-			replaceVNode(oldVNode, newVNode);
-			oldVNode.el = newDom;
-			return newDom;
-		}
+
+	if (!isEqual) {
+		const newDom = vNode2Dom(newVNode);
+		replaceNode(newDom, oldVNode.el);
+		replaceVNode(oldVNode, newVNode);
+		oldVNode.el = newDom;
+		return newDom;
 	}
 
-	if (!newVNode.componentOptions.isComponent) {
-		// 如果不是组件 vnode，先比较当前的 vnode，如果不一样的话直接替换，如果一样，递归比较 children
-		if (!isEqual) {
-			const newDom = vNode2Dom(newVNode);
-			replaceNode(newDom, oldVNode.el);
-			replaceVNode(oldVNode, newVNode);
-			oldVNode.el = newDom;
-		} else {
-			const newChildren = newVNode.children || [];
-			const oldChildren = oldVNode.children || [];
-			const maxLength = Math.max(newChildren.length, oldChildren.length);
-			for (let i = 0; i < maxLength; i++) {
-				const newChild = newChildren[i];
-				const oldChild = oldChildren[i];
-				if (!oldChild && newChild) { // 增加新的子元素
-					const newDom = vNode2Dom(newChild);
-					oldVNode.children.push(newChild);
-					oldVNode.el.appendChild(newDom);
-					continue;
-				}
+	if (oldVNode.componentOptions.isComponent) {
+		// 如果父组件发生更新的话，子组件默认全部执行一次 updateComponent() 来 diff 一次
+		// TODO 后面优化，如果子组件的 props 属性中没有发生更新的情况，就跳过子组件的 diff 更新
+		const { componentInstance } = oldVNode.componentOptions;
+		if (componentInstance) {
+			return componentInstance.$watcher.update();
+		}
+		return vNode2Dom(oldVNode);
+	} else {
+		const newChildren = newVNode.children || [];
+		const oldChildren = oldVNode.children || [];
+		const maxLength = Math.max(newChildren.length, oldChildren.length);
+		for (let i = 0; i < maxLength; i++) {
+			const newChild = newChildren[i];
+			const oldChild = oldChildren[i];
+			if (!oldChild && newChild) { // 增加新的子元素
+				const newDom = vNode2Dom(newChild);
+				oldVNode.children.push(newChild);
+				oldVNode.el.appendChild(newDom);
+				continue;
+			}
 
-				if (!newChild && oldChild) { //  删除之前的子元素
-					removeChild(oldVNode.el, oldChild.el);
-					oldChildren.splice(i, 1);
-					continue;
-				}
+			if (!newChild && oldChild) { //  删除之前的子元素
+				removeChild(oldVNode.el, oldChild.el);
+				oldChildren.splice(i, 1);
+				continue;
+			}
 
-				if (newChild && oldChild) {
-					diff(vm, oldChild, newChild);
-				}
+			if (newChild && oldChild) {
+				diff(vm, oldChild, newChild);
 			}
 		}
-		return oldVNode.el;
 	}
-
-	// TODO 组件的 diff
 }
 
 // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
@@ -116,6 +122,8 @@ export function componentVNode2Dom(vnode) {
 	componentInstance.$parent = vnode.vm;
 	componentInstance._mount();
 	vnode.el = componentInstance.$el;
+	// 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
+	vnode.componentOptions.componentInstance = componentInstance;
 	return componentInstance.$el;
 }
 

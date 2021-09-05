@@ -6,5 +6,6 @@ export const LifeCycleHooks = [
     'beforeMount',
     'mounted',
     'beforeDestroy',
-    'destroyed'
+    'destroyed',
+    'beforeCreateVNode'
 ]

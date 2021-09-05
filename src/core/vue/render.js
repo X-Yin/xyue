@@ -1,6 +1,7 @@
 import parse from "../compile";
 import VNode, {cloneVNode} from './vnode';
 import { genRenderFn } from "../render";
+import {callHook} from "./lifecycle";
 // 封装 createElement 函数
 
 export function createTextVNode(text) {
@@ -49,14 +50,17 @@ export function handleVNodeRelationship(vnode) {
     return vnode;
 }
 
-export function renderMixin(vm) {
-    vm.prototype._c = createElement;
-    vm.prototype._l = createListVNode;
-    vm.prototype._t = createTextVNode;
-    vm.prototype._f = createIfVNode;
-    vm.prototype._render = function() {
+export function renderMixin(Vue) {
+    Vue.prototype._c = createElement;
+    Vue.prototype._l = createListVNode;
+    Vue.prototype._t = createTextVNode;
+    Vue.prototype._f = createIfVNode;
+    Vue.prototype._render = function() {
+        const vm = this;
+        callHook(vm, 'beforeCreateVNode');
         // $render 是一个 render 函数字符串
         this.$render = genRenderFn(parse(this.template || ''));
+        // debugger;
         const fn = new Function(this.$render);
         // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
         // if (this.$vnode) {

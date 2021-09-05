@@ -43,8 +43,13 @@ export function beforeUpdate() {
     // handleProps(this);
 }
 
+export function beforeCreateVNode() {
+    handleProps(this);
+}
+
 export default {
     created,
     beforeMount,
-    beforeUpdate
+    beforeUpdate,
+    beforeCreateVNode
 }

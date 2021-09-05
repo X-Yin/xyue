@@ -54,7 +54,8 @@ class VNode {
             if (normalizeTagName(componentKey) === normalizeTagName(this.tag)) {
                 return {
                     isComponent: true,
-                    options: components[componentKey]
+                    options: components[componentKey],
+                    componentInstance: null // 这个后面在第一次 patch 的时候会赋值，此后 update 的时候，就可以使用该组件实例进行 $watcher.update() 的渲染了
                 };
             }
         }
