@@ -1,11 +1,15 @@
 
 export const LifeCycleHooks = [
+    'beforeCreate',
     'created',
-    'beforeUpdate',
-    'updated',
     'beforeMount',
     'mounted',
+    'beforeUpdate',
+    'beforeVNodeCreate',
+    'vNodeCreated',
+    'beforeDomCreate',
+    'domCreated',
+    'updated',
     'beforeDestroy',
-    'destroyed',
-    'beforeCreateVNode'
+    'destroyed'
 ]

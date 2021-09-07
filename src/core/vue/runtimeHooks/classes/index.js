@@ -4,6 +4,7 @@ function created() {
 
 }
 
+// 将 vnode.attrs 中的动态的 :class 转换为可以被直接赋值给 className 的字符串，时机要放在 $vnode 创建之后也就是 _render 之后
 function handleVNodeClass(vm, vnode) {
     if (!vnode) {
         return;

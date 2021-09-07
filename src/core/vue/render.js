@@ -57,7 +57,7 @@ export function renderMixin(Vue) {
     Vue.prototype._f = createIfVNode;
     Vue.prototype._render = function() {
         const vm = this;
-        callHook(vm, 'beforeCreateVNode');
+        callHook(vm, 'beforeVNodeCreate');
         // $render 是一个 render 函数字符串
         this.$render = genRenderFn(parse(this.template || ''));
         // debugger;

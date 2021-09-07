@@ -9688,7 +9688,7 @@ function proxyMixin(vm) {
   });
 }
 ;// CONCATENATED MODULE: ./src/core/constants/index.js
-var LifeCycleHooks = ['created', 'beforeUpdate', 'updated', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed', 'beforeCreateVNode'];
+var LifeCycleHooks = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'beforeVNodeCreate', 'vNodeCreated', 'beforeDomCreate', 'domCreated', 'updated', 'beforeDestroy', 'destroyed'];
 ;// CONCATENATED MODULE: ./src/core/utils/dom.js
 function appendChild(parentNode, childNode) {
   return parentNode.appendChild(childNode);
@@ -9787,7 +9787,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-function created() {}
+function created() {} // 将 vnode.attrs 中的动态的 :class 转换为可以被直接赋值给 className 的字符串，时机要放在 $vnode 创建之后也就是 _render 之后
+
 
 function handleVNodeClass(vm, vnode) {
   if (!vnode) {
@@ -9926,7 +9927,7 @@ function style_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function style_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { style_typeof = function _typeof(obj) { return typeof obj; }; } else { style_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return style_typeof(obj); }
 
-
+ // 将 vnode.attrs 中的 :style 转换为可以被直接赋值给 dom.style.cssText 的字符串, 时机要放在 $vnode 创建之后也就是 _render 之后
 
 function handleVNodeStyle(vm, vnode) {
   if (!vnode) {
@@ -10040,6 +10041,7 @@ function props_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "f
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+// 将父组件中的值更新到子组件的 $props 对象中，时机要放在创建 vnode 之前
 function handleProps(vm) {
   // 将 parent 的值和 props 中的值一一对应起来
   // 然后把 props 中的这些 key 值赋值到 vm 实例中去
@@ -10081,21 +10083,20 @@ function handleProps(vm) {
   }
 }
 
-function props_created() {
-  handleProps(this);
+function props_created() {// handleProps(this);
 }
 function props_beforeMount() {// handleProps(this)
 }
 function props_beforeUpdate() {// handleProps(this);
 }
-function beforeCreateVNode() {
+function beforeVNodeCreate() {
   handleProps(this);
 }
 /* harmony default export */ const props = ({
   created: props_created,
   beforeMount: props_beforeMount,
   beforeUpdate: props_beforeUpdate,
-  beforeCreateVNode: beforeCreateVNode
+  beforeVNodeCreate: beforeVNodeCreate
 });
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
 function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
@@ -11361,7 +11362,7 @@ function renderMixin(Vue) {
 
   Vue.prototype._render = function () {
     var vm = this;
-    callHook(vm, 'beforeCreateVNode'); // $render 是一个 render 函数字符串
+    callHook(vm, 'beforeVNodeCreate'); // $render 是一个 render 函数字符串
 
     this.$render = genRenderFn(compile(this.template || '')); // debugger;
 

@@ -1,5 +1,6 @@
 import {handleJsExpression} from "../../../utils";
 
+// 将 vnode.attrs 中的 :style 转换为可以被直接赋值给 dom.style.cssText 的字符串, 时机要放在 $vnode 创建之后也就是 _render 之后
 function handleVNodeStyle(vm, vnode) {
     if (!vnode) {
         return;

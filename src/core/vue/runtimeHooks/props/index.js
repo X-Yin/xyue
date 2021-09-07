@@ -1,4 +1,5 @@
 
+// 将父组件中的值更新到子组件的 $props 对象中，时机要放在创建 vnode 之前
 function handleProps(vm) {
     // 将 parent 的值和 props 中的值一一对应起来
     // 然后把 props 中的这些 key 值赋值到 vm 实例中去
@@ -32,7 +33,7 @@ function handleProps(vm) {
 }
 
 export function created() {
-    handleProps(this);
+    // handleProps(this);
 }
 
 export function beforeMount() {
@@ -43,7 +44,7 @@ export function beforeUpdate() {
     // handleProps(this);
 }
 
-export function beforeCreateVNode() {
+export function beforeVNodeCreate() {
     handleProps(this);
 }
 
@@ -51,5 +52,5 @@ export default {
     created,
     beforeMount,
     beforeUpdate,
-    beforeCreateVNode
+    beforeVNodeCreate
 }
