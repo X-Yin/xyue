@@ -69,6 +69,7 @@ export function renderMixin(Vue) {
         // }
         const vnode = fn.call(this);
         this.$vnode = handleVNodeRelationship(vnode || {});
+        callHook('vm', 'vNodeCreated');
         return this.$vnode;
     }
 }

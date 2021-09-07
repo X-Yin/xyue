@@ -11,6 +11,7 @@ import {
 import { NativeDomEventKeyList } from "../config";
 import {compareVNode, replaceVNode} from "./vnode";
 import component from "./global/component";
+import {callHook} from "./lifecycle";
 
 function _patch(vm, oldVNode, newVNode) {
 	if (!oldVNode) {
@@ -34,9 +35,10 @@ export function patch(vm, oldVNode, newVNode) {
 		}
 		vm.$el = dom;
 		vm.isMount = true;
+		callHook(vm, 'mounted');
 	} else { // 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
 		const dom = _patch(vm, oldVNode, newVNode);
-
+		callHook(vm, 'updated');
 	}
 
 }
@@ -117,17 +119,23 @@ export function componentVNode2Dom(vnode) {
 	const options = vnode.componentOptions.options;
 	options.parentEl = vnode.$parent.el;
 	options.parentVnode = vnode;
+	options.parentVm = vnode.vm;
 	const Ctor = vnode.vm.Ctor;
 	const componentInstance = new Ctor(options);
 	componentInstance.$parent = vnode.vm;
 	componentInstance._mount();
 	vnode.el = componentInstance.$el;
+
+	// 处理组件上面的事件
+	addEvent(vnode);
+
 	// 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
 	vnode.componentOptions.componentInstance = componentInstance;
 	return componentInstance.$el;
 }
 
 export function normalVNode2Dom(vnode) {
+
 	const tag = vnode.tag;
 
 	if (vnode.type === 3) {
@@ -179,6 +187,10 @@ export function addEvent(vnode) {
 			const cb = handleJsExpression(vnode.vm.$self, value);
 			// TODO addEventListeners 的 options
 			dom.addEventListener(name, cb.bind(vnode.vm.$self));
+		} else { // 不是浏览器的原生事件，自定义事件，可能是用于父子组件通信
+			// name: customEvent value: clickHandler
+			const cb = handleJsExpression(vnode.vm.$self, value);
+			vnode.vm.$on(name, cb.bind(vnode.vm.$self));
 		}
 	});
 }

@@ -1,5 +1,6 @@
 import { queueWatcher } from "./scheduler";
 import {popDepTargetQueue, pushDepTargetQueue} from "./dep";
+import {callHook} from "../lifecycle";
 
 let id = 0;
 
@@ -14,6 +15,7 @@ class Watcher {
     }
 
     update() {
+        callHook(this.vm, 'beforeUpdate');
         queueWatcher(this);
     }
 

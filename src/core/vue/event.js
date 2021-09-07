@@ -1,9 +1,20 @@
 
 // 用于创建每个组件的 eventBus
-export function eventMixin(vm) {
-    vm.prototype._events = {};
+import {normalizeTagName} from "../utils";
 
-    vm.prototype.$on = function(eventName, cb) {
+export function eventMixin(Vue) {
+    Vue.prototype._events = {};
+    
+    Vue.prototype.emit = function(eventName, ...args) {
+        // 这个 emit 是向父组件通信的时候使用，所以这里触发的是父组件实例的 $emit
+        const vm = this;
+        if (vm.$parentVm) {
+            vm.$parentVm.$emit(eventName, ...args);
+        }
+    }
+
+    Vue.prototype.$on = function(eventName, cb) {
+        eventName = normalizeTagName(eventName);
         if (!eventName) {
             throw new Error('_on Unexpected eventName params!');
         }
@@ -17,10 +28,11 @@ export function eventMixin(vm) {
         }
     }
 
-    vm.prototype.$emit = function(eventName, ...args) {
+    Vue.prototype.$emit = function(eventName, ...args) {
         if (!eventName) {
             throw new Error('_on Unexpected eventName params!');
         }
+        eventName = normalizeTagName(eventName);
         if (Array.isArray(this._events[eventName])) {
             this._events[eventName].forEach(cb => {
                 cb(...args);
@@ -28,7 +40,7 @@ export function eventMixin(vm) {
         }
     }
 
-    vm.prototype.$off = function(eventName, cb) {
+    Vue.prototype.$off = function(eventName, cb) {
         if (!eventName) {
             throw new Error('_on Unexpected eventName params!');
         }

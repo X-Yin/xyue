@@ -28,6 +28,7 @@ export function initMixin(vm) {
         this.$parentVnode = options.parentVnode || {};
         this.$parentEl = options.parentEl || {};
         this.$self = null;
+        this.$parentVm = options.parentVm;
         this.$render = '';
         this.$watcher = null;
         this.$props = {}; // $props 是 vm 实例内部存储数据结构对象

@@ -10178,6 +10178,7 @@ function initMixin(vm) {
     this.$parentVnode = options.parentVnode || {};
     this.$parentEl = options.parentEl || {};
     this.$self = null;
+    this.$parentVm = options.parentVm;
     this.$render = '';
     this.$watcher = null;
     this.$props = {}; // $props 是 vm 实例内部存储数据结构对象
@@ -10212,10 +10213,28 @@ function initMixin(vm) {
 }
 ;// CONCATENATED MODULE: ./src/core/vue/event.js
 // 用于创建每个组件的 eventBus
-function eventMixin(vm) {
-  vm.prototype._events = {};
 
-  vm.prototype.$on = function (eventName, cb) {
+function eventMixin(Vue) {
+  Vue.prototype._events = {};
+
+  Vue.prototype.emit = function (eventName) {
+    // 这个 emit 是向父组件通信的时候使用，所以这里触发的是父组件实例的 $emit
+    var vm = this;
+
+    if (vm.$parentVm) {
+      var _vm$$parentVm;
+
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      (_vm$$parentVm = vm.$parentVm).$emit.apply(_vm$$parentVm, [eventName].concat(args));
+    }
+  };
+
+  Vue.prototype.$on = function (eventName, cb) {
+    eventName = normalizeTagName(eventName);
+
     if (!eventName) {
       throw new Error('_on Unexpected eventName params!');
     }
@@ -10231,14 +10250,16 @@ function eventMixin(vm) {
     }
   };
 
-  vm.prototype.$emit = function (eventName) {
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+  Vue.prototype.$emit = function (eventName) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
     }
 
     if (!eventName) {
       throw new Error('_on Unexpected eventName params!');
     }
+
+    eventName = normalizeTagName(eventName);
 
     if (Array.isArray(this._events[eventName])) {
       this._events[eventName].forEach(function (cb) {
@@ -10247,7 +10268,7 @@ function eventMixin(vm) {
     }
   };
 
-  vm.prototype.$off = function (eventName, cb) {
+  Vue.prototype.$off = function (eventName, cb) {
     if (!eventName) {
       throw new Error('_on Unexpected eventName params!');
     }
@@ -10808,6 +10829,7 @@ function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 function _patch(vm, oldVNode, newVNode) {
   if (!oldVNode) {
     // const childDom = vNode2Dom(oldVNode);
@@ -10837,9 +10859,12 @@ function patch(vm, oldVNode, newVNode) {
 
     vm.$el = dom;
     vm.isMount = true;
+    callHook(vm, 'mounted');
   } else {
     // 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
     var _dom = _patch(vm, oldVNode, newVNode);
+
+    callHook(vm, 'updated');
   }
 }
 /**
@@ -10926,13 +10951,16 @@ function componentVNode2Dom(vnode) {
   var options = vnode.componentOptions.options;
   options.parentEl = vnode.$parent.el;
   options.parentVnode = vnode;
+  options.parentVm = vnode.vm;
   var Ctor = vnode.vm.Ctor;
   var componentInstance = new Ctor(options);
   componentInstance.$parent = vnode.vm;
 
   componentInstance._mount();
 
-  vnode.el = componentInstance.$el; // 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
+  vnode.el = componentInstance.$el; // 处理组件上面的事件
+
+  addEvent(vnode); // 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
 
   vnode.componentOptions.componentInstance = componentInstance;
   return componentInstance.$el;
@@ -10997,6 +11025,12 @@ function addEvent(vnode) {
       var cb = handleJsExpression(vnode.vm.$self, value); // TODO addEventListeners 的 options
 
       dom.addEventListener(name, cb.bind(vnode.vm.$self));
+    } else {
+      // 不是浏览器的原生事件，自定义事件，可能是用于父子组件通信
+      // name: customEvent value: clickHandler
+      var _cb = handleJsExpression(vnode.vm.$self, value);
+
+      vnode.vm.$on(name, _cb.bind(vnode.vm.$self));
     }
   });
 }
@@ -11115,6 +11149,7 @@ function watcher_defineProperty(obj, key, value) { if (key in obj) { Object.defi
 
 
 
+
 var watcher_id = 0;
 
 var Watcher = /*#__PURE__*/function () {
@@ -11135,6 +11170,7 @@ var Watcher = /*#__PURE__*/function () {
   watcher_createClass(Watcher, [{
     key: "update",
     value: function update() {
+      callHook(this.vm, 'beforeUpdate');
       queueWatcher(this);
     }
   }, {
@@ -11284,21 +11320,8 @@ function lifecycleMixin(Vue) {
       callHook(vm, 'beforeMount');
     }
 
-    vnode.parentEl = vm.$el; // const el = patch(vnode);
-    // if (!(prevEl instanceof HTMLElement)) {
-    //     vm.$el = el;
-    // }
-    // patch 只返回当前组件 vnode 生成的 dom，至于后面的 dom 要如何挂载到页面上，还是在这个 _update 里面处理
-    // 如果之前有 $el 比如 App 组件，那就 replaceChild
-    // 如果之前没有 $el 比如 MyButton 组件，那就赋值 vm.$el = patch(vnode)，并且 vm.$parentEl.appendChild(this.$el);
-    // const dom = patch(vnode);
-
-    patch(vm, vm.$oldVNode, vnode); // if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
-    //     prevEl.parentNode.replaceChild(dom, prevEl);
-    // } else { // MyButton 组件，并不是真实存在于页面上
-    //     vm.$parentEl.appendChild(dom);
-    // }
-    // vm.$el = dom;
+    vnode.parentEl = vm.$el;
+    patch(vm, vm.$oldVNode, vnode);
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
@@ -11374,6 +11397,7 @@ function renderMixin(Vue) {
 
     var vnode = fn.call(this);
     this.$vnode = handleVNodeRelationship(vnode || {});
+    callHook('vm', 'vNodeCreated');
     return this.$vnode;
   };
 }
@@ -11437,7 +11461,7 @@ var content = "<div id=\"app\">\n    <div @click=\"handler\" :msg=\"msg\" value=
 
 
 entry.component('my-button', {
-  template: "<div class=\"my-button\"><h1 @click=\"clickHandler\">my-button  {{name}}-{{message}}</h1></div>",
+  template: "<div class=\"my-button\"><h1 @click=\"changeMessage\">my-button  {{name}}-{{message}}</h1></div>",
   data: function data() {
     return {
       name: 'lucy'
@@ -11448,6 +11472,10 @@ entry.component('my-button', {
     clickHandler: function clickHandler() {
       // console.log('my-button click', this.name);
       this.name = 'hello';
+    },
+    changeMessage: function changeMessage() {
+      console.log('this.message is', this.message);
+      this.emit('customEvent', this.message + ' base');
     }
   }
 });
@@ -11470,6 +11498,9 @@ var vm = new entry({
     kiss: 'kissa'
   },
   methods: {
+    updateMessage1: function updateMessage1(msg) {
+      this.message1 = msg;
+    },
     clickHandler: function clickHandler() {
       // console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
       this.changeMessage1();
