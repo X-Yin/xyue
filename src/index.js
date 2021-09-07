@@ -58,13 +58,19 @@ const vm = new Vue({
     },
     methods: {
         clickHandler(...args) {
-            console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
+            // console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
+            this.changeMessage1();
+            this.changeMessage2();
+            this.changeName();
         },
         changeArr() {
             this.array.push(4);
         },
         changeMessage1() {
             this.message1 = 'world!';
+        },
+        changeMessage2() {
+            this.message2 = 'world2!';
         },
         changeName() {
             this.name = this.name + ' hello';

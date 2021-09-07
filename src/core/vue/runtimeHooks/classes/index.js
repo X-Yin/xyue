@@ -49,6 +49,13 @@ function handleVNodeClass(vm, vnode) {
         }
     })
     vnode.class = customClass.trim();
+    // 将 vnode.attrs 里面的 :class 给去掉，避免重复赋值，vnode.attrs 的格式 [{name: ':class', value: '["container", flag ? "a" : "b"]'}]
+    const index = vnode.attrs.findIndex(item => item.name === ':class');
+    if (index > -1) {
+        vnode.attrs.splice(index, 1);
+    }
+
+    // 递归遍历 children，实现 class 的 normalize 过程
     if (Array.isArray(vnode.children)) {
         vnode.children.forEach(child => {
             handleVNodeClass(vm, child);

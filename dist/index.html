@@ -8,8 +8,18 @@
     <title>title</title>
 </head>
 <body>
-<div id="app1">
+<div id="app2">
+    <p @click="changeArr">changeArr</p>
+    <li v-for="array">hello</li>
+    <p @click="changeMessage1">changeMessage1</p>
+</div>
+
+<div id="app3">
+    <h3 @click="changeMessage1">changeMessage1</h3><p>{{message1}}</p><my-button :message="message1"></my-button></div>
+
+<div id="app">
     <p @click="clickHandler"
+       data-index="45"
        style="font-size: 12px"
        class="base"
        :style="{color: 'red', background: flag ? 'blue' : 'orange'}"
@@ -19,13 +29,6 @@
     <my-button :message="message2"></my-button>
     <p>what!{{name}}</p>
 </div>
-<div id="app2">
-    <p @click="changeArr">changeArr</p>
-    <li v-for="array">hello</li>
-    <p @click="changeMessage1">changeMessage1</p>
-</div>
-
-<div id="app"><h3 @click="changeMessage1">changeMessage1</h3><p>{{message1}}</p><my-button :message="message1"></my-button></div>
 <script>
     const fn = new Function(`with(this){return 123}`);
     const obj = {

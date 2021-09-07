@@ -9844,7 +9844,16 @@ function handleVNodeClass(vm, vnode) {
       console.error('handleVNodeClass error', e);
     }
   });
-  vnode["class"] = customClass.trim();
+  vnode["class"] = customClass.trim(); // 将 vnode.attrs 里面的 :class 给去掉，避免重复赋值，vnode.attrs 的格式 [{name: ':class', value: '["container", flag ? "a" : "b"]'}]
+
+  var index = vnode.attrs.findIndex(function (item) {
+    return item.name === ':class';
+  });
+
+  if (index > -1) {
+    vnode.attrs.splice(index, 1);
+  } // 递归遍历 children，实现 class 的 normalize 过程
+
 
   if (Array.isArray(vnode.children)) {
     vnode.children.forEach(function (child) {
@@ -9969,7 +9978,16 @@ function handleVNodeStyle(vm, vnode) {
       console.error('handleVNodeStyle error', e);
     }
   });
-  vnode.style = customStyle.trim();
+  vnode.style = customStyle.trim(); // 还需要将 vnode.attrs 里面 :style 这个属性去掉，避免重复赋值, vnode.attrs = [{name: ':style', value: '{color: red}'}]
+
+  var index = vnode.attrs.findIndex(function (item) {
+    return item.name === ':style';
+  });
+
+  if (index > -1) {
+    vnode.attrs.splice(index, 1);
+  } // 递归遍历 children 实现 style 的 normalize 过程
+
 
   if (Array.isArray(vnode.children)) {
     vnode.children.forEach(function (child) {
@@ -11452,19 +11470,19 @@ var vm = new entry({
   },
   methods: {
     clickHandler: function clickHandler() {
-      var _console;
-
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      (_console = console).log.apply(_console, ['clickHandler'].concat(args, [this.name, this.flag, this.kissa]));
+      // console.log('clickHandler', ...args, this.name, this.flag, this.kissa);
+      this.changeMessage1();
+      this.changeMessage2();
+      this.changeName();
     },
     changeArr: function changeArr() {
       this.array.push(4);
     },
     changeMessage1: function changeMessage1() {
       this.message1 = 'world!';
+    },
+    changeMessage2: function changeMessage2() {
+      this.message2 = 'world2!';
     },
     changeName: function changeName() {
       this.name = this.name + ' hello';

@@ -38,6 +38,14 @@ function handleVNodeStyle(vm, vnode) {
         }
     })
     vnode.style = customStyle.trim();
+
+    // 还需要将 vnode.attrs 里面 :style 这个属性去掉，避免重复赋值, vnode.attrs = [{name: ':style', value: '{color: red}'}]
+    const index = vnode.attrs.findIndex(item => item.name === ':style');
+    if (index > -1) {
+        vnode.attrs.splice(index, 1);
+    }
+
+    // 递归遍历 children 实现 style 的 normalize 过程
     if (Array.isArray(vnode.children)) {
         vnode.children.forEach(child => {
             handleVNodeStyle(vm, child);
