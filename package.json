@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config config/webpack.config.js --watch"
+    "build:vue": "webpack --config config/webpack.config.js --watch",
+    "build:demo": "webpack --config demo/webpack.config.js --watch",
+    "dev:demo": "cd demo/dist & http-server -p 3004 -c-1 --cors",
+    "dev": "npm-run-all --parallel build:vue build:demo dev:demo"
   },
   "dependencies": {
     "@babel/core": "^7.15.0",
