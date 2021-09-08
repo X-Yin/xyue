@@ -26,7 +26,7 @@
        :class="['container', flag ? 'active' : '']">1234</p>
     <li v-for="array">hello</li>
     <my-button @customEvent="updateMessage1" :message="message1"></my-button>
-    <my-button :message="message2"></my-button>
+    <my-button :message="message1"></my-button>
     <p>what!{{name}}</p>
 </div>
 <script>
