@@ -20,6 +20,8 @@ function loader(source) {
         return select(incomingQuery, loaderContext, source, sourceMap);
     }
 
+    const vuePath = `${path.resolve(__dirname, '../../dist/vue.js')}`
+
     const scriptReq = `${resourcePath}?type=script`;
     const styleReq = `${resourcePath}?type=style`;
     const templateReq = `${resourcePath}?type=template`;

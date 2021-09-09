@@ -9543,7 +9543,7 @@ function runtimeHooks_slicedToArray(arr,i){return runtimeHooks_arrayWithHoles(ar
  * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */var installDefaultHooks=[props,classes,style,events];function installHook(vm){var customHooks={};LifeCycleHooks.forEach(function(hook){if(vm.options[hook]){customHooks[hook]=vm.options[hook];}});var prepareInstallHooks=[].concat(installDefaultHooks,[customHooks]);LifeCycleHooks.forEach(function(lifecycleHook){if(!Array.isArray(vm[lifecycleHook])){vm[lifecycleHook]=[];}});prepareInstallHooks.forEach(function(hooks){Object.entries(hooks).forEach(function(_ref){var _ref2=runtimeHooks_slicedToArray(_ref,2),hookName=_ref2[0],callback=_ref2[1];vm[hookName].push(callback.bind(vm.$self));});});};// CONCATENATED MODULE: ./src/core/vue/init.js
 var id=0;function normalizeData(data){if(typeof data==='function'){return data();}return data;}var defaultLifeCycleCb=function defaultLifeCycleCb(){};function initMixin(vm){vm.prototype._init=function(options){// 1. 初始化参数
-this.$template=options.template||'';if(typeof options.el==='string'){this.$el=document.querySelector(options.el||'');}else if(options.el instanceof HTMLElement||options.el instanceof DocumentFragment){this.$el=options.el;}this.$id=++id;this.$watch=options.watch||{};this.$vnode=null;this.$oldVNode=null;this.$parentVnode=options.parentVnode||{};this.$parentEl=options.parentEl||{};this.$self=null;this.$parentVm=options.parentVm;this.$render='';this.$watcher=null;this.$props={};// $props 是 vm 实例内部存储数据结构对象
+this.$template=options.template||'';if(typeof options.el==='string'){this.$el=document.querySelector(options.el||'');}else if(options.el instanceof HTMLElement||options.el instanceof DocumentFragment){this.$el=options.el;}else{this.$el=options.el;}this.$id=++id;this.$watch=options.watch||{};this.$vnode=null;this.$oldVNode=null;this.$parentVnode=options.parentVnode||{};this.$parentEl=options.parentEl||{};this.$self=null;this.$parentVm=options.parentVm;this.$render='';this.$watcher=null;this.$props={};// $props 是 vm 实例内部存储数据结构对象
 this.data=normalizeData(options.data||{});this.methods=options.methods||{};this.props=options.props||[];this.options=options;this.computed=options.computed||{};if(options.template){this.template=options.template;}else if(this.$el){this.template=this.$el.outerHTML;this.$el.innerHTML='';}else{this.template='';}// this.template = options.template || (this.$el ? this.$el.outerHTML : '');
 this.components=options.components||{};this.isMount=false;this.Ctor=this.constructor;// 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
 // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
@@ -9728,36 +9728,6 @@ function register(vm){component(vm);return vm;}window.Vue=vue;/* harmony default
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
@@ -9765,7 +9735,6 @@ var __webpack_exports__ = {};
 
 // EXTERNAL MODULE: ./dist/vue.js
 var vue = __webpack_require__(110);
-var vue_default = /*#__PURE__*/__webpack_require__.n(vue);
 ;// CONCATENATED MODULE: ./demo/src/App.vue?type=template
 /* harmony default export */ const Apptype_template = ({"content":"\n  <div class=\"app\">\n    <h1>App</h1>\n  </div>\n"});
 ;// CONCATENATED MODULE: ./demo/src/App.vue?type=style
@@ -9800,19 +9769,23 @@ var vue_default = /*#__PURE__*/__webpack_require__.n(vue);
                 /* harmony default export */ const App = (normalizeComponent({template: Apptype_template, style: Apptype_style, options: Apptype_script}));
     
 ;// CONCATENATED MODULE: ./demo/main.js
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+// import Vue from '../dist/vue.js';
 
 
-
-console.log((vue_default()));
-console.log(App);
-var vm = new (vue_default())(_objectSpread(_objectSpread({}, App), {}, {
-  el: '#app'
-}));
+var vm = new window.Vue({
+  el: '#app',
+  components: {
+    App: App
+  },
+  template: "<App></App>",
+  data: function data() {
+    return {
+      name: 'jack'
+    };
+  }
+});
+console.log(vm);
+vm.mount();
 })();
 
 /******/ })()

@@ -20,6 +20,8 @@ export function initMixin(vm) {
             this.$el = document.querySelector(options.el || '');
         } else if(options.el instanceof HTMLElement || options.el instanceof DocumentFragment) {
             this.$el = options.el;
+        } else {
+            this.$el = options.el;
         }
         this.$id = ++id;
         this.$watch = options.watch || {};
