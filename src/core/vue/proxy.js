@@ -15,7 +15,7 @@ export function proxyMixin(vm) {
             const keys = ['methods', 'computed', 'data', '$props'];
             for (let i = 0; i < keys.length; i++) {
                 const k = keys[i];
-                if (target[k][key]) {
+                if (typeof target[k][key] !== 'undefined') {
                     return target[k][key];
                 }
             }

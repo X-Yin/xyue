@@ -55,7 +55,7 @@ function genFor(ast) {
     return `..._l(
         '${tag}',
         '${vFor}', 
-        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: ${JSON.stringify(staticClass)}, staticStyle: ${JSON.stringify(staticStyle)}, events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }
 
@@ -68,7 +68,7 @@ function genIf(ast) {
     return `_f(
         '${tag}',
         '${vIf}', 
-        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: ${JSON.stringify(staticClass)}, staticStyle: ${JSON.stringify(staticStyle)}, events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }
 
@@ -80,6 +80,6 @@ function genEle(ast) {
     });
     return `_c(
         '${tag}',
-        {staticClass: '${staticClass}', staticStyle: '${staticStyle}', events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
+        {staticClass: ${JSON.stringify(staticClass)}, staticStyle: ${JSON.stringify(staticStyle)}, events: ${JSON.stringify(events || [])}, attrs: ${JSON.stringify(attrs || {})}},
         [${genChildren(children)}])`;
 }

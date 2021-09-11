@@ -175,7 +175,7 @@ function parse(template, options) {
 
                 const commentRes = template.match(commentReg);
                 if (commentRes) {
-                    advance(endTagRes[0].length);
+                    advance(commentRes[0].length);
                 }
 
             } else {

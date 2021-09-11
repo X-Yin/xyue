@@ -59,8 +59,8 @@ export function renderMixin(Vue) {
         const vm = this;
         callHook(vm, 'beforeVNodeCreate');
         // $render 是一个 render 函数字符串
-        this.$render = genRenderFn(parse(this.template || ''));
-        // debugger;
+        const ast = parse(this.template || '');
+        this.$render = genRenderFn(ast);
         const fn = new Function(this.$render);
         // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
         // if (this.$vnode) {

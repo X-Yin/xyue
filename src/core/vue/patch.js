@@ -29,7 +29,9 @@ export function patch(vm, oldVNode, newVNode) {
 		const prevEl = vm.$el;
 		vm.$oldVNode = newVNode;
 		if (prevEl) { // App 组件，el 是 div#app 真实存在于页面上
-			prevEl.parentNode.replaceChild(dom, prevEl);
+			// prevEl.parentNode.replaceChild(dom, prevEl);
+			prevEl.innerHTML = "";
+			prevEl.appendChild(dom);
 		} else { // MyButton 组件，并不是真实存在于页面上
 			vm.$parentEl.appendChild(dom);
 		}
@@ -117,7 +119,7 @@ export function vNode2Dom(vnode) {
 
 export function componentVNode2Dom(vnode) {
 	const options = vnode.componentOptions.options;
-	options.parentEl = vnode.$parent.el;
+	options.parentEl = (vnode.$parent && vnode.$parent.el) || vnode.parentEl;
 	options.parentVnode = vnode;
 	options.parentVm = vnode.vm;
 	const Ctor = vnode.vm.Ctor;

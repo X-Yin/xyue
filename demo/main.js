@@ -1,5 +1,5 @@
-// import Vue from '../dist/vue.js';
-import '../dist/vue.js';
+// import '../dist/vue.js';
+import '../src/core/vue/global/index'
 import App from './src/App.vue';
 
 const vm = new window.Vue({
@@ -14,5 +14,5 @@ const vm = new window.Vue({
         }
     }
 });
-console.log(vm);
+window.vm = vm;
 vm.mount();

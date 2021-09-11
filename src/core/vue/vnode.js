@@ -1,4 +1,4 @@
-import {handleDynamicExpression, isEqual, normalizeTagName} from "../utils";
+import { handleDynamicExpression, isEqual, normalizeTagName } from "../utils";
 /**
  * vnode 类的定义
  * tag: div | mybutton

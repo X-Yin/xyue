@@ -1,19 +1,15 @@
 
 function select(incomingQuery, loaderContext, source, sourceMap) {
-	const styleReg = /<style>([\s\S]*?)<\/style>/;
-	const templateReg = /<template>([\s\S]*?)<\/template>/;
-	const scriptReg = /<script>([\s\S]*?)<\/script>/;
+	const styleReg = /<style>[\n\s\t]*([\s\S]*?)[\n\s\t]*<\/style>/;
+	const templateReg = /<template>[\n\s\t]*([\s\S]*?)[\n\s\t]*<\/template>/;
+	const scriptReg = /<script>[\n\s\t]*([\s\S]*?)[\n\s\t]*<\/script>/;
 
 	if (incomingQuery.type === 'style') {
 		const styleRes = source.match(styleReg);
 		if (styleRes) {
-			const content = styleRes[1];
-			const obj = {
-				content
-			};
-			return `export default ${JSON.stringify(obj)}`;
+			return styleRes[1];
 		}
-		return `export default ${JSON.stringify({content: ''})}`
+		return '';
 	}
 
 

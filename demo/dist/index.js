@@ -1,11 +1,84 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 110:
-/***/ (() => {
+/***/ 788:
+/***/ ((module) => {
 
-function _typeof2(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof2=function _typeof2(obj){return typeof obj;};}else{_typeof2=function _typeof2(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return _typeof2(obj);}/******/(function(){// webpackBootstrap
-/******/var __webpack_modules__={/***/103:function _(module,exports,__nested_webpack_require_447__){/* module decorator */module=__nested_webpack_require_447__.nmd(module);var __WEBPACK_AMD_DEFINE_RESULT__;function _typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj;};}else{_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return _typeof(obj);}/**
+"use strict";
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+// eslint-disable-next-line func-names
+
+module.exports = function (cssWithMappingToString) {
+  var list = []; // return the list of modules as css string
+
+  list.toString = function toString() {
+    return this.map(function (item) {
+      var content = cssWithMappingToString(item);
+
+      if (item[2]) {
+        return "@media ".concat(item[2], " {").concat(content, "}");
+      }
+
+      return content;
+    }).join("");
+  }; // import a list of modules into the list
+  // eslint-disable-next-line func-names
+
+
+  list.i = function (modules, mediaQuery, dedupe) {
+    if (typeof modules === "string") {
+      // eslint-disable-next-line no-param-reassign
+      modules = [[null, modules, ""]];
+    }
+
+    var alreadyImportedModules = {};
+
+    if (dedupe) {
+      for (var i = 0; i < this.length; i++) {
+        // eslint-disable-next-line prefer-destructuring
+        var id = this[i][0];
+
+        if (id != null) {
+          alreadyImportedModules[id] = true;
+        }
+      }
+    }
+
+    for (var _i = 0; _i < modules.length; _i++) {
+      var item = [].concat(modules[_i]);
+
+      if (dedupe && alreadyImportedModules[item[0]]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+
+      if (mediaQuery) {
+        if (!item[2]) {
+          item[2] = mediaQuery;
+        } else {
+          item[2] = "".concat(mediaQuery, " and ").concat(item[2]);
+        }
+      }
+
+      list.push(item);
+    }
+  };
+
+  return list;
+};
+
+/***/ }),
+
+/***/ 103:
+/***/ (function(module, exports, __webpack_require__) {
+
+/* module decorator */ module = __webpack_require__.nmd(module);
+var __WEBPACK_AMD_DEFINE_RESULT__;function _typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj;};}else{_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return _typeof(obj);}/**
  * @license
  * Lodash <https://lodash.com/>
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
@@ -32,7 +105,7 @@ function _typeof2(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&
    * [combining diacritical marks for symbols](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks_for_Symbols).
    */var reComboMark=RegExp(rsCombo,'g');/** Used to match [string symbols](https://mathiasbynens.be/notes/javascript-unicode). */var reUnicode=RegExp(rsFitz+'(?='+rsFitz+')|'+rsSymbol+rsSeq,'g');/** Used to match complex or compound words. */var reUnicodeWord=RegExp([rsUpper+'?'+rsLower+'+'+rsOptContrLower+'(?='+[rsBreak,rsUpper,'$'].join('|')+')',rsMiscUpper+'+'+rsOptContrUpper+'(?='+[rsBreak,rsUpper+rsMiscLower,'$'].join('|')+')',rsUpper+'?'+rsMiscLower+'+'+rsOptContrLower,rsUpper+'+'+rsOptContrUpper,rsOrdUpper,rsOrdLower,rsDigits,rsEmoji].join('|'),'g');/** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */var reHasUnicode=RegExp('['+rsZWJ+rsAstralRange+rsComboRange+rsVarRange+']');/** Used to detect strings that need a more robust regexp to match words. */var reHasUnicodeWord=/[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/;/** Used to assign default `context` object properties. */var contextProps=['Array','Buffer','DataView','Date','Error','Float32Array','Float64Array','Function','Int8Array','Int16Array','Int32Array','Map','Math','Object','Promise','RegExp','Set','String','Symbol','TypeError','Uint8Array','Uint8ClampedArray','Uint16Array','Uint32Array','WeakMap','_','clearTimeout','isFinite','parseInt','setTimeout'];/** Used to make template sourceURLs easier to identify. */var templateCounter=-1;/** Used to identify `toStringTag` values of typed arrays. */var typedArrayTags={};typedArrayTags[float32Tag]=typedArrayTags[float64Tag]=typedArrayTags[int8Tag]=typedArrayTags[int16Tag]=typedArrayTags[int32Tag]=typedArrayTags[uint8Tag]=typedArrayTags[uint8ClampedTag]=typedArrayTags[uint16Tag]=typedArrayTags[uint32Tag]=true;typedArrayTags[argsTag]=typedArrayTags[arrayTag]=typedArrayTags[arrayBufferTag]=typedArrayTags[boolTag]=typedArrayTags[dataViewTag]=typedArrayTags[dateTag]=typedArrayTags[errorTag]=typedArrayTags[funcTag]=typedArrayTags[mapTag]=typedArrayTags[numberTag]=typedArrayTags[objectTag]=typedArrayTags[regexpTag]=typedArrayTags[setTag]=typedArrayTags[stringTag]=typedArrayTags[weakMapTag]=false;/** Used to identify `toStringTag` values supported by `_.clone`. */var cloneableTags={};cloneableTags[argsTag]=cloneableTags[arrayTag]=cloneableTags[arrayBufferTag]=cloneableTags[dataViewTag]=cloneableTags[boolTag]=cloneableTags[dateTag]=cloneableTags[float32Tag]=cloneableTags[float64Tag]=cloneableTags[int8Tag]=cloneableTags[int16Tag]=cloneableTags[int32Tag]=cloneableTags[mapTag]=cloneableTags[numberTag]=cloneableTags[objectTag]=cloneableTags[regexpTag]=cloneableTags[setTag]=cloneableTags[stringTag]=cloneableTags[symbolTag]=cloneableTags[uint8Tag]=cloneableTags[uint8ClampedTag]=cloneableTags[uint16Tag]=cloneableTags[uint32Tag]=true;cloneableTags[errorTag]=cloneableTags[funcTag]=cloneableTags[weakMapTag]=false;/** Used to map Latin Unicode letters to basic Latin letters. */var deburredLetters={// Latin-1 Supplement block.
 '\xc0':'A','\xc1':'A','\xc2':'A','\xc3':'A','\xc4':'A','\xc5':'A','\xe0':'a','\xe1':'a','\xe2':'a','\xe3':'a','\xe4':'a','\xe5':'a','\xc7':'C','\xe7':'c','\xd0':'D','\xf0':'d','\xc8':'E','\xc9':'E','\xca':'E','\xcb':'E','\xe8':'e','\xe9':'e','\xea':'e','\xeb':'e','\xcc':'I','\xcd':'I','\xce':'I','\xcf':'I','\xec':'i','\xed':'i','\xee':'i','\xef':'i','\xd1':'N','\xf1':'n','\xd2':'O','\xd3':'O','\xd4':'O','\xd5':'O','\xd6':'O','\xd8':'O','\xf2':'o','\xf3':'o','\xf4':'o','\xf5':'o','\xf6':'o','\xf8':'o','\xd9':'U','\xda':'U','\xdb':'U','\xdc':'U','\xf9':'u','\xfa':'u','\xfb':'u','\xfc':'u','\xdd':'Y','\xfd':'y','\xff':'y','\xc6':'Ae','\xe6':'ae','\xde':'Th','\xfe':'th','\xdf':'ss',// Latin Extended-A block.
-"\u0100":'A',"\u0102":'A',"\u0104":'A',"\u0101":'a',"\u0103":'a',"\u0105":'a',"\u0106":'C',"\u0108":'C',"\u010A":'C',"\u010C":'C',"\u0107":'c',"\u0109":'c',"\u010B":'c',"\u010D":'c',"\u010E":'D',"\u0110":'D',"\u010F":'d',"\u0111":'d',"\u0112":'E',"\u0114":'E',"\u0116":'E',"\u0118":'E',"\u011A":'E',"\u0113":'e',"\u0115":'e',"\u0117":'e',"\u0119":'e',"\u011B":'e',"\u011C":'G',"\u011E":'G',"\u0120":'G',"\u0122":'G',"\u011D":'g',"\u011F":'g',"\u0121":'g',"\u0123":'g',"\u0124":'H',"\u0126":'H',"\u0125":'h',"\u0127":'h',"\u0128":'I',"\u012A":'I',"\u012C":'I',"\u012E":'I',"\u0130":'I',"\u0129":'i',"\u012B":'i',"\u012D":'i',"\u012F":'i',"\u0131":'i',"\u0134":'J',"\u0135":'j',"\u0136":'K',"\u0137":'k',"\u0138":'k',"\u0139":'L',"\u013B":'L',"\u013D":'L',"\u013F":'L',"\u0141":'L',"\u013A":'l',"\u013C":'l',"\u013E":'l',"\u0140":'l',"\u0142":'l',"\u0143":'N',"\u0145":'N',"\u0147":'N',"\u014A":'N',"\u0144":'n',"\u0146":'n',"\u0148":'n',"\u014B":'n',"\u014C":'O',"\u014E":'O',"\u0150":'O',"\u014D":'o',"\u014F":'o',"\u0151":'o',"\u0154":'R',"\u0156":'R',"\u0158":'R',"\u0155":'r',"\u0157":'r',"\u0159":'r',"\u015A":'S',"\u015C":'S',"\u015E":'S',"\u0160":'S',"\u015B":'s',"\u015D":'s',"\u015F":'s',"\u0161":'s',"\u0162":'T',"\u0164":'T',"\u0166":'T',"\u0163":'t',"\u0165":'t',"\u0167":'t',"\u0168":'U',"\u016A":'U',"\u016C":'U',"\u016E":'U',"\u0170":'U',"\u0172":'U',"\u0169":'u',"\u016B":'u',"\u016D":'u',"\u016F":'u',"\u0171":'u',"\u0173":'u',"\u0174":'W',"\u0175":'w',"\u0176":'Y',"\u0177":'y',"\u0178":'Y',"\u0179":'Z',"\u017B":'Z',"\u017D":'Z',"\u017A":'z',"\u017C":'z',"\u017E":'z',"\u0132":'IJ',"\u0133":'ij',"\u0152":'Oe',"\u0153":'oe',"\u0149":"'n","\u017F":'s'};/** Used to map characters to HTML entities. */var htmlEscapes={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};/** Used to map HTML entities to characters. */var htmlUnescapes={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};/** Used to escape characters for inclusion in compiled string literals. */var stringEscapes={'\\':'\\',"'":"'",'\n':'n','\r':'r',"\u2028":'u2028',"\u2029":'u2029'};/** Built-in method references without a dependency on `root`. */var freeParseFloat=parseFloat,freeParseInt=parseInt;/** Detect free variable `global` from Node.js. */var freeGlobal=(typeof __nested_webpack_require_447__.g==="undefined"?"undefined":_typeof(__nested_webpack_require_447__.g))=='object'&&__nested_webpack_require_447__.g&&__nested_webpack_require_447__.g.Object===Object&&__nested_webpack_require_447__.g;/** Detect free variable `self`. */var freeSelf=(typeof self==="undefined"?"undefined":_typeof(self))=='object'&&self&&self.Object===Object&&self;/** Used as a reference to the global object. */var root=freeGlobal||freeSelf||Function('return this')();/** Detect free variable `exports`. */var freeExports=( false?0:_typeof(exports))=='object'&&exports&&!exports.nodeType&&exports;/** Detect free variable `module`. */var freeModule=freeExports&&( false?0:_typeof(module))=='object'&&module&&!module.nodeType&&module;/** Detect the popular CommonJS extension `module.exports`. */var moduleExports=freeModule&&freeModule.exports===freeExports;/** Detect free variable `process` from Node.js. */var freeProcess=moduleExports&&freeGlobal.process;/** Used to access faster Node.js helpers. */var nodeUtil=function(){try{// Use `util.types` for Node.js 10+.
+"\u0100":'A',"\u0102":'A',"\u0104":'A',"\u0101":'a',"\u0103":'a',"\u0105":'a',"\u0106":'C',"\u0108":'C',"\u010A":'C',"\u010C":'C',"\u0107":'c',"\u0109":'c',"\u010B":'c',"\u010D":'c',"\u010E":'D',"\u0110":'D',"\u010F":'d',"\u0111":'d',"\u0112":'E',"\u0114":'E',"\u0116":'E',"\u0118":'E',"\u011A":'E',"\u0113":'e',"\u0115":'e',"\u0117":'e',"\u0119":'e',"\u011B":'e',"\u011C":'G',"\u011E":'G',"\u0120":'G',"\u0122":'G',"\u011D":'g',"\u011F":'g',"\u0121":'g',"\u0123":'g',"\u0124":'H',"\u0126":'H',"\u0125":'h',"\u0127":'h',"\u0128":'I',"\u012A":'I',"\u012C":'I',"\u012E":'I',"\u0130":'I',"\u0129":'i',"\u012B":'i',"\u012D":'i',"\u012F":'i',"\u0131":'i',"\u0134":'J',"\u0135":'j',"\u0136":'K',"\u0137":'k',"\u0138":'k',"\u0139":'L',"\u013B":'L',"\u013D":'L',"\u013F":'L',"\u0141":'L',"\u013A":'l',"\u013C":'l',"\u013E":'l',"\u0140":'l',"\u0142":'l',"\u0143":'N',"\u0145":'N',"\u0147":'N',"\u014A":'N',"\u0144":'n',"\u0146":'n',"\u0148":'n',"\u014B":'n',"\u014C":'O',"\u014E":'O',"\u0150":'O',"\u014D":'o',"\u014F":'o',"\u0151":'o',"\u0154":'R',"\u0156":'R',"\u0158":'R',"\u0155":'r',"\u0157":'r',"\u0159":'r',"\u015A":'S',"\u015C":'S',"\u015E":'S',"\u0160":'S',"\u015B":'s',"\u015D":'s',"\u015F":'s',"\u0161":'s',"\u0162":'T',"\u0164":'T',"\u0166":'T',"\u0163":'t',"\u0165":'t',"\u0167":'t',"\u0168":'U',"\u016A":'U',"\u016C":'U',"\u016E":'U',"\u0170":'U',"\u0172":'U',"\u0169":'u',"\u016B":'u',"\u016D":'u',"\u016F":'u',"\u0171":'u',"\u0173":'u',"\u0174":'W',"\u0175":'w',"\u0176":'Y',"\u0177":'y',"\u0178":'Y',"\u0179":'Z',"\u017B":'Z',"\u017D":'Z',"\u017A":'z',"\u017C":'z',"\u017E":'z',"\u0132":'IJ',"\u0133":'ij',"\u0152":'Oe',"\u0153":'oe',"\u0149":"'n","\u017F":'s'};/** Used to map characters to HTML entities. */var htmlEscapes={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};/** Used to map HTML entities to characters. */var htmlUnescapes={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"};/** Used to escape characters for inclusion in compiled string literals. */var stringEscapes={'\\':'\\',"'":"'",'\n':'n','\r':'r',"\u2028":'u2028',"\u2029":'u2029'};/** Built-in method references without a dependency on `root`. */var freeParseFloat=parseFloat,freeParseInt=parseInt;/** Detect free variable `global` from Node.js. */var freeGlobal=(typeof __webpack_require__.g==="undefined"?"undefined":_typeof(__webpack_require__.g))=='object'&&__webpack_require__.g&&__webpack_require__.g.Object===Object&&__webpack_require__.g;/** Detect free variable `self`. */var freeSelf=(typeof self==="undefined"?"undefined":_typeof(self))=='object'&&self&&self.Object===Object&&self;/** Used as a reference to the global object. */var root=freeGlobal||freeSelf||Function('return this')();/** Detect free variable `exports`. */var freeExports=( false?0:_typeof(exports))=='object'&&exports&&!exports.nodeType&&exports;/** Detect free variable `module`. */var freeModule=freeExports&&( false?0:_typeof(module))=='object'&&module&&!module.nodeType&&module;/** Detect the popular CommonJS extension `module.exports`. */var moduleExports=freeModule&&freeModule.exports===freeExports;/** Detect free variable `process` from Node.js. */var freeProcess=moduleExports&&freeGlobal.process;/** Used to access faster Node.js helpers. */var nodeUtil=function(){try{// Use `util.types` for Node.js 10+.
 var types=freeModule&&freeModule.require&&freeModule.require('util').types;if(types){return types;}// Legacy `process.binding('util')` for Node.js < 10.
 return freeProcess&&freeProcess.binding&&freeProcess.binding('util');}catch(e){}}();/* Node.js helper references. */var nodeIsArrayBuffer=nodeUtil&&nodeUtil.isArrayBuffer,nodeIsDate=nodeUtil&&nodeUtil.isDate,nodeIsMap=nodeUtil&&nodeUtil.isMap,nodeIsRegExp=nodeUtil&&nodeUtil.isRegExp,nodeIsSet=nodeUtil&&nodeUtil.isSet,nodeIsTypedArray=nodeUtil&&nodeUtil.isTypedArray;/*--------------------------------------------------------------------------*/ /**
    * A faster alternative to `Function#apply`, this function invokes `func`
@@ -9469,235 +9542,323 @@ LazyWrapper.prototype.clone=lazyClone;LazyWrapper.prototype.reverse=lazyReverse;
 lodash.prototype.at=wrapperAt;lodash.prototype.chain=wrapperChain;lodash.prototype.commit=wrapperCommit;lodash.prototype.next=wrapperNext;lodash.prototype.plant=wrapperPlant;lodash.prototype.reverse=wrapperReverse;lodash.prototype.toJSON=lodash.prototype.valueOf=lodash.prototype.value=wrapperValue;// Add lazy aliases.
 lodash.prototype.first=lodash.prototype.head;if(symIterator){lodash.prototype[symIterator]=wrapperToIterator;}return lodash;};/*--------------------------------------------------------------------------*/ // Export lodash.
 var _=runInContext();// Some AMD build optimizers, like r.js, check for condition patterns like:
-if( true&&_typeof(__nested_webpack_require_447__.amdO)=='object'&&__nested_webpack_require_447__.amdO){// Expose Lodash on the global object to prevent errors when Lodash is
+if( true&&_typeof(__webpack_require__.amdO)=='object'&&__webpack_require__.amdO){// Expose Lodash on the global object to prevent errors when Lodash is
 // loaded by a script tag in the presence of an AMD loader.
 // See http://requirejs.org/docs/errors.html#mismatch for more details.
 // Use `_.noConflict` to remove Lodash from the global object.
 root._=_;// Define as an anonymous module so, through path mapping, it can be
 // referenced as the "underscore" module.
-!(__WEBPACK_AMD_DEFINE_RESULT__=function(){return _;}.call(exports,__nested_webpack_require_447__,exports,module),__WEBPACK_AMD_DEFINE_RESULT__!==undefined&&(module.exports=__WEBPACK_AMD_DEFINE_RESULT__));}// Check for `exports` after `define` in case a build optimizer adds it.
+!(__WEBPACK_AMD_DEFINE_RESULT__ = (function(){return _;}).call(exports, __webpack_require__, exports, module),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));}// Check for `exports` after `define` in case a build optimizer adds it.
 else if(freeModule){// Export for Node.js.
 (freeModule.exports=_)._=_;// Export for CommonJS support.
 freeExports._=_;}else{// Export to the global object.
-root._=_;}}).call(this);/***/}/******/};/************************************************************************/ /******/ // The module cache
-/******/var __webpack_module_cache__={};/******/ /******/ // The require function
-/******/function __nested_webpack_require_482162__(moduleId){/******/ // Check if module is in cache
-/******/var cachedModule=__webpack_module_cache__[moduleId];/******/if(cachedModule!==undefined){/******/return cachedModule.exports;/******/}/******/ // Create a new module (and put it into the cache)
-/******/var module=__webpack_module_cache__[moduleId]={/******/id:moduleId,/******/loaded:false,/******/exports:{}/******/};/******/ /******/ // Execute the module function
-/******/__webpack_modules__[moduleId].call(module.exports,module,module.exports,__nested_webpack_require_482162__);/******/ /******/ // Flag the module as loaded
-/******/module.loaded=true;/******/ /******/ // Return the exports of the module
-/******/return module.exports;/******/}/******/ /************************************************************************/ /******/ /* webpack/runtime/amd options */ /******/(function(){/******/__nested_webpack_require_482162__.amdO={};/******/})();/******/ /******/ /* webpack/runtime/compat get default export */ /******/(function(){/******/ // getDefaultExport function for compatibility with non-harmony modules
-/******/__nested_webpack_require_482162__.n=function(module){/******/var getter=module&&module.__esModule?/******/function(){return module['default'];}:/******/function(){return module;};/******/__nested_webpack_require_482162__.d(getter,{a:getter});/******/return getter;/******/};/******/})();/******/ /******/ /* webpack/runtime/define property getters */ /******/(function(){/******/ // define getter functions for harmony exports
-/******/__nested_webpack_require_482162__.d=function(exports,definition){/******/for(var key in definition){/******/if(__nested_webpack_require_482162__.o(definition,key)&&!__nested_webpack_require_482162__.o(exports,key)){/******/Object.defineProperty(exports,key,{enumerable:true,get:definition[key]});/******/}/******/}/******/};/******/})();/******/ /******/ /* webpack/runtime/global */ /******/(function(){/******/__nested_webpack_require_482162__.g=function(){/******/if((typeof globalThis==="undefined"?"undefined":_typeof2(globalThis))==='object')return globalThis;/******/try{/******/return this||new Function('return this')();/******/}catch(e){/******/if((typeof window==="undefined"?"undefined":_typeof2(window))==='object')return window;/******/}/******/}();/******/})();/******/ /******/ /* webpack/runtime/hasOwnProperty shorthand */ /******/(function(){/******/__nested_webpack_require_482162__.o=function(obj,prop){return Object.prototype.hasOwnProperty.call(obj,prop);};/******/})();/******/ /******/ /* webpack/runtime/node module decorator */ /******/(function(){/******/__nested_webpack_require_482162__.nmd=function(module){/******/module.paths=[];/******/if(!module.children)module.children=[];/******/return module;/******/};/******/})();/******/ /************************************************************************/var __webpack_exports__={};// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(function(){"use strict";// UNUSED EXPORTS: default
-;// CONCATENATED MODULE: ./src/core/vue/proxy.js
-function _slicedToArray(arr,i){return _arrayWithHoles(arr)||_iterableToArrayLimit(arr,i)||_unsupportedIterableToArray(arr,i)||_nonIterableRest();}function _nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function _unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return _arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return _arrayLikeToArray(o,minLen);}function _arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function _iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function _arrayWithHoles(arr){if(Array.isArray(arr))return arr;}function includeKey(){var data=arguments.length>0&&arguments[0]!==undefined?arguments[0]:{};var key=arguments.length>1?arguments[1]:undefined;var isInclude=false;var obj=data||{};Object.entries(obj).forEach(function(_ref){var _ref2=_slicedToArray(_ref,2),k=_ref2[0],val=_ref2[1];if(key===k){isInclude=true;}});return isInclude;}function proxyMixin(vm){vm.$self=new Proxy(vm,{get:function get(target,key,receiver){var keys=['methods','computed','data','$props'];for(var i=0;i<keys.length;i++){var k=keys[i];if(target[k][key]){return target[k][key];}}for(var _i2=0;_i2<target.props.length;_i2++){var _k=target.props[_i2];if(_k===key&&target.$parent&&target.$parent.$self[_k]){return target.$parent.$self[_k];}}return target[key];},set:function set(target,key,value,receiver){// 对于 props 的属性的赋值需要做一层拦截
-var isProp=includeKey(target.$props,key);if(isProp){throw new Error('can not set props value in child component '+key);}var isData=includeKey(target.data,key);if(isData){target.data[key]=value;}return true;}});};// CONCATENATED MODULE: ./src/core/constants/index.js
-var LifeCycleHooks=['beforeCreate','created','beforeMount','mounted','beforeUpdate','beforeVNodeCreate','vNodeCreated','beforeDomCreate','domCreated','updated','beforeDestroy','destroyed'];;// CONCATENATED MODULE: ./src/core/utils/dom.js
-function appendChild(parentNode,childNode){return parentNode.appendChild(childNode);}function clearChildrenList(node){node.innerHTML='';}function createDocumentFragment(){return document.createDocumentFragment();}function createElement(tag){return document.createElement(tag);}function createTextNode(data){return document.createTextNode(data);}function replaceNode(newNode,oldNode){if(!oldNode||!oldNode.parentNode){return;}oldNode.parentNode.replaceChild(newNode,oldNode);}function removeChild(parentNode,childNode){parentNode.removeChild(childNode);}// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
-var lodash=__nested_webpack_require_482162__(103);var lodash_default=/*#__PURE__*/__nested_webpack_require_482162__.n(lodash);;// CONCATENATED MODULE: ./src/core/utils/tool.js
-function isEqual(obj1,obj2){return lodash_default().isEqual(obj1,obj2);}function handleJsExpression(context,expression){// 这块做一层代理，是为了减少重复检查 with 对象里面的属性，造成的性能损失
-// 但是这样会导致在 code 代码执行的过程中，所有的对象，包括 window.console 也会被直接认为是 context上的对象
-// 那么就会调用报错
-var fn=new Function('sandbox',"with(sandbox){return ".concat(expression,"}"));// 这个 proxy 必须要做代理，否则执行表达式的时候报错
-var proxy=new Proxy(context,{has:function has(target,p){return true;}});return fn(proxy);}function normalizeTagName(tagName){// 统一转成小写无连字符
-// 驼峰命名 userAgent
-// 帕斯卡命名 UserAgent
-// 下划线命名 user_agent
-// 中划线命名 user-agent
-tagName=tagName.toLowerCase();tagName=tagName.replace('-','');tagName=tagName.replace('_','');return tagName;}function handleDynamicExpression(context){var expression=arguments.length>1&&arguments[1]!==undefined?arguments[1]:'';// .*? 非贪婪匹配，匹配尽可能少的字符串
-// expression 为 {{a}}-{{b}} 时，如果是贪婪匹配，那么匹配到的结果是 a}}-{{b
-// 如果是非贪婪匹配，那么匹配到结果是 a
-var reg=/{{(.*?)}}/;var matchResult;while(matchResult=(expression||'').match(reg)){try{var value=handleJsExpression(context,matchResult[1]);expression=expression.replace(matchResult[0],value);}catch(e){console.error('handleDynamicExpression error',e);break;}}return expression;};// CONCATENATED MODULE: ./src/core/utils/index.js
-;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/classes/index.js
-function classes_slicedToArray(arr,i){return classes_arrayWithHoles(arr)||classes_iterableToArrayLimit(arr,i)||classes_unsupportedIterableToArray(arr,i)||classes_nonIterableRest();}function classes_nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function classes_unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return classes_arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return classes_arrayLikeToArray(o,minLen);}function classes_arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function classes_iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function classes_arrayWithHoles(arr){if(Array.isArray(arr))return arr;}function _typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj;};}else{_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return _typeof(obj);}function created(){}// 将 vnode.attrs 中的动态的 :class 转换为可以被直接赋值给 className 的字符串，时机要放在 $vnode 创建之后也就是 _render 之后
-function handleVNodeClass(vm,vnode){if(!vnode){return;}var attrs=vnode.attrs;//[{name: '', value: ''}];
-if(!Array.isArray(attrs)){return;}var staticClass=vnode.staticClass&&vnode.staticClass.trim();var customClass="".concat(staticClass," ");attrs.forEach(function(attr){var name=attr.name,value=attr.value;if(name!==':class'){return;}// 动态 class 有三种格式
-// 1. 字符串 :class="container"
-// 2. 数组 :class="['container', this.flag ? 'active' : '']"
-// 3. 对象 :class="{container: true, active: this.flag}"
-try{var result=handleJsExpression(vm,value);if(typeof result==='string'){customClass+=result;return;}if(Array.isArray(result)){result.forEach(function(item){customClass+="".concat(item," ");});return;}if(_typeof(result)==='object'&&result!==null){Object.entries(result).forEach(function(_ref){var _ref2=classes_slicedToArray(_ref,2),key=_ref2[0],value=_ref2[1];if(value){customClass+="".concat(key," ");}});}}catch(e){console.error('handleVNodeClass error',e);}});vnode["class"]=customClass.trim();// 将 vnode.attrs 里面的 :class 给去掉，避免重复赋值，vnode.attrs 的格式 [{name: ':class', value: '["container", flag ? "a" : "b"]'}]
-var index=vnode.attrs.findIndex(function(item){return item.name===':class';});if(index>-1){vnode.attrs.splice(index,1);}// 递归遍历 children，实现 class 的 normalize 过程
-if(Array.isArray(vnode.children)){vnode.children.forEach(function(child){handleVNodeClass(vm,child);});}}function beforeMount(){handleVNodeClass(this.$self,this.$vnode);}function mounted(vm){}function updated(vm){}function beforeUpdate(vm){handleVNodeClass(this.$self,this.$vnode);}function destroyed(vm){}function beforeDestroy(vm){}/* harmony default export */var classes={created:created,updated:updated,beforeUpdate:beforeUpdate,destroyed:destroyed,beforeDestroy:beforeDestroy,mounted:mounted,beforeMount:beforeMount};;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/events/index.js
-function events_created(vm){}function events_beforeMount(vm){}function events_mounted(vm){}function events_updated(vm){}function events_beforeUpdate(vm){}function events_destroyed(vm){}function events_beforeDestroy(vm){}/* harmony default export */var events={created:events_created,updated:events_updated,beforeUpdate:events_beforeUpdate,destroyed:events_destroyed,beforeDestroy:events_beforeDestroy,beforeMount:events_beforeMount,mounted:events_mounted};;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/style/index.js
-function style_slicedToArray(arr,i){return style_arrayWithHoles(arr)||style_iterableToArrayLimit(arr,i)||style_unsupportedIterableToArray(arr,i)||style_nonIterableRest();}function style_nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function style_unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return style_arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return style_arrayLikeToArray(o,minLen);}function style_arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function style_iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function style_arrayWithHoles(arr){if(Array.isArray(arr))return arr;}function style_typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){style_typeof=function _typeof(obj){return typeof obj;};}else{style_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return style_typeof(obj);}// 将 vnode.attrs 中的 :style 转换为可以被直接赋值给 dom.style.cssText 的字符串, 时机要放在 $vnode 创建之后也就是 _render 之后
-function handleVNodeStyle(vm,vnode){if(!vnode){return;}var attrs=vnode.attrs;//[{name: '', value: ''}];
-if(!Array.isArray(attrs)){return;}var staticStyle=vnode.staticStyle&&vnode.staticStyle.trim();var customStyle='';if(staticStyle){customStyle="".concat(staticStyle).concat(staticStyle.endsWith(';')?'':';');}attrs.forEach(function(attr){var name=attr.name,value=attr.value;if(name!==':style'){return;}// 动态 style 有 2 种格式
-// 1. 字符串 :style="color: red"
-// 2. 对象 :style="{color: 'red', background: this.flag ? 'blue' : 'orange'}"
-try{var result=handleJsExpression(vm,value);if(typeof result==='string'){customStyle+=result;return;}if(style_typeof(result)==='object'&&result!==null){Object.entries(result).forEach(function(_ref){var _ref2=style_slicedToArray(_ref,2),key=_ref2[0],value=_ref2[1];customStyle+="".concat(key,":").concat(value,";");});}}catch(e){console.error('handleVNodeStyle error',e);}});vnode.style=customStyle.trim();// 还需要将 vnode.attrs 里面 :style 这个属性去掉，避免重复赋值, vnode.attrs = [{name: ':style', value: '{color: red}'}]
-var index=vnode.attrs.findIndex(function(item){return item.name===':style';});if(index>-1){vnode.attrs.splice(index,1);}// 递归遍历 children 实现 style 的 normalize 过程
-if(Array.isArray(vnode.children)){vnode.children.forEach(function(child){handleVNodeStyle(vm,child);});}}function style_created(vm){}function style_beforeMount(vm){handleVNodeStyle(this.$self,this.$vnode);}function style_mounted(vm){}function style_updated(vm){}function style_beforeUpdate(vm){handleVNodeStyle(this.$self,this.$vnode);}function style_destroyed(vm){}function style_beforeDestroy(vm){}/* harmony default export */var style={created:style_created,updated:style_updated,beforeUpdate:style_beforeUpdate,destroyed:style_destroyed,beforeDestroy:style_beforeDestroy,beforeMount:style_beforeMount,mounted:style_mounted};;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/props/index.js
-function props_slicedToArray(arr,i){return props_arrayWithHoles(arr)||props_iterableToArrayLimit(arr,i)||props_unsupportedIterableToArray(arr,i)||props_nonIterableRest();}function props_nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function props_unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return props_arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return props_arrayLikeToArray(o,minLen);}function props_arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function props_iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function props_arrayWithHoles(arr){if(Array.isArray(arr))return arr;}function props_typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){props_typeof=function _typeof(obj){return typeof obj;};}else{props_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return props_typeof(obj);}function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true});}else{obj[key]=value;}return obj;}// 将父组件中的值更新到子组件的 $props 对象中，时机要放在创建 vnode 之前
-function handleProps(vm){// 将 parent 的值和 props 中的值一一对应起来
-// 然后把 props 中的这些 key 值赋值到 vm 实例中去
-// 但是在 set 函数中，如果修改的是 props 中的 key，需要发出警告
-if(!vm.$parent){return;}if(Array.isArray(vm.props)){vm.props.forEach(function(key){var parentAttrs=vm.$parentVnode.attrs||[];//[{name: ':msg', value: 'message'}]
-parentAttrs.forEach(function(item){var name=item.name,value=item.value;if(name.startsWith(':')){var k=name.slice(1);// name 是 :msg
-if(k===key){var val=vm.$parent.$self[value];Object.assign(vm.$props,_defineProperty({},key,val));}}});});return;}if(props_typeof(vm.props)==='object'){Object.entries(vm.props).forEach(function(_ref){var _ref2=props_slicedToArray(_ref,2),key=_ref2[0],val=_ref2[1];var value=vm.$parent.$self[key];Object.assign(vm.$props,_defineProperty({},val,value));});}}function props_created(){// handleProps(this);
-}function props_beforeMount(){// handleProps(this)
-}function props_beforeUpdate(){// handleProps(this);
-}function beforeVNodeCreate(){handleProps(this);}/* harmony default export */var props={created:props_created,beforeMount:props_beforeMount,beforeUpdate:props_beforeUpdate,beforeVNodeCreate:beforeVNodeCreate};;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
-function runtimeHooks_slicedToArray(arr,i){return runtimeHooks_arrayWithHoles(arr)||runtimeHooks_iterableToArrayLimit(arr,i)||runtimeHooks_unsupportedIterableToArray(arr,i)||runtimeHooks_nonIterableRest();}function runtimeHooks_nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function runtimeHooks_unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return runtimeHooks_arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return runtimeHooks_arrayLikeToArray(o,minLen);}function runtimeHooks_arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function runtimeHooks_iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function runtimeHooks_arrayWithHoles(arr){if(Array.isArray(arr))return arr;}/**
- * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
- * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
- * */var installDefaultHooks=[props,classes,style,events];function installHook(vm){var customHooks={};LifeCycleHooks.forEach(function(hook){if(vm.options[hook]){customHooks[hook]=vm.options[hook];}});var prepareInstallHooks=[].concat(installDefaultHooks,[customHooks]);LifeCycleHooks.forEach(function(lifecycleHook){if(!Array.isArray(vm[lifecycleHook])){vm[lifecycleHook]=[];}});prepareInstallHooks.forEach(function(hooks){Object.entries(hooks).forEach(function(_ref){var _ref2=runtimeHooks_slicedToArray(_ref,2),hookName=_ref2[0],callback=_ref2[1];vm[hookName].push(callback.bind(vm.$self));});});};// CONCATENATED MODULE: ./src/core/vue/init.js
-var id=0;function normalizeData(data){if(typeof data==='function'){return data();}return data;}var defaultLifeCycleCb=function defaultLifeCycleCb(){};function initMixin(vm){vm.prototype._init=function(options){// 1. 初始化参数
-this.$template=options.template||'';if(typeof options.el==='string'){this.$el=document.querySelector(options.el||'');}else if(options.el instanceof HTMLElement||options.el instanceof DocumentFragment){this.$el=options.el;}else{this.$el=options.el;}this.$id=++id;this.$watch=options.watch||{};this.$vnode=null;this.$oldVNode=null;this.$parentVnode=options.parentVnode||{};this.$parentEl=options.parentEl||{};this.$self=null;this.$parentVm=options.parentVm;this.$render='';this.$watcher=null;this.$props={};// $props 是 vm 实例内部存储数据结构对象
-this.data=normalizeData(options.data||{});this.methods=options.methods||{};this.props=options.props||[];this.options=options;this.computed=options.computed||{};if(options.template){this.template=options.template;}else if(this.$el){this.template=this.$el.outerHTML;this.$el.innerHTML='';}else{this.template='';}// this.template = options.template || (this.$el ? this.$el.outerHTML : '');
-this.components=options.components||{};this.isMount=false;this.Ctor=this.constructor;// 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
-// 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
-// 这里的 $parent 都是父组件的实例，而不是 $self 实例
-this.$parent=null;this.$child=null;// 2. 对内部属性做一层代理，给 $self 赋值，把 data props computed methods 中的取值进行一层代理
-proxyMixin(this);};};// CONCATENATED MODULE: ./src/core/vue/event.js
-// 用于创建每个组件的 eventBus
-function eventMixin(Vue){Vue.prototype._events={};Vue.prototype.emit=function(eventName){// 这个 emit 是向父组件通信的时候使用，所以这里触发的是父组件实例的 $emit
-var vm=this;if(vm.$parentVm){var _vm$$parentVm;for(var _len=arguments.length,args=new Array(_len>1?_len-1:0),_key=1;_key<_len;_key++){args[_key-1]=arguments[_key];}(_vm$$parentVm=vm.$parentVm).$emit.apply(_vm$$parentVm,[eventName].concat(args));}};Vue.prototype.$on=function(eventName,cb){eventName=normalizeTagName(eventName);if(!eventName){throw new Error('_on Unexpected eventName params!');}if(!cb){throw new Error('_on Unexpected callback params');}if(Array.isArray(this._events[eventName])){this._events[eventName].push(cb);}else{this._events[eventName]=[cb];}};Vue.prototype.$emit=function(eventName){for(var _len2=arguments.length,args=new Array(_len2>1?_len2-1:0),_key2=1;_key2<_len2;_key2++){args[_key2-1]=arguments[_key2];}if(!eventName){throw new Error('_on Unexpected eventName params!');}eventName=normalizeTagName(eventName);if(Array.isArray(this._events[eventName])){this._events[eventName].forEach(function(cb){cb.apply(void 0,args);});}};Vue.prototype.$off=function(eventName,cb){if(!eventName){throw new Error('_on Unexpected eventName params!');}if(!cb){throw new Error('_on Unexpected callback params');}if(Array.isArray(this._events[eventName])){var index=this._events[eventName].findIndex(function(item){return item===cb;});this._events[eventName].splice(index,1);}};};// CONCATENATED MODULE: ./src/core/compile/index.js
-/**
- * html to ast
- * ast 定义标准
- * {
- *     classes: [{name 'id', value: 'app'}, {name: ':class', value: 'flag ? "active" : ""'}, [name: ':style', value: "{color: flag ? 'red' : 'blue'}"]],
- *     children: [{...}],
- *     parent: [{...}] || null,
- *     tag: 'div',
- *     staticClass: "\"container\"" // 静态的 class 属性放在这个地方，动态的依然在 classes 里面
- *     staticStyle: "{\"color\":\"red\"}" // 静态的 style 属性解析到这个地方，动态的 在 classes 里面
- *     events: {click: 'clickHandler', 'doubleClick': 'handler'}
- *     v-for: '',
- *     v-if: '',
- *     type: 1 https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
- * }
- * */ /**
- * 对于 attr 的解析
- * */function parseAttr(attr){var handleMatchRes=function handleMatchRes(res){var key=res[1];var value=res[2];if(typeof value!=='string'){value=true;}return{key:key,value:value,raw:attr};};// attr 总共有四种类型
-// class = 'a'
-// class = "a"
-// class = true
-// autoplay
-var regs=[/([^=<>\"\'\s]+)\s*="([^"]*)"/,/([^=<>\"\'\s]+)\s*='([^']*)'/,/([^=<>\"\'\s]+)\s*=([^'"]*)/,/([^=<>\"\'\s]+)\s*/];for(var i=0;i<regs.length;i++){var reg=regs[i];var res=attr.match(reg);if(res){return handleMatchRes(res);}}}/**
- * 将 classes 数组细分到 events style class 等
- * */function handleAttr(node,attrs){var res=[];attrs.forEach(function(_ref,index){var name=_ref.name,value=_ref.value;if(name==='style'){node.staticStyle=value;return;}if(name==='class'){node.staticClass=value;return;}if(name.startsWith('v-on:')||name.startsWith('@')){node.events[name.replace(/v-on:|@/,'')]=value;return;}if(name.startsWith('v-for')){node.vFor=value;return;}if(name.startsWith('v-if')){node.vIf=value;return;}res.push({name:name,value:value});});return res;}/**
- * template html 字符串
- * options 可选参数
- * */var attributeReg=/^\s*[^=<>\"\'\s]+\s*="[^"]*"|^\s*[^=<>\"\'\s]+\s*='[^']*'|^\s*[^=<>\"\'\s]+\s*=[^'"]*|^\s*[^=<>\"\'\s]+/;var startTagReg=/^<([a-zA-Z0-9\-]+)[^>]*>/;var endTagReg=/^<\/([a-zA-Z0-9\-]+)[^>]*>/;var commentReg=/<!--(.*)-->/;function parse(template,options){function createNode(){return{attrs:[],children:[],parent:[],tag:'',staticClass:'',staticStyle:'',events:{},type:0,vFor:'',vIf:'',data:''};}var ast=createNode();function advance(num){template=template.slice(num);}// 下面的这些 tag 不应该包含 child 元素
-var emptyTags={area:1,base:1,basefont:1,br:1,col:1,frame:1,hr:1,img:1,input:1,isindex:1,link:1,meta:1,param:1,embed:1};function _parse(node){while(template){if(template.startsWith('<')){var startTagRes=template.match(startTagReg);if(startTagRes){var child=createNode();node.children.push(child);child.parent=node;child.tag=startTagRes[1];child.type=1;advance(startTagRes[1].length+1);// attr 的解析和 startTag
-var attrRes=void 0;while(attrRes=template.match(attributeReg)){var attr=attrRes[0];var _parseAttr=parseAttr(attr),key=_parseAttr.key,value=_parseAttr.value;child.attrs.push({name:key,value:value});advance(attr.length+attrRes['index']);}child.attrs=handleAttr(child,child.attrs);advance(1);// 区分自闭合标签和普通标签
-if(Object.keys(emptyTags).includes(child.tag)){continue;}_parse(child);continue;}var endTagRes=template.match(endTagReg);if(endTagRes){advance(endTagRes[0].length);return;}var commentRes=template.match(commentReg);if(commentRes){advance(endTagRes[0].length);}}else{var index=template.indexOf('<');var _child=createNode();_child.type=3;_child.tag='text';var data=template.slice(0,index);if(data.includes('\n')){// 踩坑： 这个地方，如果是 \n 的话，在生成 render 函数的时候 _t('\n xxx') 会报错，只有 _t('\\n xxx') 才能正确被 new Function() 生成函数
-data=data.replace('\n','\\n');}_child.data=data;_child.parent=node;node.children.push(_child);if(index<0){return node;}advance(index);}}return node;}_parse(ast);return ast.children[0];}/* harmony default export */var compile=parse;;// CONCATENATED MODULE: ./src/core/vue/vnode.js
-function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);return Constructor;}/**
- * vnode 类的定义
- * tag: div | mybutton
- * id 自动生成
- * staticClass：静态的 class 类名，都是纯字符串 'container wrapper'
- * staticStyle：静态的 style，都是纯字符串，比如 'font-size: 20px;color:red;'
- * attrs: 所有的属性，包括 :class 和 :style 等
- * children: [vnode, vnode]
- * el: 当前的 dom 元素
- * parent: vnode
- * parentEl: 父级 dom 元素
- * classes: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
- * events: {'click': 'clickHandler'}
- * $vm: vm.$self
- * type: 1 | 3
- * data: 在 type 为 3 的时候是静态文本的内容
- * componentsOptions: {isComponent: false | true, options?: {}}
- * */var vnode_id=0;var VNode=/*#__PURE__*/function(){function VNode(tag,vm,attrs,children,type,data){_classCallCheck(this,VNode);var _ref=attrs||{},_ref$staticClass=_ref.staticClass,staticClass=_ref$staticClass===void 0?'':_ref$staticClass,_ref$staticStyle=_ref.staticStyle,staticStyle=_ref$staticStyle===void 0?'':_ref$staticStyle,_ref$attrs=_ref.attrs,attributes=_ref$attrs===void 0?{}:_ref$attrs,_ref$events=_ref.events,events=_ref$events===void 0?{}:_ref$events;this.tag=normalizeTagName(tag);this.id=++vnode_id;this.children=children;this.el=null;this.parent=null;// vm._render 创建时会梳理父子关系并赋值
-this.parentEl=null;// 在 patch 渲染时会赋值
-this.staticClass=staticClass;this.staticStyle=staticStyle;this.attrs=attributes;this.events=events;this.vm=vm;this.type=type;if(this.type===3){this.data=this.handleDynamicText(data);}this.options=vm.options;// 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
-// 这个 componentOptions 里面有两个字段一个是 isComponent 用来标记是不是组件，如果为 true 的话，会把这个组件的 options 选项给赋值
-this.componentOptions=this.getComponentOptions();}_createClass(VNode,[{key:"getComponentOptions",value:function getComponentOptions(){var components={};Object.assign(components,this.vm.Ctor.components||{},this.vm.components);var componentKeys=Object.keys(components);for(var i=0;i<componentKeys.length;i++){var componentKey=componentKeys[i];if(normalizeTagName(componentKey)===normalizeTagName(this.tag)){return{isComponent:true,options:components[componentKey],componentInstance:null// 这个后面在第一次 patch 的时候会赋值，此后 update 的时候，就可以使用该组件实例进行 $watcher.update() 的渲染了
-};}}return{isComponent:false};}},{key:"handleDynamicText",value:function handleDynamicText(data){return handleDynamicExpression(this.vm.$self,data);}}]);return VNode;}();// 只负责提供比较当前两个 vnode 属性的工具函数，child 的递归对比逻辑不在这里
-function compareVNode(oldVNode,newVNode){if(!newVNode){return false;}if(!oldVNode){throw new Error('Unexpected params '+oldVNode);}// 对比 tag class style classes events type data 等
-if(!isEqual(newVNode.tag,oldVNode.tag)){return false;}if(!isEqual(newVNode.type,oldVNode.type)){return false;}if(!isEqual(oldVNode.data,newVNode.data)){return false;}if(!isEqual(newVNode["class"],oldVNode["class"])){return false;}if(!isEqual(newVNode.style,oldVNode.style)){return false;}if(!isEqual(newVNode.attrs,oldVNode.attrs)){return false;}if(!isEqual(newVNode.events,oldVNode.events)){return false;}return true;}// 将 newVNode 的属性赋值给 oldVNode，但是不替换 oldVNode 的堆地址
-function replaceVNode(oldVNode,newVNode){var keys=['tag','children','id','staticClass','staticStyle','attrs','events','vm','type','data','options','componentOptions'];keys.forEach(function(key){oldVNode[key]=newVNode[key];});return oldVNode;}function cloneVNode(oldVNode){if(Array.isArray(oldVNode)){return oldVNode.map(function(vnode){return cloneVNode(vnode);});}var children=(oldVNode.children||[]).map(function(child){return cloneVNode(child);});return new VNode(oldVNode.tag,oldVNode.vm,oldVNode.attrs,children,oldVNode.type,oldVNode.data);}/* harmony default export */var vnode=VNode;;// CONCATENATED MODULE: ./src/core/render/index.js
-/**
- * render 函数的标准
- * _t createText 创建普通的文本 vnode: createText('helloText')
- * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', classes: { class, style, events, classes: [{name, value}], parent }, children: [])
- * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', classes, children: [])
- * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', classes, children: [])
- * */ /**
- * ast 是一个语法结构对象
- * */function genRenderFn(ast){return"with(this){return ".concat(_genRenderFn(ast),"}");}function _genRenderFn(ast){var type=ast.type,vFor=ast.vFor,vIf=ast.vIf;if(type===3){// 普通文本
-return genText(ast);}if(type===1){if(vFor){return genFor(ast);}if(vIf){return genIf(ast);}return genEle(ast);}}function genChildren(children){var fns='';var len=children.length;children.forEach(function(item,index){fns+=_genRenderFn(item);if(index!==len-1){fns+=',';}});return fns;}function genText(ast){return"_t('".concat(ast.data,"')");}function genFor(ast){var parent=ast.parent,children=ast.children,tag=ast.tag,staticClass=ast.staticClass,staticStyle=ast.staticStyle,events=ast.events,type=ast.type,data=ast.data,attrs=ast.attrs,vFor=ast.vFor,vIf=ast.vIf;var attributes={};attrs.forEach(function(_ref){var name=_ref.name,value=_ref.value;attributes[name]=value;});return"..._l(\n        '".concat(tag,"',\n        '").concat(vFor,"', \n        {staticClass: '").concat(staticClass,"', staticStyle: '").concat(staticStyle,"', events: ").concat(JSON.stringify(events||[]),", attrs: ").concat(JSON.stringify(attrs||{}),"},\n        [").concat(genChildren(children),"])");}function genIf(ast){var children=ast.children,tag=ast.tag,staticClass=ast.staticClass,staticStyle=ast.staticStyle,events=ast.events,attrs=ast.attrs,vIf=ast.vIf;var attributes={};attrs.forEach(function(_ref2){var name=_ref2.name,value=_ref2.value;attributes[name]=value;});return"_f(\n        '".concat(tag,"',\n        '").concat(vIf,"', \n        {staticClass: '").concat(staticClass,"', staticStyle: '").concat(staticStyle,"', events: ").concat(JSON.stringify(events||[]),", attrs: ").concat(JSON.stringify(attrs||{}),"},\n        [").concat(genChildren(children),"])");}function genEle(ast){var parent=ast.parent,children=ast.children,tag=ast.tag,staticClass=ast.staticClass,staticStyle=ast.staticStyle,events=ast.events,type=ast.type,data=ast.data,attrs=ast.attrs,vFor=ast.vFor,vIf=ast.vIf;var attributes={};attrs.forEach(function(_ref3){var name=_ref3.name,value=_ref3.value;attributes[name]=value;});return"_c(\n        '".concat(tag,"',\n        {staticClass: '").concat(staticClass,"', staticStyle: '").concat(staticStyle,"', events: ").concat(JSON.stringify(events||[]),", attrs: ").concat(JSON.stringify(attrs||{}),"},\n        [").concat(genChildren(children),"])");};// CONCATENATED MODULE: ./src/core/config/event.js
-var TouchEvent=['touchstart','touchmove','touchcancel','touchend'];var MouseEvent=['mouseup','mousedown','mouseenter','mouseleave','mouseout','mousemove','mouseover'];var ClickEvent=['click','dblclick','auxclick','contextmenu','pointerlockchange','pointerlockerror','select','wheel'];var DragEvent=['drag','dragend','dragenter','dragleave','dragstart','dragover','drop'];var InputEvent=['input','change','focus','blur'];var MediaEvent=['canplay','play','pause','complete','emptied','ended','playing','seeked','ratechange','seeking','stalled','suspend','timeupdate','volumechange','waiting'];var ProgressEvent=['abort','load','error','loadend','progress','timeout','loadstart'];var KeyEvent=['keydown','keypress','keyup'];var NativeDomEventKeyList=[].concat(TouchEvent,MouseEvent,ClickEvent,DragEvent,InputEvent,MediaEvent,ProgressEvent,KeyEvent);;// CONCATENATED MODULE: ./src/core/config/index.js
-;// CONCATENATED MODULE: ./src/core/vue/patch.js
-function patch_slicedToArray(arr,i){return patch_arrayWithHoles(arr)||patch_iterableToArrayLimit(arr,i)||patch_unsupportedIterableToArray(arr,i)||patch_nonIterableRest();}function patch_nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}function patch_unsupportedIterableToArray(o,minLen){if(!o)return;if(typeof o==="string")return patch_arrayLikeToArray(o,minLen);var n=Object.prototype.toString.call(o).slice(8,-1);if(n==="Object"&&o.constructor)n=o.constructor.name;if(n==="Map"||n==="Set")return Array.from(o);if(n==="Arguments"||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return patch_arrayLikeToArray(o,minLen);}function patch_arrayLikeToArray(arr,len){if(len==null||len>arr.length)len=arr.length;for(var i=0,arr2=new Array(len);i<len;i++){arr2[i]=arr[i];}return arr2;}function patch_iterableToArrayLimit(arr,i){var _i=arr==null?null:typeof Symbol!=="undefined"&&arr[Symbol.iterator]||arr["@@iterator"];if(_i==null)return;var _arr=[];var _n=true;var _d=false;var _s,_e;try{for(_i=_i.call(arr);!(_n=(_s=_i.next()).done);_n=true){_arr.push(_s.value);if(i&&_arr.length===i)break;}}catch(err){_d=true;_e=err;}finally{try{if(!_n&&_i["return"]!=null)_i["return"]();}finally{if(_d)throw _e;}}return _arr;}function patch_arrayWithHoles(arr){if(Array.isArray(arr))return arr;}function _patch(vm,oldVNode,newVNode){if(!oldVNode){// const childDom = vNode2Dom(oldVNode);
-// console.log('>>> childDom is', childDom);
-// return childDom;
-return vNode2Dom(newVNode);}return diff(vm,oldVNode,newVNode);}function patch(vm,oldVNode,newVNode){if(!oldVNode){// 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
-var dom=_patch(vm,oldVNode,newVNode);var prevEl=vm.$el;vm.$oldVNode=newVNode;if(prevEl){// App 组件，el 是 div#app 真实存在于页面上
-prevEl.parentNode.replaceChild(dom,prevEl);}else{// MyButton 组件，并不是真实存在于页面上
-vm.$parentEl.appendChild(dom);}vm.$el=dom;vm.isMount=true;callHook(vm,'mounted');}else{// 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
-var _dom=_patch(vm,oldVNode,newVNode);callHook(vm,'updated');}}/**
- * diff
- * oldVNode !== newVNode
- * vnode2dom(newVNode) 然后直接替换旧的 dom
- * oldVNode = newVNode
- * 1. 如果是组件 vnode，执行 oldVNode 的 updateComponent 逻辑
- * 2. 如果不是组件 vnode，执行 children 的递归遍历
- * */function diff(vm,oldVNode,newVNode){// 普通 text 元素不一样 vnode2dom 然后替换
-// 普通其他元素不一样，vnode2dom 然后替换
-// my-button 元素不一样
-// 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
-// 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
-var isEqual=compareVNode(oldVNode,newVNode);if(!isEqual){var newDom=vNode2Dom(newVNode);replaceNode(newDom,oldVNode.el);replaceVNode(oldVNode,newVNode);oldVNode.el=newDom;return newDom;}if(oldVNode.componentOptions.isComponent){// 如果父组件发生更新的话，子组件默认全部执行一次 updateComponent() 来 diff 一次
-// TODO 后面优化，如果子组件的 props 属性中没有发生更新的情况，就跳过子组件的 diff 更新
-var componentInstance=oldVNode.componentOptions.componentInstance;if(componentInstance){return componentInstance.$watcher.update();}return vNode2Dom(oldVNode);}else{var newChildren=newVNode.children||[];var oldChildren=oldVNode.children||[];var maxLength=Math.max(newChildren.length,oldChildren.length);for(var i=0;i<maxLength;i++){var newChild=newChildren[i];var oldChild=oldChildren[i];if(!oldChild&&newChild){// 增加新的子元素
-var _newDom=vNode2Dom(newChild);oldVNode.children.push(newChild);oldVNode.el.appendChild(_newDom);continue;}if(!newChild&&oldChild){//  删除之前的子元素
-removeChild(oldVNode.el,oldChild.el);oldChildren.splice(i,1);continue;}if(newChild&&oldChild){diff(vm,oldChild,newChild);}}}}// 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
-function vNode2Dom(vnode){var tag=vnode.tag;if(!vnode.tag){throw new Error('VNode2Dom Unexpected params tag '+vnode.tag);}if(vnode.componentOptions.isComponent){return componentVNode2Dom(vnode);}return normalVNode2Dom(vnode);}function componentVNode2Dom(vnode){var options=vnode.componentOptions.options;options.parentEl=vnode.$parent.el;options.parentVnode=vnode;options.parentVm=vnode.vm;var Ctor=vnode.vm.Ctor;var componentInstance=new Ctor(options);componentInstance.$parent=vnode.vm;componentInstance._mount();vnode.el=componentInstance.$el;// 处理组件上面的事件
-addEvent(vnode);// 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
-vnode.componentOptions.componentInstance=componentInstance;return componentInstance.$el;}function normalVNode2Dom(vnode){var tag=vnode.tag;if(vnode.type===3){var _dom2=createTextNode(vnode.data);vnode.el=_dom2;return _dom2;}var dom=createElement(tag);vnode.el=dom;// 处理 css
-if(vnode.style){dom.style.cssText=vnode.style;}// 处理 className
-if(vnode["class"]){dom.className=vnode["class"];}// 处理 attrs
-if(Array.isArray(vnode.attrs)){vnode.attrs.forEach(function(_ref){var name=_ref.name,value=_ref.value;if(name.startsWith(':')){value=handleJsExpression(vnode.vm.$self,value);name=name.slice(1);}vnode.el.setAttribute(name,value);});}// 处理 event
-addEvent(vnode);// 递归处理 children
-vnode.children.forEach(function(child){var node=vNode2Dom(child);node.parentEl=dom;appendChild(dom,node);});return dom;}function addEvent(vnode){var dom=vnode.el;var events=vnode.events||{};//{click: 'clickHandler'}
-Object.entries(events).forEach(function(_ref2){var _ref3=patch_slicedToArray(_ref2,2),name=_ref3[0],value=_ref3[1];if(NativeDomEventKeyList.includes(name)){var cb=handleJsExpression(vnode.vm.$self,value);// TODO addEventListeners 的 options
-dom.addEventListener(name,cb.bind(vnode.vm.$self));}else{// 不是浏览器的原生事件，自定义事件，可能是用于父子组件通信
-// name: customEvent value: clickHandler
-var _cb=handleJsExpression(vnode.vm.$self,value);vnode.vm.$on(name,_cb.bind(vnode.vm.$self));}});};// CONCATENATED MODULE: ./src/core/vue/reactive/scheduler.js
-var queue=[];function runQueue(){queue.forEach(function(watcher,index){if(watcher){watcher.callback();}queue[index]=null;});// 这个地方有坑！
-// 不能直接 queue = []，因为 watcher.callback 中间会执行该组件的 updateComponent，里面可能会执行子组件的 updateComponent
-// 那么就会走到 queueWatcher(childWatcher)这个地方，相当于是遍历一个数组的时候，还往这个数组里面添加新的元素，关键 runQueue 的下一次执行遍历还是异步执行
-// 此时如果将 queue 置为空 那么新添加的子元素的 watcher 就无法执行到了
-// queue = [];
-clearQueue();}function clearQueue(){var data=[];queue.forEach(function(item){if(item){data.push(item);}});queue=data;}function singlePush(array,item){var index=array.findIndex(function(i){return i===item;});if(index<0){array.push(item);}}function nextTick(fn){Promise.resolve().then(function(){fn();});}function queueWatcher(watcher){singlePush(queue,watcher);nextTick(runQueue);};// CONCATENATED MODULE: ./src/core/vue/reactive/dep.js
-function dep_classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function dep_defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}function dep_createClass(Constructor,protoProps,staticProps){if(protoProps)dep_defineProperties(Constructor.prototype,protoProps);if(staticProps)dep_defineProperties(Constructor,staticProps);return Constructor;}function dep_defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true});}else{obj[key]=value;}return obj;}var dep_id=0;var Dep=/*#__PURE__*/function(){function Dep(){dep_classCallCheck(this,Dep);dep_defineProperty(this,"subs",[]);dep_defineProperty(this,"id",++dep_id);}dep_createClass(Dep,[{key:"depend",value:function depend(){if(Dep.target){singlePush(this.subs,Dep.target);}}},{key:"notify",value:function notify(){this.subs.forEach(function(sub){sub.update&&sub.update();});}}]);return Dep;}();Dep.target=null;var DepTargetQueue=[];function pushDepTargetQueue(target){DepTargetQueue.push(target);Dep.target=target;}function popDepTargetQueue(){DepTargetQueue.pop();Dep.target=DepTargetQueue[DepTargetQueue.length-1];}/* harmony default export */var reactive_dep=Dep;;// CONCATENATED MODULE: ./src/core/vue/reactive/watcher.js
-function watcher_classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function watcher_defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}function watcher_createClass(Constructor,protoProps,staticProps){if(protoProps)watcher_defineProperties(Constructor.prototype,protoProps);if(staticProps)watcher_defineProperties(Constructor,staticProps);return Constructor;}function watcher_defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true});}else{obj[key]=value;}return obj;}var watcher_id=0;var Watcher=/*#__PURE__*/function(){function Watcher(cb,vm){watcher_classCallCheck(this,Watcher);watcher_defineProperty(this,"callback",null);watcher_defineProperty(this,"id",++watcher_id);watcher_defineProperty(this,"vm",null);this.callback=cb;this.vm=vm;this.get();}watcher_createClass(Watcher,[{key:"update",value:function update(){callHook(this.vm,'beforeUpdate');queueWatcher(this);}},{key:"get",value:function get(){// 只用在组件挂载的时候收集一次依赖即可
-pushDepTargetQueue(this);this.callback();popDepTargetQueue();}}]);return Watcher;}();/* harmony default export */var watcher=Watcher;;// CONCATENATED MODULE: ./src/core/vue/reactive/observer.js
-function observer_typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){observer_typeof=function _typeof(obj){return typeof obj;};}else{observer_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return observer_typeof(obj);}function observer_classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function observer_defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}function observer_createClass(Constructor,protoProps,staticProps){if(protoProps)observer_defineProperties(Constructor.prototype,protoProps);if(staticProps)observer_defineProperties(Constructor,staticProps);return Constructor;}function observer_defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true});}else{obj[key]=value;}return obj;}var Observer=/*#__PURE__*/function(){function Observer(data,dep){observer_classCallCheck(this,Observer);observer_defineProperty(this,"data",null);observer_defineProperty(this,"dep",null);this.dep=dep;this.data=this.deepProxy(data);}observer_createClass(Observer,[{key:"deepProxy",value:function deepProxy(data){var _this=this;var dep=this.dep;if(!data){return;}if(observer_typeof(data)!=='object'){return;}Object.keys(data).forEach(function(key){var val=data[key];if(observer_typeof(val)==='object'&&val!==null){data[key]=_this.deepProxy(val);}});return new Proxy(data,{get:function get(target,p,receiver){if(typeof dep!=='undefined'){dep.depend();}return target[p];},set:function set(target,p,value,receiver){if(observer_typeof(value)==='object'&&value!==null){target[p]=this.deepProxy(value);}else{target[p]=value;}dep.notify();return true;}});}}]);return Observer;}();/* harmony default export */var reactive_observer=Observer;;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
-function callHook(vm,hookName){if(typeof vm[hookName]==='function'){vm[hookName]();return;}if(Array.isArray(vm[hookName])){vm[hookName].forEach(function(hook){hook.call(vm);});}}function lifecycleMixin(Vue){Vue.prototype.mount=function(){return this._mount();};Vue.prototype._mount=function(){var vm=this;installHook(vm);// 开始给内部的 props 变量赋值
-callHook(vm,'created');var updateComponent=function updateComponent(){vm._update(vm._render());};var dep=new reactive_dep();// 应该是通过 watcher 来触发的，这里暂时先手动触发下
-// updateComponent();
-var observer=new reactive_observer(this.data,dep);this.data=observer.data;this.$watcher=new watcher(updateComponent,vm);};Vue.prototype._update=function(vnode){var vm=this;var prevEl=vm.$el;// 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 _render 函数里面
-if(vm.isMount){callHook(vm,'beforeUpdate');}else{callHook(vm,'beforeMount');}vnode.parentEl=vm.$el;patch(vm,vm.$oldVNode,vnode);};};// CONCATENATED MODULE: ./src/core/vue/render.js
-// 封装 createElement 函数
-function createTextVNode(text){return new vnode('text',this,{},[],3,text);}function render_createElement(tag,attrs,children){return new vnode(tag,this,attrs,children,1,null);}function createListVNode(tag,dataKey,attrs,children){var _this=this;var arr=this.$self[dataKey];if(!arr){throw new Error(dataKey+' does not exist on '+this);}// 这个地方有大坑
-// 因为 render 函数中 _l 是这么写的
-// ..._l(
-//         'li',
-//         'array',
-//         {staticClass: '', staticStyle: '', events: {}, attrs: []},
-//         [_t('{{name}}')]
-// )
-// 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
-// 对于 children 的处理要 clone 创建，而不能直接赋值
-return arr.map(function(item){return new vnode(tag,_this,attrs,cloneVNode(children),1,null);});}function createIfVNode(tag,dataKey,attrs,children){var flag=this.$self[dataKey];if(flag){return new vnode(tag,this,attrs,children,1,null);}return null;}// 梳理 vnode 父子关系
-function handleVNodeRelationship(vnode){var children=vnode.children||[];children.forEach(function(item){item.$parent=vnode;handleVNodeRelationship(item);});return vnode;}function renderMixin(Vue){Vue.prototype._c=render_createElement;Vue.prototype._l=createListVNode;Vue.prototype._t=createTextVNode;Vue.prototype._f=createIfVNode;Vue.prototype._render=function(){var vm=this;callHook(vm,'beforeVNodeCreate');// $render 是一个 render 函数字符串
-this.$render=genRenderFn(compile(this.template||''));// debugger;
-var fn=new Function(this.$render);// 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
-// if (this.$vnode) {
-//     debugger;
-//     this.$oldVNode = this.$vnode;
-// }
-var vnode=fn.call(this);this.$vnode=handleVNodeRelationship(vnode||{});callHook('vm','vNodeCreated');return this.$vnode;};};// CONCATENATED MODULE: ./src/core/vue/index.js
-function vue_Vue(options){if(!options){throw new Error('Unexpected params!');}this._init(options);}initMixin(vue_Vue);eventMixin(vue_Vue);renderMixin(vue_Vue);lifecycleMixin(vue_Vue);/* harmony default export */var vue=vue_Vue;;// CONCATENATED MODULE: ./src/core/vue/global/component.js
-function registerGlobalComponentAPI(vm){vm.components={};vm.component=function(componentName,options){vm.components[componentName]=options;return options;};}/* harmony default export */var component=registerGlobalComponentAPI;;// CONCATENATED MODULE: ./src/core/vue/global/index.js
-function register(vm){component(vm);return vm;}window.Vue=vue;/* harmony default export */var global=register(vue);;// CONCATENATED MODULE: ./src/core/vue/entry.js
-/* harmony default export */var entry=/* unused pure expression or super */null&&0;})();/******/})();
+root._=_;}}).call(this);
+
+/***/ }),
+
+/***/ 920:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(788);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".app {\n  width: 200px;\n  height: 200px;\n  color: red;\n  background-size: cover;\n  background-image: url(\"https://momentum.photos/img/89af9ef6-9a09-49de-a085-fd6b91f86c64.jpg?momo_cache_bg_uuid=d101afda-b9ff-4130-a371-50f9ffea64bf\");\n}\n\n.hello {\n  color: blue;\n}\n.world {\n  color: green;\n}\n.container {\n  border: 1px solid #ccc;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ 604:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(788);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".bar {\n  color: orange;\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ 379:
+/***/ ((module) => {
+
+"use strict";
+
+
+var stylesInDom = [];
+
+function getIndexByIdentifier(identifier) {
+  var result = -1;
+
+  for (var i = 0; i < stylesInDom.length; i++) {
+    if (stylesInDom[i].identifier === identifier) {
+      result = i;
+      break;
+    }
+  }
+
+  return result;
+}
+
+function modulesToDom(list, options) {
+  var idCountMap = {};
+  var identifiers = [];
+
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var id = options.base ? item[0] + options.base : item[0];
+    var count = idCountMap[id] || 0;
+    var identifier = "".concat(id, " ").concat(count);
+    idCountMap[id] = count + 1;
+    var index = getIndexByIdentifier(identifier);
+    var obj = {
+      css: item[1],
+      media: item[2],
+      sourceMap: item[3]
+    };
+
+    if (index !== -1) {
+      stylesInDom[index].references++;
+      stylesInDom[index].updater(obj);
+    } else {
+      stylesInDom.push({
+        identifier: identifier,
+        updater: addStyle(obj, options),
+        references: 1
+      });
+    }
+
+    identifiers.push(identifier);
+  }
+
+  return identifiers;
+}
+
+function addStyle(obj, options) {
+  var api = options.domAPI(options);
+  api.update(obj);
+  return function updateStyle(newObj) {
+    if (newObj) {
+      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {
+        return;
+      }
+
+      api.update(obj = newObj);
+    } else {
+      api.remove();
+    }
+  };
+}
+
+module.exports = function (list, options) {
+  options = options || {};
+  list = list || [];
+  var lastIdentifiers = modulesToDom(list, options);
+  return function update(newList) {
+    newList = newList || [];
+
+    for (var i = 0; i < lastIdentifiers.length; i++) {
+      var identifier = lastIdentifiers[i];
+      var index = getIndexByIdentifier(identifier);
+      stylesInDom[index].references--;
+    }
+
+    var newLastIdentifiers = modulesToDom(newList, options);
+
+    for (var _i = 0; _i < lastIdentifiers.length; _i++) {
+      var _identifier = lastIdentifiers[_i];
+
+      var _index = getIndexByIdentifier(_identifier);
+
+      if (stylesInDom[_index].references === 0) {
+        stylesInDom[_index].updater();
+
+        stylesInDom.splice(_index, 1);
+      }
+    }
+
+    lastIdentifiers = newLastIdentifiers;
+  };
+};
+
+/***/ }),
+
+/***/ 569:
+/***/ ((module) => {
+
+"use strict";
+
+
+var memo = {};
+/* istanbul ignore next  */
+
+function getTarget(target) {
+  if (typeof memo[target] === "undefined") {
+    var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
+
+    if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+      try {
+        // This will throw an exception if access to iframe is blocked
+        // due to cross-origin restrictions
+        styleTarget = styleTarget.contentDocument.head;
+      } catch (e) {
+        // istanbul ignore next
+        styleTarget = null;
+      }
+    }
+
+    memo[target] = styleTarget;
+  }
+
+  return memo[target];
+}
+/* istanbul ignore next  */
+
+
+function insertBySelector(insert, style) {
+  var target = getTarget(insert);
+
+  if (!target) {
+    throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+  }
+
+  target.appendChild(style);
+}
+
+module.exports = insertBySelector;
+
+/***/ }),
+
+/***/ 216:
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function insertStyleElement(options) {
+  var style = document.createElement("style");
+  options.setAttributes(style, options.attributes);
+  options.insert(style);
+  return style;
+}
+
+module.exports = insertStyleElement;
+
+/***/ }),
+
+/***/ 565:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function setAttributesWithoutAttributes(style) {
+  var nonce =  true ? __webpack_require__.nc : 0;
+
+  if (nonce) {
+    style.setAttribute("nonce", nonce);
+  }
+}
+
+module.exports = setAttributesWithoutAttributes;
+
+/***/ }),
+
+/***/ 795:
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function apply(style, options, obj) {
+  var css = obj.css;
+  var media = obj.media;
+  var sourceMap = obj.sourceMap;
+
+  if (media) {
+    style.setAttribute("media", media);
+  } else {
+    style.removeAttribute("media");
+  }
+
+  if (sourceMap && typeof btoa !== "undefined") {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  } // For old IE
+
+  /* istanbul ignore if  */
+
+
+  options.styleTagTransform(css, style);
+}
+
+function removeStyleElement(style) {
+  // istanbul ignore if
+  if (style.parentNode === null) {
+    return false;
+  }
+
+  style.parentNode.removeChild(style);
+}
+/* istanbul ignore next  */
+
+
+function domAPI(options) {
+  var style = options.insertStyleElement(options);
+  return {
+    update: function update(obj) {
+      apply(style, options, obj);
+    },
+    remove: function remove() {
+      removeStyleElement(style);
+    }
+  };
+}
+
+module.exports = domAPI;
+
+/***/ }),
+
+/***/ 589:
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function styleTagTransform(css, style) {
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    while (style.firstChild) {
+      style.removeChild(style.firstChild);
+    }
+
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+module.exports = styleTagTransform;
 
 /***/ })
 
@@ -9715,17 +9876,76 @@ function register(vm){component(vm);return vm;}window.Vue=vue;/* harmony default
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/amd options */
+/******/ 	(() => {
+/******/ 		__webpack_require__.amdO = {};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
@@ -9733,43 +9953,1971 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 
-// EXTERNAL MODULE: ./dist/vue.js
-var vue = __webpack_require__(110);
+;// CONCATENATED MODULE: ./src/core/vue/proxy.js
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function includeKey() {
+  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var key = arguments.length > 1 ? arguments[1] : undefined;
+  var isInclude = false;
+  var obj = data || {};
+  Object.entries(obj).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        k = _ref2[0],
+        val = _ref2[1];
+
+    if (key === k) {
+      isInclude = true;
+    }
+  });
+  return isInclude;
+}
+
+function proxyMixin(vm) {
+  vm.$self = new Proxy(vm, {
+    get: function get(target, key, receiver) {
+      var keys = ['methods', 'computed', 'data', '$props'];
+
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+
+        if (typeof target[k][key] !== 'undefined') {
+          return target[k][key];
+        }
+      }
+
+      for (var _i2 = 0; _i2 < target.props.length; _i2++) {
+        var _k = target.props[_i2];
+
+        if (_k === key && target.$parent && target.$parent.$self[_k]) {
+          return target.$parent.$self[_k];
+        }
+      }
+
+      return target[key];
+    },
+    set: function set(target, key, value, receiver) {
+      // 对于 props 的属性的赋值需要做一层拦截
+      var isProp = includeKey(target.$props, key);
+
+      if (isProp) {
+        throw new Error('can not set props value in child component ' + key);
+      }
+
+      var isData = includeKey(target.data, key);
+
+      if (isData) {
+        target.data[key] = value;
+      }
+
+      return true;
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/core/constants/index.js
+var LifeCycleHooks = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'beforeVNodeCreate', 'vNodeCreated', 'beforeDomCreate', 'domCreated', 'updated', 'beforeDestroy', 'destroyed'];
+;// CONCATENATED MODULE: ./src/core/utils/dom.js
+function appendChild(parentNode, childNode) {
+  return parentNode.appendChild(childNode);
+}
+function clearChildrenList(node) {
+  node.innerHTML = '';
+}
+function createDocumentFragment() {
+  return document.createDocumentFragment();
+}
+function createElement(tag) {
+  return document.createElement(tag);
+}
+function createTextNode(data) {
+  return document.createTextNode(data);
+}
+function replaceNode(newNode, oldNode) {
+  if (!oldNode || !oldNode.parentNode) {
+    return;
+  }
+
+  oldNode.parentNode.replaceChild(newNode, oldNode);
+}
+function removeChild(parentNode, childNode) {
+  parentNode.removeChild(childNode);
+}
+// EXTERNAL MODULE: ./node_modules/lodash/lodash.js
+var lodash = __webpack_require__(103);
+var lodash_default = /*#__PURE__*/__webpack_require__.n(lodash);
+;// CONCATENATED MODULE: ./src/core/utils/tool.js
+
+function isEqual(obj1, obj2) {
+  return lodash_default().isEqual(obj1, obj2);
+}
+function handleJsExpression(context, expression) {
+  // 这块做一层代理，是为了减少重复检查 with 对象里面的属性，造成的性能损失
+  // 但是这样会导致在 code 代码执行的过程中，所有的对象，包括 window.console 也会被直接认为是 context上的对象
+  // 那么就会调用报错
+  var fn = new Function('sandbox', "with(sandbox){return ".concat(expression, "}")); // 这个 proxy 必须要做代理，否则执行表达式的时候报错
+
+  var proxy = new Proxy(context, {
+    has: function has(target, p) {
+      return true;
+    }
+  });
+  return fn(proxy);
+}
+function normalizeTagName(tagName) {
+  // 统一转成小写无连字符
+  // 驼峰命名 userAgent
+  // 帕斯卡命名 UserAgent
+  // 下划线命名 user_agent
+  // 中划线命名 user-agent
+  tagName = tagName.toLowerCase();
+  tagName = tagName.replace('-', '');
+  tagName = tagName.replace('_', '');
+  return tagName;
+}
+function handleDynamicExpression(context) {
+  var expression = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  // .*? 非贪婪匹配，匹配尽可能少的字符串
+  // expression 为 {{a}}-{{b}} 时，如果是贪婪匹配，那么匹配到的结果是 a}}-{{b
+  // 如果是非贪婪匹配，那么匹配到结果是 a
+  var reg = /{{(.*?)}}/;
+  var matchResult;
+
+  while (matchResult = (expression || '').match(reg)) {
+    try {
+      var value = handleJsExpression(context, matchResult[1]);
+      expression = expression.replace(matchResult[0], value);
+    } catch (e) {
+      console.error('handleDynamicExpression error', e);
+      break;
+    }
+  }
+
+  return expression;
+}
+;// CONCATENATED MODULE: ./src/core/utils/index.js
+
+
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/classes/index.js
+function classes_slicedToArray(arr, i) { return classes_arrayWithHoles(arr) || classes_iterableToArrayLimit(arr, i) || classes_unsupportedIterableToArray(arr, i) || classes_nonIterableRest(); }
+
+function classes_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function classes_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return classes_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return classes_arrayLikeToArray(o, minLen); }
+
+function classes_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function classes_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function classes_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+
+
+function created() {} // 将 vnode.attrs 中的动态的 :class 转换为可以被直接赋值给 className 的字符串，时机要放在 $vnode 创建之后也就是 _render 之后
+
+
+function handleVNodeClass(vm, vnode) {
+  if (!vnode) {
+    return;
+  }
+
+  var attrs = vnode.attrs; //[{name: '', value: ''}];
+
+  if (!Array.isArray(attrs)) {
+    return;
+  }
+
+  var staticClass = vnode.staticClass && vnode.staticClass.trim();
+  var customClass = "".concat(staticClass, " ");
+  attrs.forEach(function (attr) {
+    var name = attr.name,
+        value = attr.value;
+
+    if (name !== ':class') {
+      return;
+    } // 动态 class 有三种格式
+    // 1. 字符串 :class="container"
+    // 2. 数组 :class="['container', this.flag ? 'active' : '']"
+    // 3. 对象 :class="{container: true, active: this.flag}"
+
+
+    try {
+      var result = handleJsExpression(vm, value);
+
+      if (typeof result === 'string') {
+        customClass += result;
+        return;
+      }
+
+      if (Array.isArray(result)) {
+        result.forEach(function (item) {
+          customClass += "".concat(item, " ");
+        });
+        return;
+      }
+
+      if (_typeof(result) === 'object' && result !== null) {
+        Object.entries(result).forEach(function (_ref) {
+          var _ref2 = classes_slicedToArray(_ref, 2),
+              key = _ref2[0],
+              value = _ref2[1];
+
+          if (value) {
+            customClass += "".concat(key, " ");
+          }
+        });
+      }
+    } catch (e) {
+      console.error('handleVNodeClass error', e);
+    }
+  });
+  vnode["class"] = customClass.trim(); // 将 vnode.attrs 里面的 :class 给去掉，避免重复赋值，vnode.attrs 的格式 [{name: ':class', value: '["container", flag ? "a" : "b"]'}]
+
+  var index = vnode.attrs.findIndex(function (item) {
+    return item.name === ':class';
+  });
+
+  if (index > -1) {
+    vnode.attrs.splice(index, 1);
+  } // 递归遍历 children，实现 class 的 normalize 过程
+
+
+  if (Array.isArray(vnode.children)) {
+    vnode.children.forEach(function (child) {
+      handleVNodeClass(vm, child);
+    });
+  }
+}
+
+function beforeMount() {
+  handleVNodeClass(this.$self, this.$vnode);
+}
+
+function mounted(vm) {}
+
+function updated(vm) {}
+
+function beforeUpdate(vm) {
+  handleVNodeClass(this.$self, this.$vnode);
+}
+
+function destroyed(vm) {}
+
+function beforeDestroy(vm) {}
+
+/* harmony default export */ const classes = ({
+  created: created,
+  updated: updated,
+  beforeUpdate: beforeUpdate,
+  destroyed: destroyed,
+  beforeDestroy: beforeDestroy,
+  mounted: mounted,
+  beforeMount: beforeMount
+});
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/events/index.js
+function events_created(vm) {}
+
+function events_beforeMount(vm) {}
+
+function events_mounted(vm) {}
+
+function events_updated(vm) {}
+
+function events_beforeUpdate(vm) {}
+
+function events_destroyed(vm) {}
+
+function events_beforeDestroy(vm) {}
+
+/* harmony default export */ const events = ({
+  created: events_created,
+  updated: events_updated,
+  beforeUpdate: events_beforeUpdate,
+  destroyed: events_destroyed,
+  beforeDestroy: events_beforeDestroy,
+  beforeMount: events_beforeMount,
+  mounted: events_mounted
+});
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/style/index.js
+function style_slicedToArray(arr, i) { return style_arrayWithHoles(arr) || style_iterableToArrayLimit(arr, i) || style_unsupportedIterableToArray(arr, i) || style_nonIterableRest(); }
+
+function style_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function style_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return style_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return style_arrayLikeToArray(o, minLen); }
+
+function style_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function style_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function style_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function style_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { style_typeof = function _typeof(obj) { return typeof obj; }; } else { style_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return style_typeof(obj); }
+
+ // 将 vnode.attrs 中的 :style 转换为可以被直接赋值给 dom.style.cssText 的字符串, 时机要放在 $vnode 创建之后也就是 _render 之后
+
+function handleVNodeStyle(vm, vnode) {
+  if (!vnode) {
+    return;
+  }
+
+  var attrs = vnode.attrs; //[{name: '', value: ''}];
+
+  if (!Array.isArray(attrs)) {
+    return;
+  }
+
+  var staticStyle = vnode.staticStyle && vnode.staticStyle.trim();
+  var customStyle = '';
+
+  if (staticStyle) {
+    customStyle = "".concat(staticStyle).concat(staticStyle.endsWith(';') ? '' : ';');
+  }
+
+  attrs.forEach(function (attr) {
+    var name = attr.name,
+        value = attr.value;
+
+    if (name !== ':style') {
+      return;
+    } // 动态 style 有 2 种格式
+    // 1. 字符串 :style="color: red"
+    // 2. 对象 :style="{color: 'red', background: this.flag ? 'blue' : 'orange'}"
+
+
+    try {
+      var result = handleJsExpression(vm, value);
+
+      if (typeof result === 'string') {
+        customStyle += result;
+        return;
+      }
+
+      if (style_typeof(result) === 'object' && result !== null) {
+        Object.entries(result).forEach(function (_ref) {
+          var _ref2 = style_slicedToArray(_ref, 2),
+              key = _ref2[0],
+              value = _ref2[1];
+
+          customStyle += "".concat(key, ":").concat(value, ";");
+        });
+      }
+    } catch (e) {
+      console.error('handleVNodeStyle error', e);
+    }
+  });
+  vnode.style = customStyle.trim(); // 还需要将 vnode.attrs 里面 :style 这个属性去掉，避免重复赋值, vnode.attrs = [{name: ':style', value: '{color: red}'}]
+
+  var index = vnode.attrs.findIndex(function (item) {
+    return item.name === ':style';
+  });
+
+  if (index > -1) {
+    vnode.attrs.splice(index, 1);
+  } // 递归遍历 children 实现 style 的 normalize 过程
+
+
+  if (Array.isArray(vnode.children)) {
+    vnode.children.forEach(function (child) {
+      handleVNodeStyle(vm, child);
+    });
+  }
+}
+
+function style_created(vm) {}
+
+function style_beforeMount(vm) {
+  handleVNodeStyle(this.$self, this.$vnode);
+}
+
+function style_mounted(vm) {}
+
+function style_updated(vm) {}
+
+function style_beforeUpdate(vm) {
+  handleVNodeStyle(this.$self, this.$vnode);
+}
+
+function style_destroyed(vm) {}
+
+function style_beforeDestroy(vm) {}
+
+/* harmony default export */ const style = ({
+  created: style_created,
+  updated: style_updated,
+  beforeUpdate: style_beforeUpdate,
+  destroyed: style_destroyed,
+  beforeDestroy: style_beforeDestroy,
+  beforeMount: style_beforeMount,
+  mounted: style_mounted
+});
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/props/index.js
+function props_slicedToArray(arr, i) { return props_arrayWithHoles(arr) || props_iterableToArrayLimit(arr, i) || props_unsupportedIterableToArray(arr, i) || props_nonIterableRest(); }
+
+function props_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function props_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return props_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return props_arrayLikeToArray(o, minLen); }
+
+function props_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function props_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function props_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function props_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { props_typeof = function _typeof(obj) { return typeof obj; }; } else { props_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return props_typeof(obj); }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// 将父组件中的值更新到子组件的 $props 对象中，时机要放在创建 vnode 之前
+function handleProps(vm) {
+  // 将 parent 的值和 props 中的值一一对应起来
+  // 然后把 props 中的这些 key 值赋值到 vm 实例中去
+  // 但是在 set 函数中，如果修改的是 props 中的 key，需要发出警告
+  if (!vm.$parent) {
+    return;
+  }
+
+  if (Array.isArray(vm.props)) {
+    vm.props.forEach(function (key) {
+      var parentAttrs = vm.$parentVnode.attrs || []; //[{name: ':msg', value: 'message'}]
+
+      parentAttrs.forEach(function (item) {
+        var name = item.name,
+            value = item.value;
+
+        if (name.startsWith(':')) {
+          var k = name.slice(1); // name 是 :msg
+
+          if (k === key) {
+            var val = vm.$parent.$self[value];
+            Object.assign(vm.$props, _defineProperty({}, key, val));
+          }
+        }
+      });
+    });
+    return;
+  }
+
+  if (props_typeof(vm.props) === 'object') {
+    Object.entries(vm.props).forEach(function (_ref) {
+      var _ref2 = props_slicedToArray(_ref, 2),
+          key = _ref2[0],
+          val = _ref2[1];
+
+      var value = vm.$parent.$self[key];
+      Object.assign(vm.$props, _defineProperty({}, val, value));
+    });
+  }
+}
+
+function props_created() {// handleProps(this);
+}
+function props_beforeMount() {// handleProps(this)
+}
+function props_beforeUpdate() {// handleProps(this);
+}
+function beforeVNodeCreate() {
+  handleProps(this);
+}
+/* harmony default export */ const props = ({
+  created: props_created,
+  beforeMount: props_beforeMount,
+  beforeUpdate: props_beforeUpdate,
+  beforeVNodeCreate: beforeVNodeCreate
+});
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
+function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
+
+function runtimeHooks_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function runtimeHooks_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return runtimeHooks_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return runtimeHooks_arrayLikeToArray(o, minLen); }
+
+function runtimeHooks_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function runtimeHooks_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function runtimeHooks_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+/**
+ * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
+ * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
+ * */
+
+var installDefaultHooks = [props, classes, style, events];
+function installHook(vm) {
+  var customHooks = {};
+  LifeCycleHooks.forEach(function (hook) {
+    if (vm.options[hook]) {
+      customHooks[hook] = vm.options[hook];
+    }
+  });
+  var prepareInstallHooks = [].concat(installDefaultHooks, [customHooks]);
+  LifeCycleHooks.forEach(function (lifecycleHook) {
+    if (!Array.isArray(vm[lifecycleHook])) {
+      vm[lifecycleHook] = [];
+    }
+  });
+  prepareInstallHooks.forEach(function (hooks) {
+    Object.entries(hooks).forEach(function (_ref) {
+      var _ref2 = runtimeHooks_slicedToArray(_ref, 2),
+          hookName = _ref2[0],
+          callback = _ref2[1];
+
+      vm[hookName].push(callback.bind(vm.$self));
+    });
+  });
+}
+;// CONCATENATED MODULE: ./src/core/vue/init.js
+
+
+var id = 0;
+
+function normalizeData(data) {
+  if (typeof data === 'function') {
+    return data();
+  }
+
+  return data;
+}
+
+var defaultLifeCycleCb = function defaultLifeCycleCb() {};
+
+function initMixin(vm) {
+  vm.prototype._init = function (options) {
+    // 1. 初始化参数
+    this.$template = options.template || '';
+
+    if (typeof options.el === 'string') {
+      this.$el = document.querySelector(options.el || '');
+    } else if (options.el instanceof HTMLElement || options.el instanceof DocumentFragment) {
+      this.$el = options.el;
+    } else {
+      this.$el = options.el;
+    }
+
+    this.$id = ++id;
+    this.$watch = options.watch || {};
+    this.$vnode = null;
+    this.$oldVNode = null;
+    this.$parentVnode = options.parentVnode || {};
+    this.$parentEl = options.parentEl || {};
+    this.$self = null;
+    this.$parentVm = options.parentVm;
+    this.$render = '';
+    this.$watcher = null;
+    this.$props = {}; // $props 是 vm 实例内部存储数据结构对象
+
+    this.data = normalizeData(options.data || {});
+    this.methods = options.methods || {};
+    this.props = options.props || [];
+    this.options = options;
+    this.computed = options.computed || {};
+
+    if (options.template) {
+      this.template = options.template;
+    } else if (this.$el) {
+      this.template = this.$el.outerHTML;
+      this.$el.innerHTML = '';
+    } else {
+      this.template = '';
+    } // this.template = options.template || (this.$el ? this.$el.outerHTML : '');
+
+
+    this.components = options.components || {};
+    this.isMount = false;
+    this.Ctor = this.constructor; // 在构造函数里面无法给 parent 和 child 赋值，只能在运行时创建 vnode 的时候赋值
+    // 因为 props 里面的数据，只有在创建 vnode 的时候才会用到，刚开始初始化构造的时候并用不到这两个值
+    // 这里的 $parent 都是父组件的实例，而不是 $self 实例
+
+    this.$parent = null;
+    this.$child = null; // 2. 对内部属性做一层代理，给 $self 赋值，把 data props computed methods 中的取值进行一层代理
+
+    proxyMixin(this);
+  };
+}
+;// CONCATENATED MODULE: ./src/core/vue/event.js
+// 用于创建每个组件的 eventBus
+
+function eventMixin(Vue) {
+  Vue.prototype._events = {};
+
+  Vue.prototype.emit = function (eventName) {
+    // 这个 emit 是向父组件通信的时候使用，所以这里触发的是父组件实例的 $emit
+    var vm = this;
+
+    if (vm.$parentVm) {
+      var _vm$$parentVm;
+
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      (_vm$$parentVm = vm.$parentVm).$emit.apply(_vm$$parentVm, [eventName].concat(args));
+    }
+  };
+
+  Vue.prototype.$on = function (eventName, cb) {
+    eventName = normalizeTagName(eventName);
+
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
+
+    if (!cb) {
+      throw new Error('_on Unexpected callback params');
+    }
+
+    if (Array.isArray(this._events[eventName])) {
+      this._events[eventName].push(cb);
+    } else {
+      this._events[eventName] = [cb];
+    }
+  };
+
+  Vue.prototype.$emit = function (eventName) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
+
+    eventName = normalizeTagName(eventName);
+
+    if (Array.isArray(this._events[eventName])) {
+      this._events[eventName].forEach(function (cb) {
+        cb.apply(void 0, args);
+      });
+    }
+  };
+
+  Vue.prototype.$off = function (eventName, cb) {
+    if (!eventName) {
+      throw new Error('_on Unexpected eventName params!');
+    }
+
+    if (!cb) {
+      throw new Error('_on Unexpected callback params');
+    }
+
+    if (Array.isArray(this._events[eventName])) {
+      var index = this._events[eventName].findIndex(function (item) {
+        return item === cb;
+      });
+
+      this._events[eventName].splice(index, 1);
+    }
+  };
+}
+;// CONCATENATED MODULE: ./src/core/compile/index.js
+/**
+ * html to ast
+ * ast 定义标准
+ * {
+ *     classes: [{name 'id', value: 'app'}, {name: ':class', value: 'flag ? "active" : ""'}, [name: ':style', value: "{color: flag ? 'red' : 'blue'}"]],
+ *     children: [{...}],
+ *     parent: [{...}] || null,
+ *     tag: 'div',
+ *     staticClass: "\"container\"" // 静态的 class 属性放在这个地方，动态的依然在 classes 里面
+ *     staticStyle: "{\"color\":\"red\"}" // 静态的 style 属性解析到这个地方，动态的 在 classes 里面
+ *     events: {click: 'clickHandler', 'doubleClick': 'handler'}
+ *     v-for: '',
+ *     v-if: '',
+ *     type: 1 https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
+ * }
+ * */
+
+/**
+ * 对于 attr 的解析
+ * */
+function parseAttr(attr) {
+  var handleMatchRes = function handleMatchRes(res) {
+    var key = res[1];
+    var value = res[2];
+
+    if (typeof value !== 'string') {
+      value = true;
+    }
+
+    return {
+      key: key,
+      value: value,
+      raw: attr
+    };
+  }; // attr 总共有四种类型
+  // class = 'a'
+  // class = "a"
+  // class = true
+  // autoplay
+
+
+  var regs = [/([^=<>\"\'\s]+)\s*="([^"]*)"/, /([^=<>\"\'\s]+)\s*='([^']*)'/, /([^=<>\"\'\s]+)\s*=([^'"]*)/, /([^=<>\"\'\s]+)\s*/];
+
+  for (var i = 0; i < regs.length; i++) {
+    var reg = regs[i];
+    var res = attr.match(reg);
+
+    if (res) {
+      return handleMatchRes(res);
+    }
+  }
+}
+/**
+ * 将 classes 数组细分到 events style class 等
+ * */
+
+
+function handleAttr(node, attrs) {
+  var res = [];
+  attrs.forEach(function (_ref, index) {
+    var name = _ref.name,
+        value = _ref.value;
+
+    if (name === 'style') {
+      node.staticStyle = value;
+      return;
+    }
+
+    if (name === 'class') {
+      node.staticClass = value;
+      return;
+    }
+
+    if (name.startsWith('v-on:') || name.startsWith('@')) {
+      node.events[name.replace(/v-on:|@/, '')] = value;
+      return;
+    }
+
+    if (name.startsWith('v-for')) {
+      node.vFor = value;
+      return;
+    }
+
+    if (name.startsWith('v-if')) {
+      node.vIf = value;
+      return;
+    }
+
+    res.push({
+      name: name,
+      value: value
+    });
+  });
+  return res;
+}
+/**
+ * template html 字符串
+ * options 可选参数
+ * */
+
+
+var attributeReg = /^\s*[^=<>\"\'\s]+\s*="[^"]*"|^\s*[^=<>\"\'\s]+\s*='[^']*'|^\s*[^=<>\"\'\s]+\s*=[^'"]*|^\s*[^=<>\"\'\s]+/;
+var startTagReg = /^<([a-zA-Z0-9\-]+)[^>]*>/;
+var endTagReg = /^<\/([a-zA-Z0-9\-]+)[^>]*>/;
+var commentReg = /<!--(.*)-->/;
+
+function parse(template, options) {
+  function createNode() {
+    return {
+      attrs: [],
+      children: [],
+      parent: [],
+      tag: '',
+      staticClass: '',
+      staticStyle: '',
+      events: {},
+      type: 0,
+      vFor: '',
+      vIf: '',
+      data: ''
+    };
+  }
+
+  var ast = createNode();
+
+  function advance(num) {
+    template = template.slice(num);
+  } // 下面的这些 tag 不应该包含 child 元素
+
+
+  var emptyTags = {
+    area: 1,
+    base: 1,
+    basefont: 1,
+    br: 1,
+    col: 1,
+    frame: 1,
+    hr: 1,
+    img: 1,
+    input: 1,
+    isindex: 1,
+    link: 1,
+    meta: 1,
+    param: 1,
+    embed: 1
+  };
+
+  function _parse(node) {
+    while (template) {
+      if (template.startsWith('<')) {
+        var startTagRes = template.match(startTagReg);
+
+        if (startTagRes) {
+          var child = createNode();
+          node.children.push(child);
+          child.parent = node;
+          child.tag = startTagRes[1];
+          child.type = 1;
+          advance(startTagRes[1].length + 1); // attr 的解析和 startTag
+
+          var attrRes = void 0;
+
+          while (attrRes = template.match(attributeReg)) {
+            var attr = attrRes[0];
+
+            var _parseAttr = parseAttr(attr),
+                key = _parseAttr.key,
+                value = _parseAttr.value;
+
+            child.attrs.push({
+              name: key,
+              value: value
+            });
+            advance(attr.length + attrRes['index']);
+          }
+
+          child.attrs = handleAttr(child, child.attrs);
+          advance(1); // 区分自闭合标签和普通标签
+
+          if (Object.keys(emptyTags).includes(child.tag)) {
+            continue;
+          }
+
+          _parse(child);
+
+          continue;
+        }
+
+        var endTagRes = template.match(endTagReg);
+
+        if (endTagRes) {
+          advance(endTagRes[0].length);
+          return;
+        }
+
+        var commentRes = template.match(commentReg);
+
+        if (commentRes) {
+          advance(commentRes[0].length);
+        }
+      } else {
+        var index = template.indexOf('<');
+
+        var _child = createNode();
+
+        _child.type = 3;
+        _child.tag = 'text';
+        var data = template.slice(0, index);
+
+        if (data.includes('\n')) {
+          // 踩坑： 这个地方，如果是 \n 的话，在生成 render 函数的时候 _t('\n xxx') 会报错，只有 _t('\\n xxx') 才能正确被 new Function() 生成函数
+          data = data.replace('\n', '\\n');
+        }
+
+        _child.data = data;
+        _child.parent = node;
+        node.children.push(_child);
+
+        if (index < 0) {
+          return node;
+        }
+
+        advance(index);
+      }
+    }
+
+    return node;
+  }
+
+  _parse(ast);
+
+  return ast.children[0];
+}
+
+/* harmony default export */ const compile = (parse);
+;// CONCATENATED MODULE: ./src/core/vue/vnode.js
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+/**
+ * vnode 类的定义
+ * tag: div | mybutton
+ * id 自动生成
+ * staticClass：静态的 class 类名，都是纯字符串 'container wrapper'
+ * staticStyle：静态的 style，都是纯字符串，比如 'font-size: 20px;color:red;'
+ * attrs: 所有的属性，包括 :class 和 :style 等
+ * children: [vnode, vnode]
+ * el: 当前的 dom 元素
+ * parent: vnode
+ * parentEl: 父级 dom 元素
+ * classes: [{name: ':msg', value: 'msg'}, {name: 'autoplay', value: 'true'}]
+ * events: {'click': 'clickHandler'}
+ * $vm: vm.$self
+ * type: 1 | 3
+ * data: 在 type 为 3 的时候是静态文本的内容
+ * componentsOptions: {isComponent: false | true, options?: {}}
+ * */
+
+var vnode_id = 0;
+
+var VNode = /*#__PURE__*/function () {
+  function VNode(tag, vm, attrs, children, type, data) {
+    _classCallCheck(this, VNode);
+
+    var _ref = attrs || {},
+        _ref$staticClass = _ref.staticClass,
+        staticClass = _ref$staticClass === void 0 ? '' : _ref$staticClass,
+        _ref$staticStyle = _ref.staticStyle,
+        staticStyle = _ref$staticStyle === void 0 ? '' : _ref$staticStyle,
+        _ref$attrs = _ref.attrs,
+        attributes = _ref$attrs === void 0 ? {} : _ref$attrs,
+        _ref$events = _ref.events,
+        events = _ref$events === void 0 ? {} : _ref$events;
+
+    this.tag = normalizeTagName(tag);
+    this.id = ++vnode_id;
+    this.children = children;
+    this.el = null;
+    this.parent = null; // vm._render 创建时会梳理父子关系并赋值
+
+    this.parentEl = null; // 在 patch 渲染时会赋值
+
+    this.staticClass = staticClass;
+    this.staticStyle = staticStyle;
+    this.attrs = attributes;
+    this.events = events;
+    this.vm = vm;
+    this.type = type;
+
+    if (this.type === 3) {
+      this.data = this.handleDynamicText(data);
+    }
+
+    this.options = vm.options; // 用来标记是不是组件 vnode，如果是组件 vnode 的话，在后面的 patch 过程中，会递归的去执行该组件的 mount 方法，然后进行 compile 和 render 的过程
+    // 这个 componentOptions 里面有两个字段一个是 isComponent 用来标记是不是组件，如果为 true 的话，会把这个组件的 options 选项给赋值
+
+    this.componentOptions = this.getComponentOptions();
+  }
+
+  _createClass(VNode, [{
+    key: "getComponentOptions",
+    value: function getComponentOptions() {
+      var components = {};
+      Object.assign(components, this.vm.Ctor.components || {}, this.vm.components);
+      var componentKeys = Object.keys(components);
+
+      for (var i = 0; i < componentKeys.length; i++) {
+        var componentKey = componentKeys[i];
+
+        if (normalizeTagName(componentKey) === normalizeTagName(this.tag)) {
+          return {
+            isComponent: true,
+            options: components[componentKey],
+            componentInstance: null // 这个后面在第一次 patch 的时候会赋值，此后 update 的时候，就可以使用该组件实例进行 $watcher.update() 的渲染了
+
+          };
+        }
+      }
+
+      return {
+        isComponent: false
+      };
+    }
+  }, {
+    key: "handleDynamicText",
+    value: function handleDynamicText(data) {
+      return handleDynamicExpression(this.vm.$self, data);
+    }
+  }]);
+
+  return VNode;
+}(); // 只负责提供比较当前两个 vnode 属性的工具函数，child 的递归对比逻辑不在这里
+
+
+function compareVNode(oldVNode, newVNode) {
+  if (!newVNode) {
+    return false;
+  }
+
+  if (!oldVNode) {
+    throw new Error('Unexpected params ' + oldVNode);
+  } // 对比 tag class style classes events type data 等
+
+
+  if (!isEqual(newVNode.tag, oldVNode.tag)) {
+    return false;
+  }
+
+  if (!isEqual(newVNode.type, oldVNode.type)) {
+    return false;
+  }
+
+  if (!isEqual(oldVNode.data, newVNode.data)) {
+    return false;
+  }
+
+  if (!isEqual(newVNode["class"], oldVNode["class"])) {
+    return false;
+  }
+
+  if (!isEqual(newVNode.style, oldVNode.style)) {
+    return false;
+  }
+
+  if (!isEqual(newVNode.attrs, oldVNode.attrs)) {
+    return false;
+  }
+
+  if (!isEqual(newVNode.events, oldVNode.events)) {
+    return false;
+  }
+
+  return true;
+} // 将 newVNode 的属性赋值给 oldVNode，但是不替换 oldVNode 的堆地址
+
+function replaceVNode(oldVNode, newVNode) {
+  var keys = ['tag', 'children', 'id', 'staticClass', 'staticStyle', 'attrs', 'events', 'vm', 'type', 'data', 'options', 'componentOptions'];
+  keys.forEach(function (key) {
+    oldVNode[key] = newVNode[key];
+  });
+  return oldVNode;
+}
+function cloneVNode(oldVNode) {
+  if (Array.isArray(oldVNode)) {
+    return oldVNode.map(function (vnode) {
+      return cloneVNode(vnode);
+    });
+  }
+
+  var children = (oldVNode.children || []).map(function (child) {
+    return cloneVNode(child);
+  });
+  return new VNode(oldVNode.tag, oldVNode.vm, oldVNode.attrs, children, oldVNode.type, oldVNode.data);
+}
+/* harmony default export */ const vnode = (VNode);
+;// CONCATENATED MODULE: ./src/core/render/index.js
+/**
+ * render 函数的标准
+ * _t createText 创建普通的文本 vnode: createText('helloText')
+ * _c createElement 创建普通的标签 vnode 和组件 vnode: createElement('div', classes: { class, style, events, classes: [{name, value}], parent }, children: [])
+ * _l createList 创建 v-for 循环渲染的 vnode: createList('li', 'array', classes, children: [])
+ * _f createIf 创建 v-if 条件渲染的 vnode: createIf('div', 'flag', classes, children: [])
+ * */
+
+/**
+ * ast 是一个语法结构对象
+ * */
+function genRenderFn(ast) {
+  return "with(this){return ".concat(_genRenderFn(ast), "}");
+}
+function _genRenderFn(ast) {
+  var type = ast.type,
+      vFor = ast.vFor,
+      vIf = ast.vIf;
+
+  if (type === 3) {
+    // 普通文本
+    return genText(ast);
+  }
+
+  if (type === 1) {
+    if (vFor) {
+      return genFor(ast);
+    }
+
+    if (vIf) {
+      return genIf(ast);
+    }
+
+    return genEle(ast);
+  }
+}
+
+function genChildren(children) {
+  var fns = '';
+  var len = children.length;
+  children.forEach(function (item, index) {
+    fns += _genRenderFn(item);
+
+    if (index !== len - 1) {
+      fns += ',';
+    }
+  });
+  return fns;
+}
+
+function genText(ast) {
+  return "_t('".concat(ast.data, "')");
+}
+
+function genFor(ast) {
+  var parent = ast.parent,
+      children = ast.children,
+      tag = ast.tag,
+      staticClass = ast.staticClass,
+      staticStyle = ast.staticStyle,
+      events = ast.events,
+      type = ast.type,
+      data = ast.data,
+      attrs = ast.attrs,
+      vFor = ast.vFor,
+      vIf = ast.vIf;
+  var attributes = {};
+  attrs.forEach(function (_ref) {
+    var name = _ref.name,
+        value = _ref.value;
+    attributes[name] = value;
+  });
+  return "..._l(\n        '".concat(tag, "',\n        '").concat(vFor, "', \n        {staticClass: ").concat(JSON.stringify(staticClass), ", staticStyle: ").concat(JSON.stringify(staticStyle), ", events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+}
+
+function genIf(ast) {
+  var children = ast.children,
+      tag = ast.tag,
+      staticClass = ast.staticClass,
+      staticStyle = ast.staticStyle,
+      events = ast.events,
+      attrs = ast.attrs,
+      vIf = ast.vIf;
+  var attributes = {};
+  attrs.forEach(function (_ref2) {
+    var name = _ref2.name,
+        value = _ref2.value;
+    attributes[name] = value;
+  });
+  return "_f(\n        '".concat(tag, "',\n        '").concat(vIf, "', \n        {staticClass: ").concat(JSON.stringify(staticClass), ", staticStyle: ").concat(JSON.stringify(staticStyle), ", events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+}
+
+function genEle(ast) {
+  var parent = ast.parent,
+      children = ast.children,
+      tag = ast.tag,
+      staticClass = ast.staticClass,
+      staticStyle = ast.staticStyle,
+      events = ast.events,
+      type = ast.type,
+      data = ast.data,
+      attrs = ast.attrs,
+      vFor = ast.vFor,
+      vIf = ast.vIf;
+  var attributes = {};
+  attrs.forEach(function (_ref3) {
+    var name = _ref3.name,
+        value = _ref3.value;
+    attributes[name] = value;
+  });
+  return "_c(\n        '".concat(tag, "',\n        {staticClass: ").concat(JSON.stringify(staticClass), ", staticStyle: ").concat(JSON.stringify(staticStyle), ", events: ").concat(JSON.stringify(events || []), ", attrs: ").concat(JSON.stringify(attrs || {}), "},\n        [").concat(genChildren(children), "])");
+}
+;// CONCATENATED MODULE: ./src/core/config/event.js
+var TouchEvent = ['touchstart', 'touchmove', 'touchcancel', 'touchend'];
+var MouseEvent = ['mouseup', 'mousedown', 'mouseenter', 'mouseleave', 'mouseout', 'mousemove', 'mouseover'];
+var ClickEvent = ['click', 'dblclick', 'auxclick', 'contextmenu', 'pointerlockchange', 'pointerlockerror', 'select', 'wheel'];
+var DragEvent = ['drag', 'dragend', 'dragenter', 'dragleave', 'dragstart', 'dragover', 'drop'];
+var InputEvent = ['input', 'change', 'focus', 'blur'];
+var MediaEvent = ['canplay', 'play', 'pause', 'complete', 'emptied', 'ended', 'playing', 'seeked', 'ratechange', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'];
+var ProgressEvent = ['abort', 'load', 'error', 'loadend', 'progress', 'timeout', 'loadstart'];
+var KeyEvent = ['keydown', 'keypress', 'keyup'];
+var NativeDomEventKeyList = [].concat(TouchEvent, MouseEvent, ClickEvent, DragEvent, InputEvent, MediaEvent, ProgressEvent, KeyEvent);
+;// CONCATENATED MODULE: ./src/core/config/index.js
+
+;// CONCATENATED MODULE: ./src/core/vue/patch.js
+function patch_slicedToArray(arr, i) { return patch_arrayWithHoles(arr) || patch_iterableToArrayLimit(arr, i) || patch_unsupportedIterableToArray(arr, i) || patch_nonIterableRest(); }
+
+function patch_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function patch_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return patch_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return patch_arrayLikeToArray(o, minLen); }
+
+function patch_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function patch_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function patch_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+
+function _patch(vm, oldVNode, newVNode) {
+  if (!oldVNode) {
+    // const childDom = vNode2Dom(oldVNode);
+    // console.log('>>> childDom is', childDom);
+    // return childDom;
+    return vNode2Dom(newVNode);
+  }
+
+  return diff(vm, oldVNode, newVNode);
+}
+
+function patch(vm, oldVNode, newVNode) {
+  if (!oldVNode) {
+    // 说明是第一次挂载，是 mount 的逻辑，而不是 update 的逻辑
+    var dom = _patch(vm, oldVNode, newVNode);
+
+    var prevEl = vm.$el;
+    vm.$oldVNode = newVNode;
+
+    if (prevEl) {
+      // App 组件，el 是 div#app 真实存在于页面上
+      // prevEl.parentNode.replaceChild(dom, prevEl);
+      prevEl.innerHTML = "";
+      prevEl.appendChild(dom);
+    } else {
+      // MyButton 组件，并不是真实存在于页面上
+      vm.$parentEl.appendChild(dom);
+    }
+
+    vm.$el = dom;
+    vm.isMount = true;
+    callHook(vm, 'mounted');
+  } else {
+    // 说明不是第一次挂载，是 update 的逻辑，不走 appendChild 或者是 replaceChild 的逻辑，而是走 diff 然后替换的逻辑
+    var _dom = _patch(vm, oldVNode, newVNode);
+
+    callHook(vm, 'updated');
+  }
+}
+/**
+ * diff
+ * oldVNode !== newVNode
+ * vnode2dom(newVNode) 然后直接替换旧的 dom
+ * oldVNode = newVNode
+ * 1. 如果是组件 vnode，执行 oldVNode 的 updateComponent 逻辑
+ * 2. 如果不是组件 vnode，执行 children 的递归遍历
+ * */
+
+function diff(vm, oldVNode, newVNode) {
+  // 普通 text 元素不一样 vnode2dom 然后替换
+  // 普通其他元素不一样，vnode2dom 然后替换
+  // my-button 元素不一样
+  // 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
+  // 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
+  var isEqual = compareVNode(oldVNode, newVNode);
+
+  if (!isEqual) {
+    var newDom = vNode2Dom(newVNode);
+    replaceNode(newDom, oldVNode.el);
+    replaceVNode(oldVNode, newVNode);
+    oldVNode.el = newDom;
+    return newDom;
+  }
+
+  if (oldVNode.componentOptions.isComponent) {
+    // 如果父组件发生更新的话，子组件默认全部执行一次 updateComponent() 来 diff 一次
+    // TODO 后面优化，如果子组件的 props 属性中没有发生更新的情况，就跳过子组件的 diff 更新
+    var componentInstance = oldVNode.componentOptions.componentInstance;
+
+    if (componentInstance) {
+      return componentInstance.$watcher.update();
+    }
+
+    return vNode2Dom(oldVNode);
+  } else {
+    var newChildren = newVNode.children || [];
+    var oldChildren = oldVNode.children || [];
+    var maxLength = Math.max(newChildren.length, oldChildren.length);
+
+    for (var i = 0; i < maxLength; i++) {
+      var newChild = newChildren[i];
+      var oldChild = oldChildren[i];
+
+      if (!oldChild && newChild) {
+        // 增加新的子元素
+        var _newDom = vNode2Dom(newChild);
+
+        oldVNode.children.push(newChild);
+        oldVNode.el.appendChild(_newDom);
+        continue;
+      }
+
+      if (!newChild && oldChild) {
+        //  删除之前的子元素
+        removeChild(oldVNode.el, oldChild.el);
+        oldChildren.splice(i, 1);
+        continue;
+      }
+
+      if (newChild && oldChild) {
+        diff(vm, oldChild, newChild);
+      }
+    }
+  }
+} // 将一个 vnode 树转换为 dom，这种情况下，只有在完全替换某个 dom 元素的时候，才需要用到
+
+function vNode2Dom(vnode) {
+  var tag = vnode.tag;
+
+  if (!vnode.tag) {
+    throw new Error('VNode2Dom Unexpected params tag ' + vnode.tag);
+  }
+
+  if (vnode.componentOptions.isComponent) {
+    return componentVNode2Dom(vnode);
+  }
+
+  return normalVNode2Dom(vnode);
+}
+function componentVNode2Dom(vnode) {
+  var options = vnode.componentOptions.options;
+  options.parentEl = vnode.$parent && vnode.$parent.el || vnode.parentEl;
+  options.parentVnode = vnode;
+  options.parentVm = vnode.vm;
+  var Ctor = vnode.vm.Ctor;
+  var componentInstance = new Ctor(options);
+  componentInstance.$parent = vnode.vm;
+
+  componentInstance._mount();
+
+  vnode.el = componentInstance.$el; // 处理组件上面的事件
+
+  addEvent(vnode); // 这个地方要将 componentInstance 赋值给组件 vnode 的 componentOptions 中，为了以后的 diff 更新不重复创建组件 vm 实例
+
+  vnode.componentOptions.componentInstance = componentInstance;
+  return componentInstance.$el;
+}
+function normalVNode2Dom(vnode) {
+  var tag = vnode.tag;
+
+  if (vnode.type === 3) {
+    var _dom2 = createTextNode(vnode.data);
+
+    vnode.el = _dom2;
+    return _dom2;
+  }
+
+  var dom = createElement(tag);
+  vnode.el = dom; // 处理 css
+
+  if (vnode.style) {
+    dom.style.cssText = vnode.style;
+  } // 处理 className
+
+
+  if (vnode["class"]) {
+    dom.className = vnode["class"];
+  } // 处理 attrs
+
+
+  if (Array.isArray(vnode.attrs)) {
+    vnode.attrs.forEach(function (_ref) {
+      var name = _ref.name,
+          value = _ref.value;
+
+      if (name.startsWith(':')) {
+        value = handleJsExpression(vnode.vm.$self, value);
+        name = name.slice(1);
+      }
+
+      vnode.el.setAttribute(name, value);
+    });
+  } // 处理 event
+
+
+  addEvent(vnode); // 递归处理 children
+
+  vnode.children.forEach(function (child) {
+    var node = vNode2Dom(child);
+    node.parentEl = dom;
+    appendChild(dom, node);
+  });
+  return dom;
+}
+function addEvent(vnode) {
+  var dom = vnode.el;
+  var events = vnode.events || {}; //{click: 'clickHandler'}
+
+  Object.entries(events).forEach(function (_ref2) {
+    var _ref3 = patch_slicedToArray(_ref2, 2),
+        name = _ref3[0],
+        value = _ref3[1];
+
+    if (NativeDomEventKeyList.includes(name)) {
+      var cb = handleJsExpression(vnode.vm.$self, value); // TODO addEventListeners 的 options
+
+      dom.addEventListener(name, cb.bind(vnode.vm.$self));
+    } else {
+      // 不是浏览器的原生事件，自定义事件，可能是用于父子组件通信
+      // name: customEvent value: clickHandler
+      var _cb = handleJsExpression(vnode.vm.$self, value);
+
+      vnode.vm.$on(name, _cb.bind(vnode.vm.$self));
+    }
+  });
+}
+;// CONCATENATED MODULE: ./src/core/vue/reactive/scheduler.js
+var queue = [];
+
+function runQueue() {
+  queue.forEach(function (watcher, index) {
+    if (watcher) {
+      watcher.callback();
+    }
+
+    queue[index] = null;
+  }); // 这个地方有坑！
+  // 不能直接 queue = []，因为 watcher.callback 中间会执行该组件的 updateComponent，里面可能会执行子组件的 updateComponent
+  // 那么就会走到 queueWatcher(childWatcher)这个地方，相当于是遍历一个数组的时候，还往这个数组里面添加新的元素，关键 runQueue 的下一次执行遍历还是异步执行
+  // 此时如果将 queue 置为空 那么新添加的子元素的 watcher 就无法执行到了
+  // queue = [];
+
+  clearQueue();
+}
+
+function clearQueue() {
+  var data = [];
+  queue.forEach(function (item) {
+    if (item) {
+      data.push(item);
+    }
+  });
+  queue = data;
+}
+
+function singlePush(array, item) {
+  var index = array.findIndex(function (i) {
+    return i === item;
+  });
+
+  if (index < 0) {
+    array.push(item);
+  }
+}
+
+function nextTick(fn) {
+  Promise.resolve().then(function () {
+    fn();
+  });
+}
+
+function queueWatcher(watcher) {
+  singlePush(queue, watcher);
+  nextTick(runQueue);
+}
+;// CONCATENATED MODULE: ./src/core/vue/reactive/dep.js
+function dep_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function dep_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function dep_createClass(Constructor, protoProps, staticProps) { if (protoProps) dep_defineProperties(Constructor.prototype, protoProps); if (staticProps) dep_defineProperties(Constructor, staticProps); return Constructor; }
+
+function dep_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var dep_id = 0;
+
+var Dep = /*#__PURE__*/function () {
+  function Dep() {
+    dep_classCallCheck(this, Dep);
+
+    dep_defineProperty(this, "subs", []);
+
+    dep_defineProperty(this, "id", ++dep_id);
+  }
+
+  dep_createClass(Dep, [{
+    key: "depend",
+    value: function depend() {
+      if (Dep.target) {
+        singlePush(this.subs, Dep.target);
+      }
+    }
+  }, {
+    key: "notify",
+    value: function notify() {
+      this.subs.forEach(function (sub) {
+        sub.update && sub.update();
+      });
+    }
+  }]);
+
+  return Dep;
+}();
+
+Dep.target = null;
+var DepTargetQueue = [];
+function pushDepTargetQueue(target) {
+  DepTargetQueue.push(target);
+  Dep.target = target;
+}
+function popDepTargetQueue() {
+  DepTargetQueue.pop();
+  Dep.target = DepTargetQueue[DepTargetQueue.length - 1];
+}
+/* harmony default export */ const reactive_dep = (Dep);
+;// CONCATENATED MODULE: ./src/core/vue/reactive/watcher.js
+function watcher_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function watcher_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function watcher_createClass(Constructor, protoProps, staticProps) { if (protoProps) watcher_defineProperties(Constructor.prototype, protoProps); if (staticProps) watcher_defineProperties(Constructor, staticProps); return Constructor; }
+
+function watcher_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+
+var watcher_id = 0;
+
+var Watcher = /*#__PURE__*/function () {
+  function Watcher(cb, vm) {
+    watcher_classCallCheck(this, Watcher);
+
+    watcher_defineProperty(this, "callback", null);
+
+    watcher_defineProperty(this, "id", ++watcher_id);
+
+    watcher_defineProperty(this, "vm", null);
+
+    this.callback = cb;
+    this.vm = vm;
+    this.get();
+  }
+
+  watcher_createClass(Watcher, [{
+    key: "update",
+    value: function update() {
+      callHook(this.vm, 'beforeUpdate');
+      queueWatcher(this);
+    }
+  }, {
+    key: "get",
+    value: function get() {
+      // 只用在组件挂载的时候收集一次依赖即可
+      pushDepTargetQueue(this);
+      this.callback();
+      popDepTargetQueue();
+    }
+  }]);
+
+  return Watcher;
+}();
+
+/* harmony default export */ const watcher = (Watcher);
+;// CONCATENATED MODULE: ./src/core/vue/reactive/observer.js
+function observer_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { observer_typeof = function _typeof(obj) { return typeof obj; }; } else { observer_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return observer_typeof(obj); }
+
+function observer_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function observer_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function observer_createClass(Constructor, protoProps, staticProps) { if (protoProps) observer_defineProperties(Constructor.prototype, protoProps); if (staticProps) observer_defineProperties(Constructor, staticProps); return Constructor; }
+
+function observer_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Observer = /*#__PURE__*/function () {
+  function Observer(data, dep) {
+    observer_classCallCheck(this, Observer);
+
+    observer_defineProperty(this, "data", null);
+
+    observer_defineProperty(this, "dep", null);
+
+    this.dep = dep;
+    this.data = this.deepProxy(data);
+  }
+
+  observer_createClass(Observer, [{
+    key: "deepProxy",
+    value: function deepProxy(data) {
+      var _this = this;
+
+      var dep = this.dep;
+
+      if (!data) {
+        return;
+      }
+
+      if (observer_typeof(data) !== 'object') {
+        return;
+      }
+
+      Object.keys(data).forEach(function (key) {
+        var val = data[key];
+
+        if (observer_typeof(val) === 'object' && val !== null) {
+          data[key] = _this.deepProxy(val);
+        }
+      });
+      return new Proxy(data, {
+        get: function get(target, p, receiver) {
+          if (typeof dep !== 'undefined') {
+            dep.depend();
+          }
+
+          return target[p];
+        },
+        set: function set(target, p, value, receiver) {
+          if (observer_typeof(value) === 'object' && value !== null) {
+            target[p] = this.deepProxy(value);
+          } else {
+            target[p] = value;
+          }
+
+          dep.notify();
+          return true;
+        }
+      });
+    }
+  }]);
+
+  return Observer;
+}();
+
+/* harmony default export */ const reactive_observer = (Observer);
+;// CONCATENATED MODULE: ./src/core/vue/lifecycle.js
+
+
+
+
+
+function callHook(vm, hookName) {
+  if (typeof vm[hookName] === 'function') {
+    vm[hookName]();
+    return;
+  }
+
+  if (Array.isArray(vm[hookName])) {
+    vm[hookName].forEach(function (hook) {
+      hook.call(vm);
+    });
+  }
+}
+function lifecycleMixin(Vue) {
+  Vue.prototype.mount = function () {
+    return this._mount();
+  };
+
+  Vue.prototype._mount = function () {
+    var vm = this;
+    installHook(vm); // 开始给内部的 props 变量赋值
+
+    callHook(vm, 'created');
+
+    var updateComponent = function updateComponent() {
+      vm._update(vm._render());
+    };
+
+    var dep = new reactive_dep(); // 应该是通过 watcher 来触发的，这里暂时先手动触发下
+    // updateComponent();
+
+    var observer = new reactive_observer(this.data, dep);
+    this.data = observer.data;
+    this.$watcher = new watcher(updateComponent, vm);
+  };
+
+  Vue.prototype._update = function (vnode) {
+    var vm = this;
+    var prevEl = vm.$el; // 关于 $oldVNode 和 $vnode 的赋值逻辑放在了 _render 函数里面
+
+    if (vm.isMount) {
+      callHook(vm, 'beforeUpdate');
+    } else {
+      callHook(vm, 'beforeMount');
+    }
+
+    vnode.parentEl = vm.$el;
+    patch(vm, vm.$oldVNode, vnode);
+  };
+}
+;// CONCATENATED MODULE: ./src/core/vue/render.js
+
+
+
+ // 封装 createElement 函数
+
+function createTextVNode(text) {
+  return new vnode('text', this, {}, [], 3, text);
+}
+function render_createElement(tag, attrs, children) {
+  return new vnode(tag, this, attrs, children, 1, null);
+}
+function createListVNode(tag, dataKey, attrs, children) {
+  var _this = this;
+
+  var arr = this.$self[dataKey];
+
+  if (!arr) {
+    throw new Error(dataKey + ' does not exist on ' + this);
+  } // 这个地方有大坑
+  // 因为 render 函数中 _l 是这么写的
+  // ..._l(
+  //         'li',
+  //         'array',
+  //         {staticClass: '', staticStyle: '', events: {}, attrs: []},
+  //         [_t('{{name}}')]
+  // )
+  // 这里 _t 创建的 children 其实是同一个 vnode，所以这里循环创建的 children 其实是同一个 vnode 实例，后面在进行 patch 的时候，会出现 bug
+  // 对于 children 的处理要 clone 创建，而不能直接赋值
+
+
+  return arr.map(function (item) {
+    return new vnode(tag, _this, attrs, cloneVNode(children), 1, null);
+  });
+}
+function createIfVNode(tag, dataKey, attrs, children) {
+  var flag = this.$self[dataKey];
+
+  if (flag) {
+    return new vnode(tag, this, attrs, children, 1, null);
+  }
+
+  return null;
+} // 梳理 vnode 父子关系
+
+function handleVNodeRelationship(vnode) {
+  var children = vnode.children || [];
+  children.forEach(function (item) {
+    item.$parent = vnode;
+    handleVNodeRelationship(item);
+  });
+  return vnode;
+}
+function renderMixin(Vue) {
+  Vue.prototype._c = render_createElement;
+  Vue.prototype._l = createListVNode;
+  Vue.prototype._t = createTextVNode;
+  Vue.prototype._f = createIfVNode;
+
+  Vue.prototype._render = function () {
+    var vm = this;
+    callHook(vm, 'beforeVNodeCreate'); // $render 是一个 render 函数字符串
+
+    var ast = compile(this.template || '');
+    this.$render = genRenderFn(ast);
+    var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
+    // if (this.$vnode) {
+    //     debugger;
+    //     this.$oldVNode = this.$vnode;
+    // }
+
+    var vnode = fn.call(this);
+    this.$vnode = handleVNodeRelationship(vnode || {});
+    callHook('vm', 'vNodeCreated');
+    return this.$vnode;
+  };
+}
+;// CONCATENATED MODULE: ./src/core/vue/index.js
+
+
+
+
+
+
+
+function Vue(options) {
+  if (!options) {
+    throw new Error('Unexpected params!');
+  }
+
+  this._init(options);
+}
+
+initMixin(Vue);
+eventMixin(Vue);
+renderMixin(Vue);
+lifecycleMixin(Vue);
+/* harmony default export */ const vue = (Vue);
+;// CONCATENATED MODULE: ./src/core/vue/global/component.js
+function registerGlobalComponentAPI(vm) {
+  vm.components = {};
+
+  vm.component = function (componentName, options) {
+    vm.components[componentName] = options;
+    return options;
+  };
+}
+
+/* harmony default export */ const component = (registerGlobalComponentAPI);
+;// CONCATENATED MODULE: ./src/core/vue/global/index.js
+
+
+
+function register(vm) {
+  component(vm);
+  return vm;
+}
+
+window.Vue = vue;
+/* harmony default export */ const global = (register(vue));
 ;// CONCATENATED MODULE: ./demo/src/App.vue?type=template
-/* harmony default export */ const Apptype_template = ({"content":"\n  <div class=\"app\">\n    <h1>App</h1>\n  </div>\n"});
-;// CONCATENATED MODULE: ./demo/src/App.vue?type=style
-/* harmony default export */ const Apptype_style = ({"content":"\n.app {\n  width: 200px;\n  height: 200px;\n  background-size: cover;\n  background-image: url(\"https://momentum.photos/img/89af9ef6-9a09-49de-a085-fd6b91f86c64.jpg?momo_cache_bg_uuid=d101afda-b9ff-4130-a371-50f9ffea64bf\");\n}\n"});
+/* harmony default export */ const Apptype_template = ({"content":"<div class=\"app\">\n    <h1>App</h1>\n<!--    <button @click=\"changeMsg\">{{message}}</button>-->\n    <p\n        :class=\"['container', flag ? 'hello' : 'world']\"\n        :style=\"{'font-size': flag ? '12px' : '20px'}\"\n        @click=\"changeFlag\">changeFlag - {{flag}}</p>\n    <bar :msg=\"message\" @changeMessage=\"changeMessage\"></bar>\n  </div>"});
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
+var injectStylesIntoStyleTag = __webpack_require__(379);
+var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleDomAPI.js
+var styleDomAPI = __webpack_require__(795);
+var styleDomAPI_default = /*#__PURE__*/__webpack_require__.n(styleDomAPI);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertBySelector.js
+var insertBySelector = __webpack_require__(569);
+var insertBySelector_default = /*#__PURE__*/__webpack_require__.n(insertBySelector);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js
+var setAttributesWithoutAttributes = __webpack_require__(565);
+var setAttributesWithoutAttributes_default = /*#__PURE__*/__webpack_require__.n(setAttributesWithoutAttributes);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/insertStyleElement.js
+var insertStyleElement = __webpack_require__(216);
+var insertStyleElement_default = /*#__PURE__*/__webpack_require__.n(insertStyleElement);
+// EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/styleTagTransform.js
+var styleTagTransform = __webpack_require__(589);
+var styleTagTransform_default = /*#__PURE__*/__webpack_require__.n(styleTagTransform);
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./modules/loader/index.js!./demo/src/App.vue?type=style
+var Apptype_style = __webpack_require__(920);
+;// CONCATENATED MODULE: ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js!./demo/src/App.vue?type=style
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var options = {};
+
+options.styleTagTransform = (styleTagTransform_default());
+options.setAttributes = (setAttributesWithoutAttributes_default());
+
+      options.insert = insertBySelector_default().bind(null, "head");
+    
+options.domAPI = (styleDomAPI_default());
+options.insertStyleElement = (insertStyleElement_default());
+
+var update = injectStylesIntoStyleTag_default()(Apptype_style/* default */.Z, options);
+
+
+
+
+       /* harmony default export */ const src_Apptype_style = (Apptype_style/* default */.Z && Apptype_style/* default.locals */.Z.locals ? Apptype_style/* default.locals */.Z.locals : undefined);
+
+;// CONCATENATED MODULE: ./demo/src/Bar.vue?type=template
+/* harmony default export */ const Bartype_template = ({"content":"<div class=\"bar\">\n    <h2>bar-{{msg}}</h2>\n    <button @click=\"changeMessage\">change parent message</button>\n  </div>"});
+// EXTERNAL MODULE: ./node_modules/css-loader/dist/cjs.js!./modules/loader/index.js!./demo/src/Bar.vue?type=style
+var Bartype_style = __webpack_require__(604);
+;// CONCATENATED MODULE: ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js!./demo/src/Bar.vue?type=style
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+var Bartype_style_options = {};
+
+Bartype_style_options.styleTagTransform = (styleTagTransform_default());
+Bartype_style_options.setAttributes = (setAttributesWithoutAttributes_default());
+
+      Bartype_style_options.insert = insertBySelector_default().bind(null, "head");
+    
+Bartype_style_options.domAPI = (styleDomAPI_default());
+Bartype_style_options.insertStyleElement = (insertStyleElement_default());
+
+var Bartype_style_update = injectStylesIntoStyleTag_default()(Bartype_style/* default */.Z, Bartype_style_options);
+
+
+
+
+       /* harmony default export */ const src_Bartype_style = (Bartype_style/* default */.Z && Bartype_style/* default.locals */.Z.locals ? Bartype_style/* default.locals */.Z.locals : undefined);
+
+;// CONCATENATED MODULE: ./demo/src/Bar.vue?type=script
+/* harmony default export */ const Bartype_script = ({
+  name: 'bar',
+  props: ['msg'],
+  methods: {
+    changeMessage() {
+      this.emit('changeMessage', this.msg + ' 1');
+    }
+  }
+});
+;// CONCATENATED MODULE: ./demo/src/Bar.vue
+
+                
+                
+                function normalizeComponent({template, options}) {
+                    if (template) {
+                        Object.assign(options, {template: template.content});
+                    }
+                    return options;
+                }
+                /* harmony default export */ const Bar = (normalizeComponent({template: Bartype_template, options: Bartype_script}));
+    
 ;// CONCATENATED MODULE: ./demo/src/App.vue?type=script
 
 /* harmony default export */ const Apptype_script = ({
   name: 'App',
   data() {
     return {
-      message: 'hello world'
+      message: 'hello world',
+      flag: true,
+      array: [1, 2, 3]
     }
   },
+  components: {
+    Bar: Bar
+  },
   methods: {
-    clickHandler() {}
+    changeFlag() {
+      this.flag = false;
+      console.log('>>>>> changeFlag', this.flag);
+    },
+    clickHandler() {},
+    changeMessage(msg) {
+      this.message = msg;
+    },
+    changeMsg() {
+      this.message = 'base!!!';
+    }
   }
 });
-
 ;// CONCATENATED MODULE: ./demo/src/App.vue
 
                 
                 
-                function normalizeComponent({style, template, options}) {
-                    if (style) {
-                        Object.assign(options, {style: style.content});
-                    }
+                function App_normalizeComponent({template, options}) {
                     if (template) {
                         Object.assign(options, {template: template.content});
                     }
                     return options;
                 }
-                /* harmony default export */ const App = (normalizeComponent({template: Apptype_template, style: Apptype_style, options: Apptype_script}));
+                /* harmony default export */ const App = (App_normalizeComponent({template: Apptype_template, options: Apptype_script}));
     
 ;// CONCATENATED MODULE: ./demo/main.js
-// import Vue from '../dist/vue.js';
+// import '../dist/vue.js';
 
 
 var vm = new window.Vue({
@@ -9784,7 +11932,7 @@ var vm = new window.Vue({
     };
   }
 });
-console.log(vm);
+window.vm = vm;
 vm.mount();
 })();
 

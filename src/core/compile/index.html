@@ -165,7 +165,7 @@
 
                     const commentRes = template.match(commentReg);
                     if (commentRes) {
-                        advance(endTagRes[0].length);
+                        advance(commentReg[0].length);
                         continue;
                     }
 
@@ -191,13 +191,7 @@
         return ast;
     }
 
-    const content = `<div id="app">
-    <div @click="handler" :msg="msg" value="hello" style="color: red" class="container" v-for="arr" v-if="flag">
-        <input type="text">
-        <p>hello</p>
-        <my-button :msg="msg"></my-button>
-    </div>
-</div>`;
+    const content = `\\n  <div class=\\"app\\">\\n    <h1>App</h1>\\n  </div>\\n`;
     const ast = parse(content);
     console.log(ast);
 </script>

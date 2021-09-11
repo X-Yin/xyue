@@ -10169,6 +10169,8 @@ function initMixin(vm) {
       this.$el = document.querySelector(options.el || '');
     } else if (options.el instanceof HTMLElement || options.el instanceof DocumentFragment) {
       this.$el = options.el;
+    } else {
+      this.$el = options.el;
     }
 
     this.$id = ++id;
@@ -10851,7 +10853,9 @@ function patch(vm, oldVNode, newVNode) {
 
     if (prevEl) {
       // App 组件，el 是 div#app 真实存在于页面上
-      prevEl.parentNode.replaceChild(dom, prevEl);
+      // prevEl.parentNode.replaceChild(dom, prevEl);
+      prevEl.innerHTML = "";
+      prevEl.appendChild(dom);
     } else {
       // MyButton 组件，并不是真实存在于页面上
       vm.$parentEl.appendChild(dom);
@@ -10949,7 +10953,7 @@ function vNode2Dom(vnode) {
 }
 function componentVNode2Dom(vnode) {
   var options = vnode.componentOptions.options;
-  options.parentEl = vnode.$parent.el;
+  options.parentEl = vnode.$parent && vnode.$parent.el || vnode.parentEl;
   options.parentVnode = vnode;
   options.parentVm = vnode.vm;
   var Ctor = vnode.vm.Ctor;
@@ -11372,7 +11376,8 @@ function renderMixin(Vue) {
     var vm = this;
     callHook(vm, 'beforeVNodeCreate'); // $render 是一个 render 函数字符串
 
-    this.$render = genRenderFn(compile(this.template || '')); // debugger;
+    var ast = compile(this.template || '');
+    this.$render = genRenderFn(ast); // debugger;
 
     var fn = new Function(this.$render); // 如果之前已经有 $vnode，证明不是第一次渲染，所以要梳理一下先后关系
     // if (this.$vnode) {
