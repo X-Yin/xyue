@@ -27,8 +27,8 @@ export function initMixin(vm) {
         this.$watch = options.watch || {};
         this.$vnode = null;
         this.$oldVNode = null;
-        this.$parentVnode = options.parentVnode || {};
-        this.$parentEl = options.parentEl || {};
+        this.$parentVnode = options.parentVnode || null;
+        this.$parentEl = options.parentEl || null;
         this.$self = null;
         this.$parentVm = options.parentVm;
         this.$render = '';

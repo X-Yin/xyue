@@ -33,7 +33,7 @@ export function patch(vm, oldVNode, newVNode) {
 			prevEl.innerHTML = "";
 			prevEl.appendChild(dom);
 		} else { // MyButton 组件，并不是真实存在于页面上
-			vm.$parentEl.appendChild(dom);
+			vm.$parentEl && vm.$parentEl.appendChild(dom);
 		}
 		vm.$el = dom;
 		vm.isMount = true;
@@ -161,10 +161,10 @@ export function normalVNode2Dom(vnode) {
 	// 处理 attrs
 	if (Array.isArray(vnode.attrs)) {
 		vnode.attrs.forEach(({name, value}) => {
-			if (name.startsWith(':')) {
-				value = handleJsExpression(vnode.vm.$self, value);
-				name = name.slice(1);
-			}
+			// if (name.startsWith(':')) {
+			// 	value = handleJsExpression(vnode.vm.$self, value);
+			// 	name = name.slice(1);
+			// }
 			vnode.el.setAttribute(name, value);
 		})
 	}

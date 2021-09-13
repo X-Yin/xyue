@@ -12,7 +12,6 @@ function select(incomingQuery, loaderContext, source, sourceMap) {
 		return '';
 	}
 
-
 	if(incomingQuery.type === 'template') {
 		const templateRes = source.match(templateReg);
 		if (templateRes) {

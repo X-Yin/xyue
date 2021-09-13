@@ -20,9 +20,9 @@ import { handleDynamicExpression, isEqual, normalizeTagName } from "../utils";
 let id = 0;
 
 class VNode {
-    constructor(tag, vm, attrs, children, type, data) {
+    constructor(tag, vm, attrs, children, type, data, runtimeContext) {
 
-        const { staticClass = '', staticStyle = '', attrs: attributes = {}, events = {} } = attrs || {};
+        const { staticClass = '', staticStyle = '', attrs: attributes = [], events = {} } = attrs || {};
 
         this.tag = normalizeTagName(tag);
         this.id = ++id;
@@ -36,6 +36,7 @@ class VNode {
         this.events = events;
         this.vm = vm;
         this.type = type;
+        this.text = data; //  这个 data 是没有被处理过的原始的模板字符串，可以是普通的字符串比如 hello，或者是动态字符串{{msg}}
         if (this.type === 3) {
             this.data = this.handleDynamicText(data);
         }
@@ -65,7 +66,8 @@ class VNode {
     }
 
     handleDynamicText(data) {
-        return handleDynamicExpression(this.vm.$self, data);
+        const text = handleDynamicExpression(this.vm.$self, data);
+        return text;
     }
 }
 

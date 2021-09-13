@@ -9,8 +9,8 @@ function handleProps(vm) {
     }
     if (Array.isArray(vm.props)) {
         vm.props.forEach(key => {
-            const parentAttrs = vm.$parentVnode.attrs || []; //[{name: ':msg', value: 'message'}]
-            parentAttrs.forEach(item => {
+            const parentAttrs = (vm.$parentVnode && vm.$parentVnode.attrs) || []; //[{name: ':msg', value: 'message'}]
+            parentAttrs && parentAttrs.forEach(item => {
                 const {name, value} = item;
                 if (name.startsWith(':')) {
                     const k = name.slice(1); // name 是 :msg

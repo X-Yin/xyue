@@ -10013,9 +10013,9 @@ function handleProps(vm) {
 
   if (Array.isArray(vm.props)) {
     vm.props.forEach(function (key) {
-      var parentAttrs = vm.$parentVnode.attrs || []; //[{name: ':msg', value: 'message'}]
+      var parentAttrs = vm.$parentVnode && vm.$parentVnode.attrs || []; //[{name: ':msg', value: 'message'}]
 
-      parentAttrs.forEach(function (item) {
+      parentAttrs && parentAttrs.forEach(function (item) {
         var name = item.name,
             value = item.value;
 
@@ -10059,6 +10059,67 @@ function beforeVNodeCreate() {
   beforeUpdate: props_beforeUpdate,
   beforeVNodeCreate: beforeVNodeCreate
 });
+;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/attrs/index.js
+ // 在 vnode 创建完成以后，需要对所有的动态 attrs 进行一次处理，也就是 v-bind 或者 : 开头的属性
+// 比如 :value="componentValue"，在 attrs 中的数据结构是 [{name: ':value', value: 'componentValue'}]
+// 需要将 componentValue 转换成真正的 data 中的 componentValue 值，比如说转换成下面这个样子
+// [{name: 'value', value: 'hello world'}]，在真正进行 patch 的时候，不需要处理动态的 attrs，所有的动态 attrs 都在 vnode 创建完成以后自动处理
+// 因为此时已经可以拿到所有的上下文数据了，props 的 parent 注入是在 beforeVNodeCreate 已经注入过了
+
+function vNodeCreated() {
+  var vm = this;
+  handleDynamicAttrs(vm, vm.$vnode);
+}
+
+function handleDynamicAttrs(vm, vnode) {
+  if (!vnode) {
+    return;
+  }
+
+  if (vnode.componentOptions.isComponent) {
+    return;
+  }
+
+  var attrs = vnode.attrs;
+
+  if (!Array.isArray(attrs)) {
+    return;
+  }
+
+  attrs.forEach(function (attr) {
+    var name = attr.name,
+        value = attr.value;
+
+    if (name.startsWith(':style')) {
+      return;
+    }
+
+    if (name.startsWith(':class')) {
+      return;
+    }
+
+    if (!name.startsWith(':')) {
+      return;
+    }
+
+    attr.name = name.slice(1);
+    attr.value = handleJsExpression(vm.$self, value);
+  }); // 递归处理 children
+
+  var children = vnode.children || [];
+
+  if (!Array.isArray(children)) {
+    return;
+  }
+
+  children.forEach(function (child) {
+    handleDynamicAttrs(vm, child);
+  });
+}
+
+/* harmony default export */ const attrs = ({
+  vNodeCreated: vNodeCreated
+});
 ;// CONCATENATED MODULE: ./src/core/vue/runtimeHooks/index.js
 function runtimeHooks_slicedToArray(arr, i) { return runtimeHooks_arrayWithHoles(arr) || runtimeHooks_iterableToArrayLimit(arr, i) || runtimeHooks_unsupportedIterableToArray(arr, i) || runtimeHooks_nonIterableRest(); }
 
@@ -10077,12 +10138,13 @@ function runtimeHooks_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; 
 
 
 
+
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
  * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
-var installDefaultHooks = [props, classes, style, events];
+var installDefaultHooks = [props, classes, style, events, attrs];
 function installHook(vm) {
   var customHooks = {};
   LifeCycleHooks.forEach(function (hook) {
@@ -10138,8 +10200,8 @@ function initMixin(vm) {
     this.$watch = options.watch || {};
     this.$vnode = null;
     this.$oldVNode = null;
-    this.$parentVnode = options.parentVnode || {};
-    this.$parentEl = options.parentEl || {};
+    this.$parentVnode = options.parentVnode || null;
+    this.$parentEl = options.parentEl || null;
     this.$self = null;
     this.$parentVm = options.parentVm;
     this.$render = '';
@@ -10515,7 +10577,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var vnode_id = 0;
 
 var VNode = /*#__PURE__*/function () {
-  function VNode(tag, vm, attrs, children, type, data) {
+  function VNode(tag, vm, attrs, children, type, data, runtimeContext) {
     _classCallCheck(this, VNode);
 
     var _ref = attrs || {},
@@ -10524,7 +10586,7 @@ var VNode = /*#__PURE__*/function () {
         _ref$staticStyle = _ref.staticStyle,
         staticStyle = _ref$staticStyle === void 0 ? '' : _ref$staticStyle,
         _ref$attrs = _ref.attrs,
-        attributes = _ref$attrs === void 0 ? {} : _ref$attrs,
+        attributes = _ref$attrs === void 0 ? [] : _ref$attrs,
         _ref$events = _ref.events,
         events = _ref$events === void 0 ? {} : _ref$events;
 
@@ -10542,6 +10604,7 @@ var VNode = /*#__PURE__*/function () {
     this.events = events;
     this.vm = vm;
     this.type = type;
+    this.text = data; //  这个 data 是没有被处理过的原始的模板字符串，可以是普通的字符串比如 hello，或者是动态字符串{{msg}}
 
     if (this.type === 3) {
       this.data = this.handleDynamicText(data);
@@ -10580,7 +10643,8 @@ var VNode = /*#__PURE__*/function () {
   }, {
     key: "handleDynamicText",
     value: function handleDynamicText(data) {
-      return handleDynamicExpression(this.vm.$self, data);
+      var text = handleDynamicExpression(this.vm.$self, data);
+      return text;
     }
   }]);
 
@@ -10819,7 +10883,7 @@ function patch(vm, oldVNode, newVNode) {
       prevEl.appendChild(dom);
     } else {
       // MyButton 组件，并不是真实存在于页面上
-      vm.$parentEl.appendChild(dom);
+      vm.$parentEl && vm.$parentEl.appendChild(dom);
     }
 
     vm.$el = dom;
@@ -10957,12 +11021,10 @@ function normalVNode2Dom(vnode) {
     vnode.attrs.forEach(function (_ref) {
       var name = _ref.name,
           value = _ref.value;
-
-      if (name.startsWith(':')) {
-        value = handleJsExpression(vnode.vm.$self, value);
-        name = name.slice(1);
-      }
-
+      // if (name.startsWith(':')) {
+      // 	value = handleJsExpression(vnode.vm.$self, value);
+      // 	name = name.slice(1);
+      // }
       vnode.el.setAttribute(name, value);
     });
   } // 处理 event
@@ -11275,6 +11337,8 @@ function lifecycleMixin(Vue) {
   };
 }
 ;// CONCATENATED MODULE: ./src/core/vue/render.js
+function render_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -11286,13 +11350,83 @@ function createTextVNode(text) {
 function render_createElement(tag, attrs, children) {
   return new vnode(tag, this, attrs, children, 1, null);
 }
-function createListVNode(tag, dataKey, attrs, children) {
+function createIfVNode(tag, dataKey, attrs, children) {
+  var flag = this.$self[dataKey];
+
+  if (flag) {
+    return new vnode(tag, this, attrs, children, 1, null);
+  }
+
+  return null;
+}
+/**
+ * expression 两种形式
+ * item in array
+ * (item, index) in array
+ * */
+
+function handleVForExpression(expression) {
+  var expReg1 = /^[\s\n\t]*([0-9a-zA-Z-]+)\s+in\s+([0-9a-zA-Z-]+)[\s\t\n]*$/;
+  var expReg2 = /^[\s\n\t]*\(\s*([0-9a-zA-Z-]+)\s*,\s*([0-9a-zA-Z-]+)\s*\)\s+in\s+([0-9a-zA-Z-]+)[\s\t\n]*$/;
+  var result;
+
+  if (result = expression.match(expReg1)) {
+    var itemKey = result[1] || '';
+    var dataKey = result[2] || '';
+    return {
+      itemKey: itemKey,
+      dataKey: dataKey,
+      indexKey: 'index'
+    };
+  }
+
+  if (result = expression.match(expReg2)) {
+    var _itemKey = result[1] || '';
+
+    var indexKey = result[2] || '';
+
+    var _dataKey = result[3] || '';
+
+    return {
+      itemKey: _itemKey,
+      dataKey: _dataKey,
+      indexKey: indexKey
+    };
+  }
+
+  return null;
+}
+function createRuntimeContext(context, runtimeContext) {
+  return new Proxy(context, {
+    get: function get(target, p, receiver) {
+      if (typeof runtimeContext[p] === 'undefined') {
+        return target[p];
+      }
+
+      return runtimeContext[p];
+    },
+    set: function set(target, p, value, receiver) {
+      context[p] = value;
+      return true;
+    }
+  });
+}
+function createListVNode(tag, vForExpression, attrs, children) {
   var _this = this;
 
+  var vForObj = handleVForExpression(vForExpression);
+
+  if (!vForObj) {
+    return [];
+  }
+
+  var itemKey = vForObj.itemKey,
+      indexKey = vForObj.indexKey,
+      dataKey = vForObj.dataKey;
   var arr = this.$self[dataKey];
 
   if (!arr) {
-    throw new Error(dataKey + ' does not exist on ' + this);
+    throw new Error(vForExpression + ' does not exist on ' + this);
   } // 这个地方有大坑
   // 因为 render 函数中 _l 是这么写的
   // ..._l(
@@ -11305,18 +11439,17 @@ function createListVNode(tag, dataKey, attrs, children) {
   // 对于 children 的处理要 clone 创建，而不能直接赋值
 
 
-  return arr.map(function (item) {
-    return new vnode(tag, _this, attrs, cloneVNode(children), 1, null);
+  return arr.map(function (item, index) {
+    var _obj;
+
+    var obj = (_obj = {}, render_defineProperty(_obj, itemKey, item), render_defineProperty(_obj, indexKey, index), _obj);
+    _this.$self = createRuntimeContext(_this.$self, obj); // 需要重新注入一遍新的上下文来生成一遍 child
+
+    var newChildren = children.map(function (child) {
+      return new vnode('text', _this, {}, [], 3, child.text);
+    });
+    return new vnode(tag, _this, attrs, newChildren, 1, null, obj);
   });
-}
-function createIfVNode(tag, dataKey, attrs, children) {
-  var flag = this.$self[dataKey];
-
-  if (flag) {
-    return new vnode(tag, this, attrs, children, 1, null);
-  }
-
-  return null;
 } // 梳理 vnode 父子关系
 
 function handleVNodeRelationship(vnode) {
@@ -11325,6 +11458,22 @@ function handleVNodeRelationship(vnode) {
     item.$parent = vnode;
     handleVNodeRelationship(item);
   });
+  return vnode;
+} // 清除掉 v-if 创建出来为 null 的 child
+
+function clearNullChild(vnode) {
+  if (!vnode) {
+    return {};
+  }
+
+  var children = vnode.children || [];
+
+  while (children.includes(null)) {
+    var index = children.indexOf(null);
+    children.splice(index, 1);
+  }
+
+  vnode.children = children;
   return vnode;
 }
 function renderMixin(Vue) {
@@ -11346,8 +11495,8 @@ function renderMixin(Vue) {
     // }
 
     var vnode = fn.call(this);
-    this.$vnode = handleVNodeRelationship(vnode || {});
-    callHook('vm', 'vNodeCreated');
+    this.$vnode = handleVNodeRelationship(clearNullChild(vnode) || {});
+    callHook(vm, 'vNodeCreated');
     return this.$vnode;
   };
 }

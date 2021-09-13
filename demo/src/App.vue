@@ -1,12 +1,8 @@
 <template>
   <div class="app">
-    <h1>App</h1>
-<!--    <button @click="changeMsg">{{message}}</button>-->
-    <p
-        :class="['container', flag ? 'hello' : 'world']"
-        :style="{'font-size': flag ? '12px' : '20px'}"
-        @click="changeFlag">changeFlag - {{flag}}</p>
-    <bar :msg="message" @changeMessage="changeMessage"></bar>
+    <p @click="setValue">setValue</p>
+    <p @click="getValue">getValue</p>
+    <input id="input" type="text" :value="value" @input="changeValue">
   </div>
 </template>
 
@@ -18,16 +14,34 @@ export default {
     return {
       message: 'hello world',
       flag: true,
-      array: [1, 2, 3]
+      value: 'case',
+      array: ['a', 'b', 'c']
     }
+  },
+  mounted() {
+    console.log('mounted');
+    window.input = document.getElementById('input');
   },
   components: {
     Bar
   },
   methods: {
+    setValue() {
+      this.value = "hello value!!!";
+    },
+    getValue() {
+      console.log('>>>> get value', this.value);
+    },
+    changeValue(e) {
+      console.log('>>>> changeValue ', e);
+      this.value = e.target.value;
+    },
     changeFlag() {
-      this.flag = false;
+      this.flag = !this.flag;
       console.log('>>>>> changeFlag', this.flag);
+    },
+    newItem() {
+      this.array.push(1);
     },
     clickHandler() {},
     changeMessage(msg) {
@@ -46,7 +60,7 @@ export default {
   height: 200px;
   color: red;
   background-size: cover;
-  background-image: url("https://momentum.photos/img/89af9ef6-9a09-49de-a085-fd6b91f86c64.jpg?momo_cache_bg_uuid=d101afda-b9ff-4130-a371-50f9ffea64bf");
+  /*background-image: url("https://momentum.photos/img/89af9ef6-9a09-49de-a085-fd6b91f86c64.jpg?momo_cache_bg_uuid=d101afda-b9ff-4130-a371-50f9ffea64bf");*/
 }
 
 .hello {

@@ -1,15 +1,16 @@
 import { LifeCycleHooks } from "../../constants";
-import attrHooks from './classes';
+import classHooks from './classes';
 import eventHooks from './events';
 import styleHooks from './style';
 import propsHooks from './props';
+import attrsHooks from './attrs';
 
 /**
  * hooks 是跟随 vm 组件实例的生命周期函数所增加的各种行为
  * vm 组件实例中，真正的 beforeCreate, created, updated, beforeMount, mounted, beforeUpdate, beforeDestroy, destroyed 都是数组的形式
  * */
 
-const installDefaultHooks = [propsHooks, attrHooks, styleHooks, eventHooks];
+const installDefaultHooks = [propsHooks, classHooks, styleHooks, eventHooks, attrsHooks];
 
 export function installHook(vm) {
     const customHooks = {};
