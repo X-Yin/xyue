@@ -104,11 +104,33 @@ export function compareVNode(oldVNode, newVNode) {
         return false;
     }
 
-    if (!isEqual(newVNode.events, oldVNode.events)) {
+    return true;
+}
+
+export function isSameComponent(oldVNode, newVNode) {
+    if (!newVNode) {
+        return false;
+    }
+    if (!oldVNode) {
+        throw new Error('Unexpected params ' + oldVNode);
+    }
+    // 对比 tag type data events 等
+    // 如果这些都不一样的话，就说明不是同一个 dom
+    if (!isEqual(newVNode.tag, oldVNode.tag)) {
         return false;
     }
 
-    return true;
+    if (!isEqual(newVNode.type, oldVNode.type)) {
+        return false;
+    }
+
+    if (!isEqual(oldVNode.data, newVNode.data)) {
+        return false;
+    }
+
+    if (!isEqual(newVNode.events, oldVNode.events)) {
+        return false;
+    }
 }
 
 // 将 newVNode 的属性赋值给 oldVNode，但是不替换 oldVNode 的堆地址

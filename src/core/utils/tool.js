@@ -48,3 +48,8 @@ export function handleDynamicExpression(context, expression = '') {
     }
     return expression;
 }
+
+
+export function isEqual(oldVal, newVal) {
+    return lodash.isEqual(oldVal, newVal);
+}

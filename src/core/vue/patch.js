@@ -6,10 +6,11 @@ import {
 	createTextNode,
 	handleJsExpression,
 	normalizeTagName, removeChild,
-	replaceNode
+	replaceNode,
+	isEqual
 } from "../utils";
 import { NativeDomEventKeyList } from "../config";
-import {compareVNode, replaceVNode} from "./vnode";
+import {compareVNode, isSameComponent, replaceVNode} from "./vnode";
 import component from "./global/component";
 import {callHook} from "./lifecycle";
 
@@ -55,14 +56,22 @@ export function patch(vm, oldVNode, newVNode) {
  * */
 
 export function diff(vm, oldVNode, newVNode) {
+
+
+	// diff 的时候，分为两种对比
+	// 第一种是当 tag 或者 type 或者 data 不一样的时候，走下面的逻辑
 	// 普通 text 元素不一样 vnode2dom 然后替换
 	// 普通其他元素不一样，vnode2dom 然后替换
 	// my-button 元素不一样
 	// 先判断占位组件 vnode 是不是一样，比如 <my-button :message='hello'> 和 <my-button-1 :message='base'>，这种不一致，就直接 vnode2dom 创建一个新的组件，然后替换
 	// 如果占位组件 vnode 的 tag 一致，attrs 也一致，需要触发 oldVNode.vm.$watcher.update 这个函数，让子组件内部实现 diff 逻辑才行
-	const isEqual = compareVNode(oldVNode, newVNode);
 
-	if (!isEqual) {
+	// 第二种是当 attrs style class 不一样的时候，不要直接替换 dom
+	// 而是通过动态的 setAttribute 或者是 style.cssText 或者是 className = 这种形式来动态的替换
+	// 比如 input.value 属性，如果每次 value 属性发生改变的时候，都重新替换 input dom，那么输入框的光标就不连续了
+	const isSame = isSameComponent(oldVNode, newVNode);
+
+	if (!isSame) {
 		const newDom = vNode2Dom(newVNode);
 		replaceNode(newDom, oldVNode.el);
 		replaceVNode(oldVNode, newVNode);
@@ -78,29 +87,50 @@ export function diff(vm, oldVNode, newVNode) {
 			return componentInstance.$watcher.update();
 		}
 		return vNode2Dom(oldVNode);
-	} else {
-		const newChildren = newVNode.children || [];
-		const oldChildren = oldVNode.children || [];
-		const maxLength = Math.max(newChildren.length, oldChildren.length);
-		for (let i = 0; i < maxLength; i++) {
-			const newChild = newChildren[i];
-			const oldChild = oldChildren[i];
-			if (!oldChild && newChild) { // 增加新的子元素
-				const newDom = vNode2Dom(newChild);
-				oldVNode.children.push(newChild);
-				oldVNode.el.appendChild(newDom);
-				continue;
-			}
+	}
 
-			if (!newChild && oldChild) { //  删除之前的子元素
-				removeChild(oldVNode.el, oldChild.el);
-				oldChildren.splice(i, 1);
-				continue;
-			}
+	// 如果两个 vnode 相等，需要比较 attrs 和 style 以及 class，如果有不同的需要动态的替换
 
-			if (newChild && oldChild) {
-				diff(vm, oldChild, newChild);
-			}
+	let flag = isEqual(oldVNode.attrs, newVNode.attrs);
+	if (!flag) {
+		oldVNode.el.style.cssText = newVNode.style;
+	}
+
+	flag = isEqual(oldVNode.class, newVNode.class);
+	if (!flag) {
+		oldVNode.el.className = newVNode.class;
+	}
+
+	flag = isEqual(oldVNode.style, newVNode.style);
+	if (!flag) {
+		if (Array.isArray(newVNode.attrs)) {
+			newVNode.attrs.forEach(({name, value}) => {
+				oldVNode.el.setAttribute(name, value);
+			})
+		}
+	}
+
+	const newChildren = newVNode.children || [];
+	const oldChildren = oldVNode.children || [];
+	const maxLength = Math.max(newChildren.length, oldChildren.length);
+	for (let i = 0; i < maxLength; i++) {
+		const newChild = newChildren[i];
+		const oldChild = oldChildren[i];
+		if (!oldChild && newChild) { // 增加新的子元素
+			const newDom = vNode2Dom(newChild);
+			oldVNode.children.push(newChild);
+			oldVNode.el.appendChild(newDom);
+			continue;
+		}
+
+		if (!newChild && oldChild) { //  删除之前的子元素
+			removeChild(oldVNode.el, oldChild.el);
+			oldChildren.splice(i, 1);
+			continue;
+		}
+
+		if (newChild && oldChild) {
+			diff(vm, oldChild, newChild);
 		}
 	}
 }
@@ -161,10 +191,6 @@ export function normalVNode2Dom(vnode) {
 	// 处理 attrs
 	if (Array.isArray(vnode.attrs)) {
 		vnode.attrs.forEach(({name, value}) => {
-			// if (name.startsWith(':')) {
-			// 	value = handleJsExpression(vnode.vm.$self, value);
-			// 	name = name.slice(1);
-			// }
 			vnode.el.setAttribute(name, value);
 		})
 	}
